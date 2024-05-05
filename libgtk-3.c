@@ -171,3 +171,10 @@ gtk_font_chooser_get_font (GtkFontChooser *fontchooser)
   return NULL;
 }
 #endif
+
+void
+gtk_widget_override_font (GtkWidget                  *widget,
+                          const PangoFontDescription *font_desc)
+{
+  gtk_widget_modify_font (widget, font_desc);
+}
