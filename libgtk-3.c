@@ -68,10 +68,7 @@ GtkWidget*
 gtk_box_new (GtkOrientation orientation,
              gint           spacing)
 {
-  return g_object_new (GTK_TYPE_BOX,
-                       "orientation", orientation,
-                       "spacing",     spacing,
-                       NULL);
+  return _gtk_box_new(orientation, TRUE, spacing);
 }
 
 int
