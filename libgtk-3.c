@@ -1,5 +1,4 @@
 #include <gtk/gtk.h>
-#include "headers/gtk/gtk.h"
 
 GtkWidget *
 gtk_grid_new (void)
@@ -122,6 +121,8 @@ gtk_widget_get_allocated_height (GtkWidget *widget)
  * Returns: (transfer none): a #GtkStyleContext. This memory is owned by @widget and
  *          must not be freed.
  **/
+typedef struct _GtkStyleContext GtkStyleContext;
+
 GtkStyleContext *
 gtk_widget_get_style_context (GtkWidget *widget)
 {
