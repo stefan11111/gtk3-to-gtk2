@@ -136,3 +136,21 @@ gtk_font_chooser_dialog_new (const gchar *title,
 {
   return gtk_font_selection_dialog_new(title);
 }
+
+#ifdef BROKEN
+typedef struct _GtkFontChooser GtkFontChooser;
+void
+gtk_font_chooser_set_font (GtkFontChooser *fontchooser,
+                           const gchar    *fontname)
+{
+  g_return_if_fail (fontname != NULL);
+
+  g_object_set (fontchooser, "font", fontname, NULL);
+}
+#else
+void
+gtk_font_chooser_set_font (GtkFontChooser *fontchooser,
+                           const gchar    *fontname)
+{
+}
+#endif
