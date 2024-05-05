@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include "headers/gtk/gtk.h"
 
 GtkWidget *
 gtk_grid_new (void)
