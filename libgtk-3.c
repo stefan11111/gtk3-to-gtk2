@@ -93,3 +93,8 @@ gtk_style_context_get_font ()
 {
   return NULL;
 }
+
+void
+gtk_style_context_get_color ()
+{
+}
