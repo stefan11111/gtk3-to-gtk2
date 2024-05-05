@@ -3,16 +3,18 @@
 XCFLAGS = ${CPPFLAGS} ${CFLAGS} -nostdlib -std=c99 -fPIC -Wall -Wno-pedantic
 XLDFLAGS = ${LDFLAGS} -shared -Wl
 
+TARGET = x11
+
 all: libgtk-3.so.0 libgdk-3.so.0
 
 .c.o:
 	${CC} ${XCFLAGS} -c -o $@ $<
 
 libgtk-3.so.0:
-	${CC} ${XCFLAGS} libgtk-3.c -o libgtk-3.so.0 ${XLDFLAGS},-soname,libgtk-3.so.0
+	${CC} ${XCFLAGS} libgtk-3.c -lgtk-${TARGET}-2.0 -o libgtk-3.so.0 ${XLDFLAGS},-soname,libgtk-3.so.0
 
 libgdk-3.so.0:
-	${CC} ${XCFLAGS} libgdk-3.c -o libgdk-3.so.0 ${XLDFLAGS},-soname,libgdk-3.so.0
+	${CC} ${XCFLAGS} libgdk-3.c -lgdk-${TARGET}-2.0 -o libgdk-3.so.0 ${XLDFLAGS},-soname,libgdk-3.so.0
 
 install: libgtk-3.so.0 libgdk-3.so.0
 	mkdir -p ${DESTDIR}/usr/lib64
