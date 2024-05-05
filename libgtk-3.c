@@ -137,8 +137,8 @@ gtk_font_chooser_dialog_new (const gchar *title,
   return gtk_font_selection_dialog_new(title);
 }
 
-#ifdef BROKEN
 typedef struct _GtkFontChooser GtkFontChooser;
+#ifdef BROKEN
 void
 gtk_font_chooser_set_font (GtkFontChooser *fontchooser,
                            const gchar    *fontname)
