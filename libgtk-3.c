@@ -246,6 +246,7 @@ gdk_rgba_to_string (const GdkRGBA *rgba)
     }
 }
 
+#if 0
 static GdkRGBA GdkRGBA_from_GdkColor (GdkColor *color)
 {
   GdkRGBA rgba;
@@ -253,7 +254,23 @@ static GdkRGBA GdkRGBA_from_GdkColor (GdkColor *color)
   rgba.green = (gdouble)color->green/65535;
   rgba.blue = (gdouble)color->blue/65535;
   rgba.alpha = 1;
+
+  return rgba;
 }
+#endif
+
+struct _GtkColorButtonPrivate
+{
+  GtkWidget *draw_area; /* Widget where we draw the color sample */
+  GtkWidget *cs_dialog; /* Color selection dialog */
+
+  gchar *title;         /* Title for the color selection window */
+
+  GdkColor color;
+  guint16 alpha;
+
+  guint use_alpha : 1;  /* Use alpha or not */
+};
 
 void
 gtk_color_button_get_rgba (GtkColorButton *button,
@@ -262,5 +279,8 @@ gtk_color_button_get_rgba (GtkColorButton *button,
   g_return_if_fail (GTK_IS_COLOR_BUTTON (button));
   g_return_if_fail (rgba != NULL);
 
-  *rgba = GdkRGBA_from_GdkColor(&button->priv->color);
+  rgba->red = (gdouble)button->priv->color.red/65535;
+  rgba->green = (gdouble)button->priv->color.green/65535;
+  rgba->blue = (gdouble)button->priv->color.blue/65535;
+  rgba->alpha = button->priv->use_alpha ? (gdouble)button->priv->alpha/65535 : 1;
 }
