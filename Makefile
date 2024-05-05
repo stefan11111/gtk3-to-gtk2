@@ -24,7 +24,7 @@ install: libgtk-3.so.0 libgdk-3.so.0
 	ln -rsf ${DESTDIR}/usr/lib64/libgtk-3.so.0 ${DESTDIR}/usr/lib64/libgtk-3.so
 	ln -rsf ${DESTDIR}/usr/lib64/libgdk-3.so.0 ${DESTDIR}/usr/lib64/libgdk-3.so
 	mkdir -p ${DESTDIR}/usr/lib64/pkgconfig
-	cp -f pc/* ${DESTDIR}/usr/lib64/pkgconfig
+	cp -f pc/pc-${TARGET}/* ${DESTDIR}/usr/lib64/pkgconfig
 	mkdir -p ${DESTDIR}/usr/include/gtk-3.0/gtk
 	cp -rf headers/* ${DESTDIR}/usr/include/gtk-3.0
 uninstall:
