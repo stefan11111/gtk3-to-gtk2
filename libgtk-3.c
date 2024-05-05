@@ -147,10 +147,27 @@ gtk_font_chooser_set_font (GtkFontChooser *fontchooser,
 
   g_object_set (fontchooser, "font", fontname, NULL);
 }
+
+gchar *
+gtk_font_chooser_get_font (GtkFontChooser *fontchooser)
+{
+  gchar *fontname;
+
+  g_object_get (fontchooser, "font", &fontname, NULL);
+
+
+  return fontname;
+}
 #else
 void
 gtk_font_chooser_set_font (GtkFontChooser *fontchooser,
                            const gchar    *fontname)
 {
+}
+
+gchar *
+gtk_font_chooser_get_font (GtkFontChooser *fontchooser)
+{
+  return NULL;
 }
 #endif
