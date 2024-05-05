@@ -203,3 +203,11 @@ gtk_widget_override_font (GtkWidget                  *widget,
 {
   gtk_widget_modify_font (widget, (PangoFontDescription *)font_desc);
 }
+
+GtkWidget *
+gtk_tree_view_column_get_button (GtkTreeViewColumn *tree_column)
+{
+  g_return_val_if_fail (GTK_IS_TREE_VIEW_COLUMN (tree_column), NULL);
+
+  return tree_column->button;
+}
