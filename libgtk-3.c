@@ -3,19 +3,19 @@
 guint
 gtk_get_major_version (void)
 {
-  return GTK_MAJOR_VERSION;
+  return 3;
 }
 
 guint
 gtk_get_minor_version (void)
 {
-  return GTK_MINOR_VERSION;
+  return 24;
 }
 
 guint
 gtk_get_micro_version (void)
 {
-  return GTK_MICRO_VERSION;
+  return 39;
 }
 
 GtkWidget *
