@@ -6,6 +6,11 @@ gtk_grid_new (void)
   return NULL;
 }
 
+void
+gtk_grid_attach ()
+{
+}
+
 gboolean
 gtk_widget_get_hexpand (GtkWidget *widget)
 {
