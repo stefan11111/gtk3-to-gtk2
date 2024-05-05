@@ -1,5 +1,23 @@
 #include <gtk/gtk.h>
 
+guint
+gtk_get_major_version (void)
+{
+  return GTK_MAJOR_VERSION;
+}
+
+guint
+gtk_get_minor_version (void)
+{
+  return GTK_MINOR_VERSION;
+}
+
+guint
+gtk_get_micro_version (void)
+{
+  return GTK_MICRO_VERSION;
+}
+
 GtkWidget *
 gtk_grid_new (void)
 {
