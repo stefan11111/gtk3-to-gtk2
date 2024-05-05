@@ -68,7 +68,6 @@ GtkWidget*
 gtk_box_new (GtkOrientation orientation,
              gint           spacing)
 {
-//  return _gtk_box_new(orientation, FALSE, spacing);
   return gtk_hbox_new(FALSE, spacing);
 }
 
@@ -146,7 +145,7 @@ gtk_font_chooser_dialog_new (const gchar *title,
 }
 
 typedef struct _GtkFontChooser GtkFontChooser;
-#ifdef BROKEN
+
 void
 gtk_font_chooser_set_font (GtkFontChooser *fontchooser,
                            const gchar    *fontname)
@@ -166,7 +165,7 @@ gtk_font_chooser_get_font (GtkFontChooser *fontchooser)
 
   return fontname;
 }
-#else
+#if 0
 void
 gtk_font_chooser_set_font (GtkFontChooser *fontchooser,
                            const gchar    *fontname)
