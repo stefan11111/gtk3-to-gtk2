@@ -22,7 +22,6 @@
 #error "Only <gtk/gtk-a11y.h> can be included directly."
 #endif
 
-#include <atk/atk.h>
 #include <gtk/a11y/gtkcellaccessible.h>
 
 G_BEGIN_DECLS
@@ -53,7 +52,7 @@ struct _GtkCellAccessibleParentIface
                                  gint                    *y,
                                  gint                    *width,
                                  gint                    *height,
-                                 AtkCoordType             coord_type);
+                                 void*                   coord_type);
   void     ( *get_cell_area)    (GtkCellAccessibleParent *parent,
                                  GtkCellAccessible       *cell,
                                  GdkRectangle            *cell_rect);
@@ -74,7 +73,7 @@ struct _GtkCellAccessibleParentIface
   /* end of actions */
   void     ( *update_relationset) (GtkCellAccessibleParent *parent,
                                  GtkCellAccessible       *cell,
-                                 AtkRelationSet          *relationset);
+                                 void*                   *relationset);
   void     ( *get_cell_position) (GtkCellAccessibleParent *parent,
                                   GtkCellAccessible       *cell,
                                   gint                    *row,
@@ -95,7 +94,7 @@ void     gtk_cell_accessible_parent_get_cell_extents (GtkCellAccessibleParent *p
                                                       gint                    *y,
                                                       gint                    *width,
                                                       gint                    *height,
-                                                      AtkCoordType             coord_type);
+                                                      void*                   coord_type);
 GDK_AVAILABLE_IN_ALL
 void     gtk_cell_accessible_parent_get_cell_area    (GtkCellAccessibleParent *parent,
                                                       GtkCellAccessible       *cell,
@@ -122,7 +121,7 @@ void     gtk_cell_accessible_parent_edit             (GtkCellAccessibleParent *p
 GDK_AVAILABLE_IN_3_12
 void     gtk_cell_accessible_parent_update_relationset (GtkCellAccessibleParent *parent,
                                                       GtkCellAccessible       *cell,
-                                                      AtkRelationSet          *relationset);
+                                                      void                    *relationset);
 GDK_AVAILABLE_IN_ALL
 void     gtk_cell_accessible_parent_get_cell_position(GtkCellAccessibleParent *parent,
                                                       GtkCellAccessible       *cell,

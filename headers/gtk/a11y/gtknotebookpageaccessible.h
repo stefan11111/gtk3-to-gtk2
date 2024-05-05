@@ -39,21 +39,21 @@ typedef struct _GtkNotebookPageAccessiblePrivate GtkNotebookPageAccessiblePrivat
 
 struct _GtkNotebookPageAccessible
 {
-  AtkObject parent;
+  void* parent;
 
   GtkNotebookPageAccessiblePrivate *priv;
 };
 
 struct _GtkNotebookPageAccessibleClass
 {
-  AtkObjectClass parent_class;
+  void* parent_class;
 };
 
 GDK_AVAILABLE_IN_ALL
 GType      gtk_notebook_page_accessible_get_type   (void);
 
 GDK_AVAILABLE_IN_ALL
-AtkObject *gtk_notebook_page_accessible_new        (GtkNotebookAccessible     *notebook,
+void *gtk_notebook_page_accessible_new        (GtkNotebookAccessible     *notebook,
                                                     GtkWidget                 *child);
 
 GDK_AVAILABLE_IN_ALL

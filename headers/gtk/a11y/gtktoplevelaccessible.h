@@ -22,8 +22,6 @@
 #error "Only <gtk/gtk-a11y.h> can be included directly."
 #endif
 
-#include <atk/atk.h>
-
 G_BEGIN_DECLS
 
 #define GTK_TYPE_TOPLEVEL_ACCESSIBLE               (gtk_toplevel_accessible_get_type ())
@@ -39,14 +37,14 @@ typedef struct _GtkToplevelAccessiblePrivate GtkToplevelAccessiblePrivate;
 
 struct _GtkToplevelAccessible
 {
-  AtkObject parent;
+  void* parent;
 
   GtkToplevelAccessiblePrivate *priv;
 };
 
 struct _GtkToplevelAccessibleClass
 {
-  AtkObjectClass parent_class;
+  void* parent_class;
 };
 
 GDK_AVAILABLE_IN_ALL

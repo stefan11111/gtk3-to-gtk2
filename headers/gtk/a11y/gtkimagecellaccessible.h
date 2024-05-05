@@ -22,7 +22,6 @@
 #error "Only <gtk/gtk-a11y.h> can be included directly."
 #endif
 
-#include <atk/atk.h>
 #include <gtk/a11y/gtkrenderercellaccessible.h>
 
 G_BEGIN_DECLS

@@ -22,7 +22,6 @@
 #error "Only <gtk/gtk-a11y.h> can be included directly."
 #endif
 
-#include <atk/atk.h>
 #include <gtk/a11y/gtkcellaccessible.h>
 
 G_BEGIN_DECLS
@@ -54,7 +53,7 @@ GDK_AVAILABLE_IN_ALL
 GType      gtk_renderer_cell_accessible_get_type     (void);
 
 GDK_AVAILABLE_IN_ALL
-AtkObject *gtk_renderer_cell_accessible_new          (GtkCellRenderer * renderer);
+void *gtk_renderer_cell_accessible_new          (GtkCellRenderer * renderer);
 
 G_END_DECLS
 

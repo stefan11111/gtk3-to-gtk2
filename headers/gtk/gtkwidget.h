@@ -33,7 +33,6 @@
 #include <gtk/gtkaccelgroup.h>
 #include <gtk/gtkborder.h>
 #include <gtk/gtktypes.h>
-#include <atk/atk.h>
 
 G_BEGIN_DECLS
 
@@ -549,7 +548,7 @@ struct _GtkWidgetClass
 
   /* accessibility support
    */
-  AtkObject *  (* get_accessible)     (GtkWidget *widget);
+  void*        (* get_accessible)     (GtkWidget *widget);
 
   void         (* screen_changed)     (GtkWidget *widget,
                                        GdkScreen *previous_screen);
@@ -1062,9 +1061,9 @@ void             gtk_widget_class_set_accessible_type    (GtkWidgetClass     *wi
                                                           GType               type);
 GDK_AVAILABLE_IN_3_2
 void             gtk_widget_class_set_accessible_role    (GtkWidgetClass     *widget_class,
-                                                          AtkRole             role);
+                                                          void*               role);
 GDK_AVAILABLE_IN_ALL
-AtkObject*       gtk_widget_get_accessible               (GtkWidget          *widget);
+void*       gtk_widget_get_accessible               (GtkWidget          *widget);
 
 
 /* Margin and alignment */
