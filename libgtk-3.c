@@ -245,3 +245,22 @@ gdk_rgba_to_string (const GdkRGBA *rgba)
                               alpha);
     }
 }
+
+static GdkRGBA GdkRGBA_from_GdkColor (GdkColor *color)
+{
+  GdkRGBA rgba;
+  rgba.red = (gdouble)color->red/65535;
+  rgba.green = (gdouble)color->green/65535;
+  rgba.blue = (gdouble)color->blue/65535;
+  rgba.alpha = 1;
+}
+
+void
+gtk_color_button_get_rgba (GtkColorButton *button,
+                           GdkRGBA        *rgba)
+{
+  g_return_if_fail (GTK_IS_COLOR_BUTTON (button));
+  g_return_if_fail (rgba != NULL);
+
+  *rgba = GdkRGBA_from_GdkColor(&button->priv->color);
+}
