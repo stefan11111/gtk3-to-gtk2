@@ -176,5 +176,5 @@ void
 gtk_widget_override_font (GtkWidget                  *widget,
                           const PangoFontDescription *font_desc)
 {
-  gtk_widget_modify_font (widget, font_desc);
+  gtk_widget_modify_font (widget, (PangoFontDescription *)font_desc);
 }
