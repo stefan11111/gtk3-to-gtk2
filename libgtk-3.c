@@ -129,3 +129,10 @@ gtk_render_layout (GtkStyleContext *context,
   pango_cairo_show_layout (cr, layout);
   cairo_restore (cr);
 }
+
+GtkWidget*
+gtk_font_chooser_dialog_new (const gchar *title,
+                             GtkWindow   *parent)
+{
+  return gtk_font_selection_dialog_new(title);
+}
