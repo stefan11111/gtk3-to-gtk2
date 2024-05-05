@@ -11,6 +11,11 @@ gtk_grid_attach ()
 {
 }
 
+void
+gtk_grid_set_column_spacing()
+{
+}
+
 gboolean
 gtk_widget_get_hexpand (GtkWidget *widget)
 {
