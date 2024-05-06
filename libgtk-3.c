@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include <gtk/gtk.h>
 
 guint
@@ -534,5 +536,50 @@ gtk_paned_new (GtkOrientation orientation)
 {
   return g_object_new (GTK_TYPE_PANED,
                        "orientation", orientation,
+                       NULL);
+}
+
+GtkWidget *
+gtk_scale_new (GtkOrientation  orientation,
+               GtkAdjustment  *adjustment)
+{
+  g_return_val_if_fail (adjustment == NULL || GTK_IS_ADJUSTMENT (adjustment),
+                        NULL);
+
+  return g_object_new (GTK_TYPE_SCALE,
+                       "orientation", orientation,
+                       "adjustment",  adjustment,
+                       NULL);
+}
+
+GtkWidget *
+gtk_scale_new_with_range (GtkOrientation orientation,
+                          gdouble        min,
+                          gdouble        max,
+                          gdouble        step)
+{
+  GtkObject *adj;
+  gint digits;
+
+  g_return_val_if_fail (min < max, NULL);
+  g_return_val_if_fail (step != 0.0, NULL);
+
+  adj = gtk_adjustment_new (min, min, max, step, 10 * step, 0);
+
+  if (fabs (step) >= 1.0 || step == 0.0)
+    {
+      digits = 0;
+    }
+  else
+    {
+      digits = abs ((gint) floor (log10 (fabs (step))));
+      if (digits > 5)
+        digits = 5;
+    }
+
+  return g_object_new (GTK_TYPE_SCALE,
+                       "orientation", orientation,
+                       "adjustment",  adj,
+                       "digits",      digits,
                        NULL);
 }

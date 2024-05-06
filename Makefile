@@ -2,7 +2,7 @@
 
 INCLUDES = -I. -I.. -I/usr/include/gtk-2.0 -I/usr/lib64/gtk-2.0/include -I/usr/include/pango-1.0 -I/usr/include/gdk-pixbuf-2.0 -I/usr/lib64/libffi/include -pthread -I/usr/include/fribidi -I/usr/include/harfbuzz -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/cairo -I/usr/include/libpng16 -I/usr/include/freetype2 -I/usr/include/pixman-1
 
-XCFLAGS = ${CPPFLAGS} ${CFLAGS} -nostdlib -std=c99 -fPIC -Wall -Wno-pedantic ${INCLUDES}
+XCFLAGS = ${CPPFLAGS} ${CFLAGS} -lm -std=c99 -fPIC -Wall -Wno-pedantic ${INCLUDES}
 XLDFLAGS = ${LDFLAGS} -shared -Wl
 
 TARGET = x11
