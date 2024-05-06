@@ -583,3 +583,12 @@ gtk_scale_new_with_range (GtkOrientation orientation,
                        "digits",      digits,
                        NULL);
 }
+
+GtkIconSet *
+gtk_style_context_lookup_icon_set (GtkStyleContext *context,
+                                   const gchar     *stock_id)
+{
+  g_return_val_if_fail (stock_id, NULL);
+
+  return gtk_icon_factory_lookup_default (stock_id);
+}
