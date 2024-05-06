@@ -592,3 +592,8 @@ gtk_style_context_lookup_icon_set (GtkStyleContext *context,
 
   return gtk_icon_factory_lookup_default (stock_id);
 }
+
+void
+gtk_style_context_set_junction_sides ()
+{
+}
