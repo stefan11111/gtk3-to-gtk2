@@ -492,8 +492,7 @@ gtk_render_option (GtkStyleContext *context,
                    gdouble          width,
                    gdouble          height)
 {
-  g_return_if_fail (GTK_IS_STYLE_CONTEXT (context));
-  g_return_if_fail (cr != NULL);
+  g_return_if_fail (cr);
 
   if (width <= 0 || height <= 0)
     return;
@@ -507,3 +506,7 @@ gtk_render_option (GtkStyleContext *context,
   cairo_set_matrix (cr, &matrix);
 }
 
+void
+gtk_widget_path_iter_set_name ()
+{
+}
