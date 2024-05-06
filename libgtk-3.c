@@ -308,3 +308,26 @@ gtk_widget_set_margin_left (GtkWidget *widget,
   widget->allocation.x = margin;
   gtk_widget_queue_resize (widget);
 }
+
+gint
+gtk_widget_get_margin_right (GtkWidget *widget)
+{
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
+
+  return widget->allocation.x + widget->allocation.width;
+}
+
+void
+gtk_widget_set_margin_right (GtkWidget *widget,
+                             gint       margin)
+{
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (margin <= G_MAXINT16);
+
+  if (widget->allocation.x + widget->allocation.width == margin)
+    return;
+
+  widget->requisition.width = margin - widget->allocation.x;
+  widget->allocation.width = margin - widget->allocation.x;
+  gtk_widget_queue_resize (widget);
+}
