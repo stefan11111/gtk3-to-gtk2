@@ -597,3 +597,23 @@ void
 gtk_style_context_set_junction_sides ()
 {
 }
+
+struct _GtkWidgetPath
+{
+  guint ref_count;
+
+  GArray *elems; /* First element contains the described widget */
+};
+
+typedef struct _GtkWidgetPath GtkWidgetPath;
+
+gint
+gtk_widget_path_length (const GtkWidgetPath *path)
+{
+#if 0 /* runtime cost */
+  if (!path) {
+    return 0;
+  }
+#endif
+  return path->elems->len;
+}
