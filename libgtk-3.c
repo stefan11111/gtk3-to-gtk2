@@ -284,3 +284,9 @@ gtk_color_button_get_rgba (GtkColorButton *button,
   rgba->blue = (gdouble)button->priv->color.blue/65535;
   rgba->alpha = button->priv->use_alpha ? (gdouble)button->priv->alpha/65535 : 1;
 }
+
+void
+gtk_widget_set_margin_left (GtkWidget *widget,
+                            gint       margin)
+{
+}
