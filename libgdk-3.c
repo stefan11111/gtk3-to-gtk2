@@ -69,3 +69,9 @@ gdk_window_set_background_pattern (GdkWindow       *window,
                                    cairo_pattern_t *pattern)
 {
 }
+
+gint
+gdk_window_get_scale_factor (GdkWindow *window)
+{
+  return 1;
+}
