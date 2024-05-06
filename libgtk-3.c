@@ -437,3 +437,8 @@ void
 gtk_revealer_set_transition_duration ()
 {
 }
+
+void
+gtk_style_context_get_padding ()
+{
+}
