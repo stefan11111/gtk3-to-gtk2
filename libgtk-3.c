@@ -483,3 +483,27 @@ GType gtk_scrollable_get_type (void)
 {
   return 0;
 }
+
+void
+gtk_render_option (GtkStyleContext *context,
+                   cairo_t         *cr,
+                   gdouble          x,
+                   gdouble          y,
+                   gdouble          width,
+                   gdouble          height)
+{
+  g_return_if_fail (GTK_IS_STYLE_CONTEXT (context));
+  g_return_if_fail (cr != NULL);
+
+  if (width <= 0 || height <= 0)
+    return;
+
+  cairo_matrix_t matrix;
+
+  cairo_get_matrix (cr, &matrix);
+
+  cairo_translate (cr, x, y);
+
+  cairo_set_matrix (cr, &matrix);
+}
+
