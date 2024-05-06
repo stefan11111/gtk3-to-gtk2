@@ -38,3 +38,28 @@ gdk_rgba_to_string (const GdkRGBA *rgba)
                               alpha);
     }
 }
+
+typedef struct _GdkDeviceManager GdkDeviceManager;
+
+GdkDeviceManager *
+gdk_display_get_device_manager (GdkDisplay *display)
+{
+  return NULL;
+}
+
+void
+gdk_device_ungrab (GdkDevice  *device,
+                   guint32     time_)
+{
+}
+
+typedef struct _GdkGrabOwnership GdkGrabOwnership;
+
+GdkGrabStatus
+gdk_device_grab ()
+{
+#if 0
+  return 5;
+#endif
+  return 0;
+}
