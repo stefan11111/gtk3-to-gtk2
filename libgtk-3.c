@@ -517,3 +517,10 @@ gtk_style_context_get_style_property (GtkStyleContext *context,
                                       GValue          *value)
 {
 }
+
+void
+gtk_style_context_get_border_color (GtkStyleContext *context,
+                                    GtkStateFlags    state,
+                                    GdkRGBA         *color)
+{
+}
