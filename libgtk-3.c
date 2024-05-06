@@ -510,3 +510,10 @@ void
 gtk_widget_path_iter_set_name ()
 {
 }
+
+void
+gtk_style_context_get_style_property (GtkStyleContext *context,
+                                      const gchar     *property_name,
+                                      GValue          *value)
+{
+}
