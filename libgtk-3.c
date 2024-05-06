@@ -617,3 +617,32 @@ gtk_widget_path_length (const GtkWidgetPath *path)
 #endif
   return path->elems->len;
 }
+
+void
+gtk_widget_shape_combine_region (GtkWidget *widget,
+                                 cairo_region_t *region)
+{
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  /*  set_shape doesn't work on widgets without GDK window */
+  g_return_if_fail (gtk_widget_get_has_window (widget));
+
+  if (region == NULL)
+    {
+      if (widget->window)
+        gdk_window_shape_combine_region (widget->window, NULL, 0, 0);
+
+      g_object_set_qdata (G_OBJECT (widget), g_quark_from_static_string ("gtk-shape-info"), NULL);
+    }
+  else
+    {
+      g_object_set_qdata_full (G_OBJECT (widget), g_quark_from_static_string ("gtk-shape-info"),
+                               cairo_region_copy (region),
+                               (GDestroyNotify) cairo_region_destroy);
+
+      /* set shape if widget has a GDK window already.
+       * otherwise the shape is scheduled to be set by gtk_widget_realize().
+       */
+      if (widget->window)
+        gdk_window_shape_combine_region (widget->window, (const GdkRegion *)((const int*)region + 2), 0, 0);
+    }
+}
