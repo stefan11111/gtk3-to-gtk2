@@ -63,3 +63,9 @@ gdk_device_grab ()
 #endif
   return 0;
 }
+
+void
+gdk_window_set_background_pattern (GdkWindow       *window,
+                                   cairo_pattern_t *pattern)
+{
+}
