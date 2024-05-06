@@ -353,3 +353,23 @@ gtk_widget_set_margin_start (GtkWidget *widget,
   (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? gtk_widget_set_margin_right (widget, margin) :
                                                             gtk_widget_set_margin_left (widget, margin);
 }
+
+gint
+gtk_widget_get_margin_end (GtkWidget *widget)
+{
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
+
+  return (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? widget->allocation.x:
+                                                                   widget->allocation.x +  widget->allocation.width;
+}
+
+void
+gtk_widget_set_margin_end (GtkWidget *widget,
+                           gint       margin)
+{
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (margin <= G_MAXINT16);
+
+  (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? gtk_widget_set_margin_left (widget, margin) :
+                                                            gtk_widget_set_margin_right (widget, margin);
+}
