@@ -653,6 +653,27 @@ gtk_button_box_new (GtkOrientation orientation)
   return orientation ? gtk_vbutton_box_new () : gtk_hbutton_box_new ();
 }
 
+/* not stubs, resize grips removed upstream */
+
+void
+gtk_window_set_has_resize_grip (GtkWindow *window,
+                                gboolean   value)
+{
+}
+
+gboolean
+gtk_window_resize_grip_is_visible (GtkWindow *window)
+{
+  return FALSE;
+}
+
+gboolean
+gtk_window_get_has_resize_grip (GtkWindow *window)
+
+{
+  return FALSE;
+}
+
 gboolean
 gtk_window_get_resize_grip_area (GtkWindow    *window,
                                  GdkRectangle *rect)
