@@ -432,3 +432,8 @@ gtk_render_background (GtkStyleContext *context,
                        gdouble          height)
 {
 }
+
+void
+gtk_revealer_set_transition_duration ()
+{
+}
