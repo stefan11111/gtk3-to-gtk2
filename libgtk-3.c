@@ -502,3 +502,8 @@ gtk_scrollable_set_vadjustment (GtkScrollable *scrollable,
 
   g_object_set (scrollable, "vadjustment", vadjustment, NULL);
 }
+
+GType gtk_scrollable_get_type (void)
+{
+  return 0;
+}
