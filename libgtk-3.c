@@ -652,3 +652,10 @@ gtk_button_box_new (GtkOrientation orientation)
 {
   return orientation ? gtk_vbutton_box_new () : gtk_hbutton_box_new ();
 }
+
+gboolean
+gtk_window_get_resize_grip_area (GtkWindow    *window,
+                                 GdkRectangle *rect)
+{
+  return FALSE;
+}
