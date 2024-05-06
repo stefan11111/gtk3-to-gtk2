@@ -393,8 +393,8 @@ gtk_widget_set_margin_top (GtkWidget *widget,
     return;
   }
 
-  widget->requisition.height += margin - widget->allocation.y;
-  widget->allocation.height += margin - widget->allocation.y;
+  widget->requisition.height -= margin - widget->allocation.y;
+  widget->allocation.height -= margin - widget->allocation.y;
   widget->allocation.y = margin;
   gtk_widget_queue_resize (widget);
 }
@@ -418,7 +418,7 @@ gtk_widget_set_margin_bottom (GtkWidget *widget,
     return;
   }
 
-  widget->requisition.height = widget->allocation.y - margin;
-  widget->allocation.height = widget->allocation.y - margin;
+  widget->requisition.height = margin - widget->allocation.y;
+  widget->allocation.height = margin - widget->allocation.y;
   gtk_widget_queue_resize (widget);
 }
