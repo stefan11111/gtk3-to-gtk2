@@ -646,3 +646,9 @@ gtk_widget_shape_combine_region (GtkWidget *widget,
         gdk_window_shape_combine_region (widget->window, (const GdkRegion *)((const int*)region + 2), 0, 0);
     }
 }
+
+GtkWidget *
+gtk_button_box_new (GtkOrientation orientation)
+{
+  return orientation ? gtk_vbutton_box_new () : gtk_hbutton_box_new ();
+}
