@@ -528,3 +528,11 @@ gtk_widget_set_clip (GtkWidget           *widget,
                      const GtkAllocation *clip)
 {
 }
+
+GtkWidget *
+gtk_paned_new (GtkOrientation orientation)
+{
+  return g_object_new (GTK_TYPE_PANED,
+                       "orientation", orientation,
+                       NULL);
+}
