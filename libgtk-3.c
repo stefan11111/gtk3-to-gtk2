@@ -519,8 +519,12 @@ gtk_style_context_get_style_property (GtkStyleContext *context,
 }
 
 void
-gtk_style_context_get_border_color (GtkStyleContext *context,
-                                    GtkStateFlags    state,
-                                    GdkRGBA         *color)
+gtk_style_context_get_border_color ()
+{
+}
+
+void
+gtk_widget_set_clip (GtkWidget           *widget,
+                     const GtkAllocation *clip)
 {
 }
