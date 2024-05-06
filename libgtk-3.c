@@ -422,3 +422,13 @@ gtk_widget_set_margin_bottom (GtkWidget *widget,
   widget->allocation.height = margin - widget->allocation.y;
   gtk_widget_queue_resize (widget);
 }
+
+void
+gtk_render_background (GtkStyleContext *context,
+                       cairo_t         *cr,
+                       gdouble          x,
+                       gdouble          y,
+                       gdouble          width,
+                       gdouble          height)
+{
+}
