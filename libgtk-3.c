@@ -442,3 +442,63 @@ void
 gtk_style_context_get_padding ()
 {
 }
+
+typedef struct _GtkScrollable GtkScrollable;
+
+GtkAdjustment *
+gtk_scrollable_get_hadjustment (GtkScrollable *scrollable)
+{
+  GtkAdjustment *adj = NULL;
+
+  g_return_val_if_fail (scrollable, NULL);
+
+  g_object_get (scrollable, "hadjustment", &adj, NULL);
+
+  /* Horrid hack; g_object_get() returns a new reference but
+   * that contradicts the memory management conventions
+   * for accessors.
+   */
+  if (adj)
+    g_object_unref (adj);
+
+  return adj;
+}
+
+void
+gtk_scrollable_set_hadjustment (GtkScrollable *scrollable,
+                                GtkAdjustment *hadjustment)
+{
+  g_return_if_fail (scrollable);
+  g_return_if_fail (hadjustment == NULL || GTK_IS_ADJUSTMENT (hadjustment));
+
+  g_object_set (scrollable, "hadjustment", hadjustment, NULL);
+}
+
+GtkAdjustment *
+gtk_scrollable_get_vadjustment (GtkScrollable *scrollable)
+{
+  GtkAdjustment *adj = NULL;
+
+  g_return_val_if_fail (scrollable, NULL);
+
+  g_object_get (scrollable, "vadjustment", &adj, NULL);
+
+  /* Horrid hack; g_object_get() returns a new reference but
+   * that contradicts the memory management conventions
+   * for accessors.
+   */
+  if (adj)
+    g_object_unref (adj);
+
+  return adj;
+}
+
+void
+gtk_scrollable_set_vadjustment (GtkScrollable *scrollable,
+                                GtkAdjustment *vadjustment)
+{
+  g_return_if_fail (scrollable);
+  g_return_if_fail (vadjustment == NULL || GTK_IS_ADJUSTMENT (vadjustment));
+
+  g_object_set (scrollable, "vadjustment", vadjustment, NULL);
+}
