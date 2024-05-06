@@ -285,8 +285,26 @@ gtk_color_button_get_rgba (GtkColorButton *button,
   rgba->alpha = button->priv->use_alpha ? (gdouble)button->priv->alpha/65535 : 1;
 }
 
+gint
+gtk_widget_get_margin_left (GtkWidget *widget)
+{
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
+
+  return widget->allocation.x;
+}
+
 void
 gtk_widget_set_margin_left (GtkWidget *widget,
                             gint       margin)
 {
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (margin <= G_MAXINT16);
+
+  if (widget->allocation.x == margin)
+    return;
+
+  widget->requisition.width -= margin - widget->allocation.x;
+  widget->allocation.width -= margin - widget->allocation.x;
+  widget->allocation.x = margin;
+  gtk_widget_queue_resize (widget);
 }
