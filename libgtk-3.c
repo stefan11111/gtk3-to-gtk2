@@ -680,3 +680,118 @@ gtk_window_get_resize_grip_area (GtkWindow    *window,
 {
   return FALSE;
 }
+
+#if 0
+static void
+gtk_widget_compute_size_for_orientation (GtkWidget        *widget,
+                                         GtkOrientation    orientation,
+                                         gint              for_size,
+                                         gint             *minimum,
+                                         gint             *natural,
+                                         gint             *minimum_baseline,
+                                         gint             *natural_baseline)
+{
+  if (minimum) {
+    *minimum = 0;
+  }
+  if (natural) {
+    *natural = 0;
+  }
+  if (minimum_baseline) {
+    *minimum_baseline = -1;
+  }
+  if (natural_baseline) {
+    *natural_baseline = -1;
+  }
+}
+#endif
+void
+gtk_widget_get_preferred_width (GtkWidget *widget,
+                                gint      *minimum_width,
+                                gint      *natural_width)
+{
+  if (minimum_width) {
+    *minimum_width = 0;
+  }
+  if (natural_width) {
+    *natural_width = 0;
+  }
+}
+
+void
+gtk_widget_get_preferred_height (GtkWidget *widget,
+                                 gint      *minimum_height,
+                                 gint      *natural_height)
+{
+  if (minimum_height) {
+    *minimum_height = 0;
+  }
+  if (natural_height) {
+    *natural_height = 0;
+  }
+}
+
+void
+gtk_widget_get_preferred_width_for_height (GtkWidget *widget,
+                                           gint       height,
+                                           gint      *minimum_width,
+                                           gint      *natural_width)
+{
+  if (minimum_width) {
+    *minimum_width = 0;
+  }
+  if (natural_width) {
+    *natural_width = 0;
+  }
+}
+
+void
+gtk_widget_get_preferred_height_for_width (GtkWidget *widget,
+                                           gint       width,
+                                           gint      *minimum_height,
+                                           gint      *natural_height)
+{
+  if (minimum_height) {
+    *minimum_height = 0;
+  }
+  if (natural_height) {
+    *natural_height = 0;
+  }
+}
+
+void
+gtk_widget_get_preferred_height_and_baseline_for_width (GtkWidget *widget,
+                                                        gint       width,
+                                                        gint      *minimum_height,
+                                                        gint      *natural_height,
+                                                        gint      *minimum_baseline,
+                                                        gint      *natural_baseline)
+{
+  if (minimum_height) {
+    *minimum_height = 0;
+  }
+  if (natural_height) {
+    *natural_height = 0;
+  }
+  if (minimum_baseline) {
+    *minimum_baseline = -1;
+  }
+  if (natural_baseline) {
+    *natural_baseline = -1;
+  }
+}
+
+void
+gtk_widget_get_preferred_size (GtkWidget      *widget,
+                               GtkRequisition *minimum_size,
+                               GtkRequisition *natural_size)
+{
+  if (minimum_size) {
+    minimum_size->width = 0;
+    minimum_size->height = 0;
+  }
+  if (natural_size) {
+    natural_size->width = 0;
+    natural_size->height = 0;
+  }
+}
