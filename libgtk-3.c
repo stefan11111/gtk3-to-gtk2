@@ -389,11 +389,36 @@ gtk_widget_set_margin_top (GtkWidget *widget,
   g_return_if_fail (GTK_IS_WIDGET (widget));
   g_return_if_fail (margin <= G_MAXINT16);
 
-  if (widget->allocation.y == margin)
+  if (widget->allocation.y == margin) {
     return;
+  }
 
   widget->requisition.height += margin - widget->allocation.y;
   widget->allocation.height += margin - widget->allocation.y;
   widget->allocation.y = margin;
+  gtk_widget_queue_resize (widget);
+}
+
+gint
+gtk_widget_get_margin_bottom (GtkWidget *widget)
+{
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
+
+  return widget->allocation.y - widget->allocation.height;
+}
+
+void
+gtk_widget_set_margin_bottom (GtkWidget *widget,
+                              gint       margin)
+{
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (margin <= G_MAXINT16);
+
+  if (widget->allocation.y - widget->allocation.height == margin) {
+    return;
+  }
+
+  widget->requisition.height = widget->allocation.y - margin;
+  widget->allocation.height = widget->allocation.y - margin;
   gtk_widget_queue_resize (widget);
 }
