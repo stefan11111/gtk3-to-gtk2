@@ -786,6 +786,7 @@ gtk_widget_get_preferred_size (GtkWidget      *widget,
                                GtkRequisition *minimum_size,
                                GtkRequisition *natural_size)
 {
+#if 0
   if (minimum_size) {
     minimum_size->width = 0;
     minimum_size->height = 0;
@@ -793,5 +794,12 @@ gtk_widget_get_preferred_size (GtkWidget      *widget,
   if (natural_size) {
     natural_size->width = 0;
     natural_size->height = 0;
+  }
+#endif
+  if (minimum_size) {
+    memset(minimum_size, 0, sizeof(GtkRequisition));
+  }
+  if (natural_size) {
+    memset(natural_size, 0, sizeof(GtkRequisition));
   }
 }
