@@ -1,5 +1,18 @@
 #include <gdk/gdk.h>
 
+#ifdef GDK_WINDOWING_X11
+#include <gdk/gdkx.h>
+#if 0
+#define X11
+#endif
+#endif
+
+#ifdef GDK_WINDOWING_DIRECTFB
+#if 0
+#define DIRECTFB
+#endif
+#endif
+
 void
 gdk_disable_multidevice (void)
 {
@@ -265,10 +278,10 @@ gdk_window_get_visible_region (GdkWindow *window)
   return cairo_region_copy ((const cairo_region_t*)&tmp_region);
 }
 
-#ifdef _GDK_WIDOWING_X11
+#ifdef X11
 Window
 gdk_x11_window_get_xid (GdkWindow *window)
 {
-  gdk_x11_drawable_get_xid (win);
+  return gdk_x11_drawable_get_xid (window);
 }
 #endif

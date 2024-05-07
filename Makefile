@@ -4,7 +4,7 @@
 
 INCLUDES = $(shell pkg-config --cflags gtk+-2.0)
 
-GDK_WINDOWING = _GDK_WINDOWING_X11
+GDK_WINDOWING = X11
 
 XCFLAGS = ${CPPFLAGS} ${CFLAGS} -lm -std=c99 -fPIC -Wall -Wno-pedantic ${INCLUDES} -D${GDK_WINDOWING}
 XLDFLAGS = ${LDFLAGS} -shared -Wl
