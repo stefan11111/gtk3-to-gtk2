@@ -617,3 +617,27 @@ gdk_rgba_free (GdkRGBA *rgba)
 {
   g_slice_free (GdkRGBA, rgba);
 }
+
+void
+gdk_cairo_set_source_rgba (cairo_t       *cr,
+                           const GdkRGBA *rgba)
+{
+#if 0 /* slow, wastes memory, needlessly lossy */
+  GdkColor color;
+
+  color.pixel = 0;
+  color.red = (guint16)(rgba->red * 65535);
+  color.green = (guint16)(rgba->green * 65535);
+  color.blue = (guint16)(rgba->blue * 65535);
+
+  gdk_cairo_set_source_color (cr, &color);
+#endif /* call the actual function directly */
+  g_return_if_fail (cr != NULL);
+  g_return_if_fail (rgba != NULL);
+
+  cairo_set_source_rgba (cr,
+                         rgba->red,
+                         rgba->green,
+                         rgba->blue,
+                         rgba->alpha);
+}
