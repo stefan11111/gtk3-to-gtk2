@@ -708,3 +708,9 @@ gdk_rgba_parse (GdkRGBA     *rgba,
 #endif
   return TRUE;
 }
+
+GdkDevice *
+gdk_device_manager_get_client_pointer (GdkDeviceManager *device_manager)
+{
+  return NULL;
+}
