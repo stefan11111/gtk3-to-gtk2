@@ -641,3 +641,70 @@ gdk_cairo_set_source_rgba (cairo_t       *cr,
                          rgba->blue,
                          rgba->alpha);
 }
+
+gboolean
+gdk_rgba_parse (GdkRGBA     *rgba,
+                const gchar *spec)
+{
+  if (!rgba) {
+    return TRUE; /* copied from upstream */
+  }
+
+  GdkColor color;
+
+  if (!gdk_color_parse (spec, &color)) { /* argument order reversed */
+    return FALSE;
+  }
+
+  rgba->red = (gdouble)color.red/65535;
+  rgba->green = (gdouble)color.green/65535;
+  rgba->blue = (gdouble)color.blue/65535;
+#ifndef __FAST_MATH__ /* lossless but slow */
+#include <math.h>
+  if (strncmp (spec, "rgba", 4)) {
+    rgba->alpha = 1;
+    return TRUE;
+  }
+  if (*spec != ',') {
+    return FALSE;
+  }
+
+  spec++;
+
+  while (*spec == ' ') {
+    spec++;
+  }
+
+  gchar *p;
+
+  gdouble a = g_ascii_strtod (spec, &p);
+  if (errno == ERANGE || p == spec || isinf (a) || isnan (a)) {
+    return FALSE;
+  }
+
+  spec = p;
+
+  while (*spec == ' ') {
+    spec++;
+  }
+
+  if (*spec != ')') {
+    return FALSE;
+  }
+
+  spec++;
+
+  while (*spec == ' ') {
+    spec++;
+  }
+
+  if (*spec != '\0') {
+    return FALSE;
+  }
+
+  rgba->alpha = CLAMP (a, 0, 1);
+#else /* lossy but fast */
+  rgba->alpha = 1;
+#endif
+  return TRUE;
+}
