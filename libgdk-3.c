@@ -231,7 +231,7 @@ gdk_window_get_clip_region (GdkWindow *window)
 #if 0 /* no need for miRegionCopy, simple memcpy works */
   miRegionCopy((GdkRegion*)((int*)&tmp_region + 2), (const GdkRegion*)(((struct _GdkWindowObjectReal*)window)->clip_region));
 #endif
-/* even memcpy is too much */
+/* even memcpy is too much, result gets copyed again on the next line */
   memcpy(((int*)&tmp_region + 2), (((struct _GdkWindowObjectReal*)window)->clip_region), sizeof(GdkRegion));
 
   cairo_region_t *result = cairo_region_copy ((const cairo_region_t*)&tmp_region);
@@ -272,19 +272,20 @@ gdk_window_get_visible_region (GdkWindow *window)
 #if 0 /* no need for miRegionCopy, simple memcpy works */
   miRegionCopy((GdkRegion*)((int*)&tmp_region + 2), (const GdkRegion*)(((struct _GdkWindowObjectReal*)window)->clip_region));
 #endif
-/* even memcpy is too much */
+/* even memcpy is too much, result gets copyed again on the next line */
   memcpy(((int*)&tmp_region + 2), (((struct _GdkWindowObjectReal*)window)->clip_region), sizeof(GdkRegion));
 
   return cairo_region_copy ((const cairo_region_t*)&tmp_region);
 }
 
-#ifdef X11
 Window
 gdk_x11_window_get_xid (GdkWindow *window)
 {
+#ifdef X11
   return gdk_x11_drawable_get_xid (window);
-}
 #endif
+  return 0;
+}
 
 static cairo_format_t
 gdk_cairo_format_for_content (cairo_content_t content)
@@ -596,4 +597,9 @@ gdk_pixbuf_get_from_window (GdkWindow *src,
   cairo_surface_destroy (surface);
 
   return dest;
+}
+
+GType gdk_x11_screen_get_type (void)
+{
+  return 0;
 }
