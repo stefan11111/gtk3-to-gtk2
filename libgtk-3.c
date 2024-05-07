@@ -1016,3 +1016,9 @@ gtk_style_context_get_state (GtkStyleContext *context)
 {
   return 0;
 }
+
+void
+gtk_style_context_set_parent (GtkStyleContext *context,
+                              GtkStyleContext *parent)
+{
+}
