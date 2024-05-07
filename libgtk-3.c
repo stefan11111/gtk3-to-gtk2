@@ -1022,3 +1022,8 @@ gtk_style_context_set_parent (GtkStyleContext *context,
                               GtkStyleContext *parent)
 {
 }
+
+GType gtk_header_bar_get_type (void)
+{
+  return 0;
+}
