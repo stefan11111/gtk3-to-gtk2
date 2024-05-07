@@ -1055,3 +1055,382 @@ gtk_style_context_get_margin (GtkStyleContext *context,
                               GtkBorder       *margin)
 {
 }
+
+void
+gtk_style_context_clear_property_cache (GtkStyleContext *context)
+{
+}
+
+typedef struct _GtkStyleProviderPrivate GtkStyleProviderPrivate;
+
+GtkStyleProviderPrivate *
+gtk_style_context_get_style_provider (GtkStyleContext *context)
+{
+  return NULL;
+}
+
+typedef struct _GtkCssStyle GtkCssStyle;
+
+GtkCssStyle *
+gtk_style_context_lookup_style (GtkStyleContext *context)
+{
+  return NULL;
+}
+
+typedef struct _GtkCssNode GtkCssNode;
+
+GtkCssNode*
+gtk_style_context_get_node (GtkStyleContext *context)
+{
+  return NULL;
+}
+
+GtkStyleContext *
+gtk_style_context_new (void)
+{
+  return NULL;
+}
+
+GtkStyleContext *
+gtk_style_context_new_for_node (GtkCssNode *node)
+{
+  return NULL;
+}
+
+void
+gtk_style_context_add_provider ()
+{
+}
+
+void
+gtk_style_context_remove_provider ()
+{
+}
+
+void
+gtk_style_context_reset_widgets (GdkScreen *screen)
+{
+  GList *list, *toplevels;
+
+  toplevels = gtk_window_list_toplevels ();
+  g_list_foreach (toplevels, (GFunc) g_object_ref, NULL);
+
+  for (list = toplevels; list; list = list->next)
+    {
+      g_object_unref (list->data);
+    }
+
+  g_list_free (toplevels);
+}
+
+void
+gtk_style_context_add_provider_for_screen ()
+{
+}
+
+void
+gtk_style_context_remove_provider_for_screen ()
+{
+}
+
+typedef struct _GtkCssSection GtkCssSection;
+
+GtkCssSection *
+gtk_style_context_get_section (GtkStyleContext *context,
+                               const gchar     *property)
+{
+  return NULL;
+}
+
+void
+gtk_style_context_get_property (GtkStyleContext *context,
+                                const gchar     *property,
+                                GtkStateFlags    state,
+                                GValue          *value)
+{
+}
+
+void
+gtk_style_context_get_valist (GtkStyleContext *context,
+                              GtkStateFlags    state,
+                              va_list          args)
+{
+}
+
+void
+gtk_style_context_get (GtkStyleContext *context,
+                       GtkStateFlags    state,
+                       ...)
+{
+}
+
+void
+gtk_style_context_set_id (GtkStyleContext *context,
+                          const char      *id)
+{
+}
+
+const char *
+gtk_style_context_get_id (GtkStyleContext *context)
+{
+  return NULL;
+}
+
+void
+gtk_style_context_set_state (GtkStyleContext *context,
+                             GtkStateFlags    flags)
+{
+}
+
+void
+gtk_style_context_set_scale (GtkStyleContext *context,
+                             gint             scale)
+{
+}
+
+gint
+gtk_style_context_get_scale (GtkStyleContext *context)
+{
+  return 0;
+}
+
+gboolean
+gtk_style_context_state_is_running (GtkStyleContext *context,
+                                    GtkStateType     state,
+                                    gdouble         *progress)
+{
+  return FALSE;
+}
+
+void
+gtk_style_context_set_path (GtkStyleContext *context,
+                            GtkWidgetPath   *path)
+{
+}
+
+const GtkWidgetPath *
+gtk_style_context_get_path (GtkStyleContext *context)
+{
+  return NULL;
+}
+
+GtkStyleContext *
+gtk_style_context_get_parent (GtkStyleContext *context)
+{
+  return NULL;
+}
+
+void
+gtk_style_context_save_to_node (GtkStyleContext *context,
+                                GtkCssNode      *node)
+{
+}
+
+void
+gtk_style_context_save_named (GtkStyleContext *context,
+                              const char      *name)
+{
+}
+
+void
+gtk_style_context_save (GtkStyleContext *context)
+{
+}
+
+void
+gtk_style_context_restore (GtkStyleContext *context)
+{
+}
+
+void
+gtk_style_context_add_class (GtkStyleContext *context,
+                             const gchar     *class_name)
+{
+}
+
+void
+gtk_style_context_remove_class (GtkStyleContext *context,
+                                const gchar     *class_name)
+{
+}
+
+gboolean
+gtk_style_context_has_class (GtkStyleContext *context,
+                             const gchar     *class_name)
+{
+  return FALSE;
+}
+
+GList *
+gtk_style_context_list_classes (GtkStyleContext *context)
+{
+  return NULL;
+}
+
+GList *
+gtk_style_context_list_regions (GtkStyleContext *context)
+{
+  return NULL;
+}
+
+void
+gtk_style_context_add_region ()
+{
+}
+
+void
+gtk_style_context_remove_region (GtkStyleContext *context,
+                                 const gchar     *region_name)
+{
+}
+
+gboolean
+gtk_style_context_has_region ()
+{
+  return FALSE;
+}
+
+void
+gtk_style_context_get_style_valist (GtkStyleContext *context,
+                                    va_list          args)
+{
+}
+
+void
+gtk_style_context_get_style (GtkStyleContext *context,
+                             ...)
+{
+}
+
+void
+gtk_style_context_set_screen (GtkStyleContext *context,
+                              GdkScreen       *screen)
+{
+}
+
+GdkScreen *
+gtk_style_context_get_screen (GtkStyleContext *context)
+{
+  return NULL;
+}
+
+void
+gtk_style_context_set_frame_clock (GtkStyleContext *context,
+                                   GdkFrameClock   *frame_clock)
+{
+}
+
+GdkFrameClock *
+gtk_style_context_get_frame_clock (GtkStyleContext *context)
+{
+  return NULL;
+}
+
+void
+gtk_style_context_set_direction (GtkStyleContext  *context,
+                                 GtkTextDirection  direction)
+{
+}
+
+GtkTextDirection
+gtk_style_context_get_direction (GtkStyleContext *context)
+{
+  return GTK_TEXT_DIR_LTR;
+}
+
+typedef enum {
+  GTK_JUNCTION_NONE   = 0,
+  GTK_JUNCTION_CORNER_TOPLEFT = 1 << 0,
+  GTK_JUNCTION_CORNER_TOPRIGHT = 1 << 1,
+  GTK_JUNCTION_CORNER_BOTTOMLEFT = 1 << 2,
+  GTK_JUNCTION_CORNER_BOTTOMRIGHT = 1 << 3,
+  GTK_JUNCTION_TOP    = (GTK_JUNCTION_CORNER_TOPLEFT | GTK_JUNCTION_CORNER_TOPRIGHT),
+  GTK_JUNCTION_BOTTOM = (GTK_JUNCTION_CORNER_BOTTOMLEFT | GTK_JUNCTION_CORNER_BOTTOMRIGHT),
+  GTK_JUNCTION_LEFT   = (GTK_JUNCTION_CORNER_TOPLEFT | GTK_JUNCTION_CORNER_BOTTOMLEFT),
+  GTK_JUNCTION_RIGHT  = (GTK_JUNCTION_CORNER_TOPRIGHT | GTK_JUNCTION_CORNER_BOTTOMRIGHT)
+} GtkJunctionSides;
+
+GtkJunctionSides
+gtk_style_context_get_junction_sides (GtkStyleContext *context)
+{
+  return 0;
+}
+
+gboolean
+gtk_style_context_lookup_color (GtkStyleContext *context,
+                                const gchar     *color_name,
+                                GdkRGBA         *color)
+{
+  return FALSE;
+}
+
+void
+gtk_style_context_notify_state_change (GtkStyleContext *context,
+                                       GdkWindow       *window,
+                                       gpointer         region_id,
+                                       GtkStateType     state,
+                                       gboolean         state_value)
+{
+}
+
+void
+gtk_style_context_cancel_animations (GtkStyleContext *context,
+                                     gpointer         region_id)
+{
+}
+
+void
+gtk_style_context_scroll_animations (GtkStyleContext *context,
+                                     GdkWindow       *window,
+                                     gint             dx,
+                                     gint             dy)
+{
+}
+
+void
+gtk_style_context_push_animatable_region (GtkStyleContext *context,
+                                          gpointer         region_id)
+{
+}
+
+void
+gtk_style_context_pop_animatable_region (GtkStyleContext *context)
+{
+}
+
+void
+gtk_style_context_validate ()
+{
+}
+
+void
+gtk_style_context_invalidate (GtkStyleContext *context)
+{
+}
+
+void
+gtk_style_context_set_background (GtkStyleContext *context,
+                                  GdkWindow       *window)
+{
+}
+
+void
+gtk_style_context_get_background_color (GtkStyleContext *context,
+                                        GtkStateFlags    state,
+                                        GdkRGBA         *color)
+{
+}
+
+typedef struct _GtkCssStyleChange GtkCssStyleChange;
+
+GtkCssStyleChange *
+gtk_style_context_get_change (GtkStyleContext *context)
+{
+  return NULL;
+}
+
+char *
+gtk_style_context_to_string ()
+{
+  return g_string_free(g_string_new (""), FALSE);
+}
