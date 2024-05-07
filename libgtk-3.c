@@ -1474,3 +1474,9 @@ gtk_color_button_set_rgba (GtkColorButton *button,
 
   gtk_color_button_set_alpha (button, (guint16)(rgba->alpha * 65535));
 }
+
+GtkWidget *
+gtk_color_button_new_with_rgba (const GdkRGBA *rgba)
+{
+  return g_object_new (GTK_TYPE_COLOR_BUTTON, "rgba", rgba, NULL);
+}
