@@ -126,37 +126,6 @@ gtk_style_context_get_color ()
 {
 }
 
-void
-gtk_render_layout (GtkStyleContext *context,
-                   cairo_t         *cr,
-                   gdouble          x,
-                   gdouble          y,
-                   PangoLayout     *layout)
-{
-  g_return_if_fail (PANGO_IS_LAYOUT (layout));
-  g_return_if_fail (cr != NULL);
-
-  cairo_save (cr);
-  const PangoMatrix *matrix = pango_context_get_matrix (pango_layout_get_context (layout));
-
-  cairo_move_to (cr, x, y);
-
-  if (!matrix) {
-    return;
-  }
-
-  cairo_matrix_t cairo_matrix;
-
-  cairo_matrix_init (&cairo_matrix,
-                     matrix->xx, matrix->yx,
-                     matrix->xy, matrix->yy,
-                     matrix->x0, matrix->y0);
-  cairo_transform (cr, &cairo_matrix);
-
-  pango_cairo_show_layout (cr, layout);
-  cairo_restore (cr);
-}
-
 GtkWidget*
 gtk_font_chooser_dialog_new (const gchar *title,
                              GtkWindow   *parent)
@@ -469,28 +438,6 @@ gtk_scrollable_set_vadjustment (GtkScrollable *scrollable,
 GType gtk_scrollable_get_type (void)
 {
   return 0;
-}
-
-void
-gtk_render_option (GtkStyleContext *context,
-                   cairo_t         *cr,
-                   gdouble          x,
-                   gdouble          y,
-                   gdouble          width,
-                   gdouble          height)
-{
-  g_return_if_fail (cr);
-
-  if (width <= 0 || height <= 0)
-    return;
-
-  cairo_matrix_t matrix;
-
-  cairo_get_matrix (cr, &matrix);
-
-  cairo_translate (cr, x, y);
-
-  cairo_set_matrix (cr, &matrix);
 }
 
 void
@@ -1624,7 +1571,7 @@ gtk_css_style_render_icon (GtkCssStyle            *style,
                            double                  height,
                            GtkCssImageBuiltinType  builtin_type)
 {
-  g_return_if_fail (cr != NULL);
+  g_return_if_fail (cr);
 
   cairo_matrix_t matrix, saved_matrix;
 
@@ -1649,16 +1596,6 @@ gtk_css_style_render_background_is_opaque (GtkCssStyle *style)
 }
 
 void
-gtk_render_background (GtkStyleContext *context,
-                       cairo_t         *cr,
-                       gdouble          x,
-                       gdouble          y,
-                       gdouble          width,
-                       gdouble          height)
-{
-}
-
-void
 gtk_css_style_render_border ()
 {
 }
@@ -1674,18 +1611,14 @@ gtk_render_frame (GtkStyleContext *context,
 }
 
 void
-gtk_render_handle (GtkStyleContext *context,
-                      cairo_t         *cr,
-                      gdouble          x,
-                      gdouble          y,
-                      gdouble          width,
-                      gdouble          height)
+gtk_render_check (GtkStyleContext *context,
+                  cairo_t         *cr,
+                  gdouble          x,
+                  gdouble          y,
+                  gdouble          width,
+                  gdouble          height)
 {
-  g_return_if_fail (cr != NULL);
-
-  if (width <= 0 || height <= 0) {
-    return;
-  }
+  g_return_if_fail (cr);
 
   cairo_matrix_t matrix, saved_matrix;
 
@@ -1696,4 +1629,296 @@ gtk_render_handle (GtkStyleContext *context,
   cairo_transform (cr, &matrix);
 
   cairo_set_matrix (cr, &saved_matrix);
+}
+
+void
+gtk_render_option (GtkStyleContext *context,
+                   cairo_t         *cr,
+                   gdouble          x,
+                   gdouble          y,
+                   gdouble          width,
+                   gdouble          height)
+{
+  g_return_if_fail (cr);
+
+  cairo_matrix_t matrix, saved_matrix;
+
+  cairo_get_matrix (cr, &saved_matrix);
+
+  cairo_translate (cr, x, y);
+
+  cairo_transform (cr, &matrix);
+
+  cairo_set_matrix (cr, &saved_matrix);
+}
+
+void
+gtk_render_arrow (GtkStyleContext *context,
+                  cairo_t         *cr,
+                  gdouble          angle,
+                  gdouble          x,
+                  gdouble          y,
+                  gdouble          size)
+{
+}
+
+void
+gtk_render_background (GtkStyleContext *context,
+                       cairo_t         *cr,
+                       gdouble          x,
+                       gdouble          y,
+                       gdouble          width,
+                       gdouble          height)
+{
+}
+
+void
+gtk_render_background_get_clip (GtkStyleContext *context,
+                                gdouble          x,
+                                gdouble          y,
+                                gdouble          width,
+                                gdouble          height,
+                                GdkRectangle    *out_clip)
+{
+}
+
+void
+gtk_render_expander (GtkStyleContext *context,
+                        cairo_t         *cr,
+                        gdouble          x,
+                        gdouble          y,
+                        gdouble          width,
+                        gdouble          height)
+{
+  g_return_if_fail (cr);
+
+  cairo_matrix_t matrix, saved_matrix;
+
+  cairo_get_matrix (cr, &saved_matrix);
+
+  cairo_translate (cr, x, y);
+
+  cairo_transform (cr, &matrix);
+
+  cairo_set_matrix (cr, &saved_matrix);
+}
+
+void
+gtk_css_style_render_outline (GtkCssStyle *style,
+                              cairo_t     *cr,
+                              gdouble      x,
+                              gdouble      y,
+                              gdouble      width,
+                              gdouble      height)
+{
+}
+
+void
+gtk_render_focus (GtkStyleContext *context,
+                  cairo_t         *cr,
+                  gdouble          x,
+                  gdouble          y,
+                  gdouble          width,
+                  gdouble          height)
+{
+}
+
+void
+gtk_render_layout (GtkStyleContext *context,
+                   cairo_t         *cr,
+                   gdouble          x,
+                   gdouble          y,
+                   PangoLayout     *layout)
+{
+  g_return_if_fail (PANGO_IS_LAYOUT (layout));
+  g_return_if_fail (cr);
+
+  cairo_save (cr);
+  const PangoMatrix *matrix = pango_context_get_matrix (pango_layout_get_context (layout));
+
+  cairo_move_to (cr, x, y);
+
+  if (!matrix) {
+    return;
+  }
+
+  cairo_matrix_t cairo_matrix;
+
+  cairo_matrix_init (&cairo_matrix,
+                     matrix->xx, matrix->yx,
+                     matrix->xy, matrix->yy,
+                     matrix->x0, matrix->y0);
+  cairo_transform (cr, &cairo_matrix);
+
+  pango_cairo_show_layout (cr, layout);
+  cairo_restore (cr);
+}
+
+void
+gtk_render_line (GtkStyleContext *context,
+                 cairo_t         *cr,
+                 gdouble          x0,
+                 gdouble          y0,
+                 gdouble          x1,
+                 gdouble          y1)
+{
+  g_return_if_fail (cr);
+
+  cairo_save (cr);
+
+  cairo_set_line_cap (cr, CAIRO_LINE_CAP_SQUARE);
+  cairo_set_line_width (cr, 1);
+
+  cairo_move_to (cr, x0 + 0.5, y0 + 0.5);
+  cairo_line_to (cr, x1 + 0.5, y1 + 0.5);
+
+  cairo_stroke (cr);
+
+  cairo_restore (cr);
+}
+
+void
+gtk_render_slider (GtkStyleContext *context,
+                   cairo_t         *cr,
+                   gdouble          x,
+                   gdouble          y,
+                   gdouble          width,
+                   gdouble          height,
+                   GtkOrientation   orientation)
+{
+}
+
+void
+gtk_render_frame_gap (GtkStyleContext *context,
+                      cairo_t         *cr,
+                      gdouble          x,
+                      gdouble          y,
+                      gdouble          width,
+                      gdouble          height,
+                      GtkPositionType  gap_side,
+                      gdouble          xy0_gap,
+                      gdouble          xy1_gap)
+{
+}
+
+void
+gtk_render_extension (GtkStyleContext *context,
+                      cairo_t         *cr,
+                      gdouble          x,
+                      gdouble          y,
+                      gdouble          width,
+                      gdouble          height,
+                      GtkPositionType  gap_side)
+{
+}
+
+void
+gtk_render_handle (GtkStyleContext *context,
+                      cairo_t         *cr,
+                      gdouble          x,
+                      gdouble          y,
+                      gdouble          width,
+                      gdouble          height)
+{
+  g_return_if_fail (cr);
+
+  cairo_matrix_t matrix, saved_matrix;
+
+  cairo_get_matrix (cr, &saved_matrix);
+
+  cairo_translate (cr, x, y);
+
+  cairo_transform (cr, &matrix);
+
+  cairo_set_matrix (cr, &saved_matrix);
+}
+
+void
+gtk_render_activity (GtkStyleContext *context,
+                     cairo_t         *cr,
+                     gdouble          x,
+                     gdouble          y,
+                     gdouble          width,
+                     gdouble          height)
+{
+}
+
+typedef enum /*< skip >*/ {
+  GTK_CSS_ICON_EFFECT_NONE,
+  GTK_CSS_ICON_EFFECT_HIGHLIGHT,
+  GTK_CSS_ICON_EFFECT_DIM
+} GtkCssIconEffect;
+
+
+GdkPixbuf *
+gtk_render_icon_pixbuf_unpacked (GdkPixbuf           *base_pixbuf,
+                                 GtkIconSize          size,
+                                 GtkCssIconEffect     icon_effect)
+{
+
+  g_return_val_if_fail (base_pixbuf, NULL);
+
+  /* If the size was wildcarded, and we're allowed to scale, then scale; otherwise,
+   * leave it alone.
+   */
+  if (size != (GtkIconSize) -1)
+    {
+      int width = 1;
+      int height = 1;
+
+      if (!gtk_icon_size_lookup (size, &width, &height))
+        {
+          g_warning (G_STRLOC ": invalid icon size '%d'", size);
+          return NULL;
+        }
+
+      return (width == gdk_pixbuf_get_width (base_pixbuf) && height == gdk_pixbuf_get_height (base_pixbuf)) ?
+                                                                                    g_object_ref (base_pixbuf) :
+                                                                                    gdk_pixbuf_scale_simple (base_pixbuf,
+                                                                                                           width, height,
+                                                                                                     GDK_INTERP_BILINEAR);
+    }
+
+  return g_object_ref (base_pixbuf);
+}
+
+GdkPixbuf *
+gtk_render_icon_pixbuf (GtkStyleContext     *context,
+                        const GtkIconSource *source,
+                        GtkIconSize          size)
+{
+  g_return_val_if_fail (size > GTK_ICON_SIZE_INVALID || size == (GtkIconSize)-1, NULL);
+  g_return_val_if_fail (source, NULL);
+
+  return gtk_render_icon_pixbuf_unpacked (gtk_icon_source_get_pixbuf (source),
+                                          gtk_icon_source_get_size_wildcarded (source) ? size : -1,
+                                          0);
+}
+
+void
+gtk_render_icon (GtkStyleContext *context,
+                 cairo_t         *cr,
+                 GdkPixbuf       *pixbuf,
+                 gdouble          x,
+                 gdouble          y)
+{
+}
+
+void
+gtk_render_icon_surface (GtkStyleContext *context,
+                         cairo_t         *cr,
+                         cairo_surface_t *surface,
+                         gdouble          x,
+                         gdouble          y)
+{
+}
+
+void
+gtk_render_content_path (GtkStyleContext *context,
+                         cairo_t         *cr,
+                         double           x,
+                         double           y,
+                         double           width,
+                         double           height)
+{
 }
