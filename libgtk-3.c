@@ -1434,3 +1434,10 @@ gtk_style_context_to_string ()
 {
   return g_string_free(g_string_new (""), FALSE);
 }
+
+void
+gtk_style_context_get_border (GtkStyleContext *context,
+                              GtkStateFlags    state,
+                              GtkBorder       *border)
+{
+}
