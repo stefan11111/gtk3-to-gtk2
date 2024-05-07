@@ -603,3 +603,11 @@ GType gdk_x11_screen_get_type (void)
 {
   return 0;
 }
+
+typedef struct _GdkFrameClock GdkFrameClock;
+
+GdkFrameClock*
+gdk_window_get_frame_clock (GdkWindow *window)
+{
+  return NULL;
+}

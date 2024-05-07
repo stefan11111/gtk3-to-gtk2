@@ -984,3 +984,11 @@ gtk_render_frame (GtkStyleContext *context,
                   gdouble          height)
 {
 }
+
+typedef struct _GdkFrameClock GdkFrameClock;
+
+GdkFrameClock*
+gtk_widget_get_frame_clock (GtkWidget *widget)
+{
+  return NULL;
+}
