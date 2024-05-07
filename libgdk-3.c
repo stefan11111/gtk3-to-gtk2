@@ -611,3 +611,9 @@ gdk_window_get_frame_clock (GdkWindow *window)
 {
   return NULL;
 }
+
+void
+gdk_rgba_free (GdkRGBA *rgba)
+{
+  g_slice_free (GdkRGBA, rgba);
+}
