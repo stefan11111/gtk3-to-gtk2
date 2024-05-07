@@ -803,3 +803,166 @@ gtk_widget_get_preferred_size (GtkWidget      *widget,
     memset(natural_size, 0, sizeof(GtkRequisition));
   }
 }
+
+PangoFontDescription *
+gtk_font_chooser_get_font_desc (GtkFontChooser *fontchooser)
+{
+  PangoFontDescription *font_desc;
+
+  g_return_val_if_fail (fontchooser, NULL);
+
+  g_object_get (fontchooser, "font-desc", &font_desc, NULL);
+
+  return font_desc;
+}
+
+void
+gtk_font_chooser_set_font_desc (GtkFontChooser             *fontchooser,
+                                const PangoFontDescription *font_desc)
+{
+  g_return_if_fail (fontchooser);
+  g_return_if_fail (font_desc != NULL);
+
+  g_object_set (fontchooser, "font-desc", font_desc, NULL);
+}
+
+gchar *
+gtk_font_chooser_get_preview_text (GtkFontChooser *fontchooser)
+{
+  char *text;
+
+  g_return_val_if_fail (fontchooser, NULL);
+
+  g_object_get (fontchooser, "preview-text", &text, NULL);
+
+  return text;
+}
+
+void
+gtk_font_chooser_set_preview_text (GtkFontChooser *fontchooser,
+                                   const gchar    *text)
+{
+  g_return_if_fail (fontchooser);
+  g_return_if_fail (text != NULL);
+
+  g_object_set (fontchooser, "preview-text", text, NULL);
+}
+
+gboolean
+gtk_font_chooser_get_show_preview_entry (GtkFontChooser *fontchooser)
+{
+  gboolean show;
+
+  g_return_val_if_fail (fontchooser, FALSE);
+
+  g_object_get (fontchooser, "show-preview-entry", &show, NULL);
+
+  return show;
+}
+
+void
+gtk_font_chooser_set_show_preview_entry (GtkFontChooser *fontchooser,
+                                         gboolean        show_preview_entry)
+{
+  g_return_if_fail (fontchooser);
+
+  show_preview_entry = show_preview_entry != FALSE;
+  g_object_set (fontchooser, "show-preview-entry", show_preview_entry, NULL);
+}
+
+PangoFontFamily *
+gtk_font_chooser_get_font_family (GtkFontChooser *fontchooser)
+{
+  return NULL;
+}
+
+PangoFontFace *
+gtk_font_chooser_get_font_face (GtkFontChooser *fontchooser)
+{
+  return NULL;
+}
+
+gint
+gtk_font_chooser_get_font_size (GtkFontChooser *fontchooser)
+{
+  return -1;
+}
+
+void
+gtk_font_chooser_set_filter_func ()
+{
+}
+
+void
+gtk_font_chooser_set_font_map (GtkFontChooser *fontchooser,
+                               PangoFontMap   *fontmap)
+{
+}
+
+PangoFontMap *
+gtk_font_chooser_get_font_map (GtkFontChooser *fontchooser)
+{
+  return NULL;
+}
+
+typedef enum {
+  GTK_FONT_CHOOSER_LEVEL_FAMILY     = 0,
+  GTK_FONT_CHOOSER_LEVEL_STYLE      = 1 << 0,
+  GTK_FONT_CHOOSER_LEVEL_SIZE       = 1 << 1,
+  GTK_FONT_CHOOSER_LEVEL_VARIATIONS = 1 << 2,
+  GTK_FONT_CHOOSER_LEVEL_FEATURES   = 1 << 3
+} GtkFontChooserLevel;
+
+void
+gtk_font_chooser_set_level (GtkFontChooser      *fontchooser,
+                            GtkFontChooserLevel  level)
+{
+  g_return_if_fail (fontchooser);
+
+  g_object_set (fontchooser, "level", level, NULL);
+}
+
+GtkFontChooserLevel
+gtk_font_chooser_get_level (GtkFontChooser *fontchooser)
+{
+  GtkFontChooserLevel level;
+
+  g_return_val_if_fail (fontchooser, 0);
+
+  g_object_get (fontchooser, "level", &level, NULL);
+
+  return level;
+}
+
+char *
+gtk_font_chooser_get_font_features (GtkFontChooser *fontchooser)
+{
+  char *text;
+
+  g_return_val_if_fail (fontchooser, NULL);
+
+  g_object_get (fontchooser, "font-features", &text, NULL);
+
+  return text;
+}
+
+char *
+gtk_font_chooser_get_language (GtkFontChooser *fontchooser)
+{
+  char *text;
+
+  g_return_val_if_fail (fontchooser, NULL);
+
+  g_object_get (fontchooser, "language", &text, NULL);
+
+  return text;
+}
+
+void
+gtk_font_chooser_set_language (GtkFontChooser *fontchooser,
+                               const char     *language)
+{
+  g_return_if_fail (fontchooser);
+
+  g_object_set (fontchooser, "language", language, NULL);
+}

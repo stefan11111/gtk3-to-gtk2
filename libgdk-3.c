@@ -218,6 +218,7 @@ gdk_window_get_clip_region (GdkWindow *window)
 #if 0 /* no need for miRegionCopy, simple memcpy works */
   miRegionCopy((GdkRegion*)((int*)&tmp_region + 2), (const GdkRegion*)(((struct _GdkWindowObjectReal*)window)->clip_region));
 #endif
+/* even memcpy is too much */
   memcpy(((int*)&tmp_region + 2), (((struct _GdkWindowObjectReal*)window)->clip_region), sizeof(GdkRegion));
 
   cairo_region_t *result = cairo_region_copy ((const cairo_region_t*)&tmp_region);
@@ -258,6 +259,7 @@ gdk_window_get_visible_region (GdkWindow *window)
 #if 0 /* no need for miRegionCopy, simple memcpy works */
   miRegionCopy((GdkRegion*)((int*)&tmp_region + 2), (const GdkRegion*)(((struct _GdkWindowObjectReal*)window)->clip_region));
 #endif
+/* even memcpy is too much */
   memcpy(((int*)&tmp_region + 2), (((struct _GdkWindowObjectReal*)window)->clip_region), sizeof(GdkRegion));
 
   return cairo_region_copy ((const cairo_region_t*)&tmp_region);
