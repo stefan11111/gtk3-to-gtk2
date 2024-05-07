@@ -974,3 +974,13 @@ gtk_separator_new (GtkOrientation orientation)
                        "orientation", orientation,
                        NULL);
 }
+
+void
+gtk_render_frame (GtkStyleContext *context,
+                  cairo_t         *cr,
+                  gdouble          x,
+                  gdouble          y,
+                  gdouble          width,
+                  gdouble          height)
+{
+}
