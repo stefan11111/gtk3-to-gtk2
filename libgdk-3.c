@@ -720,3 +720,23 @@ gdk_x11_display_get_type (void)
 {
   return 0;
 }
+
+GdkWindow *
+gdk_window_get_device_position_double (GdkWindow       *window,
+                                       GdkDevice       *device,
+                                       double          *x,
+                                       double          *y,
+                                       GdkModifierType *mask)
+{
+  return NULL;
+}
+
+GdkWindow *
+gdk_window_get_device_position (GdkWindow       *window,
+                                GdkDevice       *device,
+                                gint            *x,
+                                gint            *y,
+                                GdkModifierType *mask)
+{
+  return NULL;
+}
