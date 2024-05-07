@@ -966,3 +966,11 @@ gtk_font_chooser_set_language (GtkFontChooser *fontchooser,
 
   g_object_set (fontchooser, "language", language, NULL);
 }
+
+GtkWidget *
+gtk_separator_new (GtkOrientation orientation)
+{
+  return g_object_new (GTK_TYPE_SEPARATOR,
+                       "orientation", orientation,
+                       NULL);
+}
