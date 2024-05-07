@@ -412,11 +412,6 @@ gtk_render_background (GtkStyleContext *context,
 }
 
 void
-gtk_revealer_set_transition_duration ()
-{
-}
-
-void
 gtk_style_context_get_padding ()
 {
 }
@@ -1553,4 +1548,58 @@ char *
 gtk_css_provider_to_string (GtkCssProvider *provider)
 {
   return g_string_free (g_string_new (""), FALSE);
+}
+
+GtkWidget *
+gtk_revealer_new (void)
+{
+  return NULL;
+}
+
+void
+gtk_revealer_set_reveal_child ()
+{
+}
+
+gboolean
+gtk_revealer_get_reveal_child ()
+{
+  return FALSE;
+}
+
+gboolean
+gtk_revealer_get_child_revealed ()
+{
+  return TRUE;
+}
+
+guint
+gtk_revealer_get_transition_duration ()
+{
+  return 0;
+}
+
+void
+gtk_revealer_set_transition_duration ()
+{
+}
+
+typedef enum {
+  GTK_REVEALER_TRANSITION_TYPE_NONE,
+  GTK_REVEALER_TRANSITION_TYPE_CROSSFADE,
+  GTK_REVEALER_TRANSITION_TYPE_SLIDE_RIGHT,
+  GTK_REVEALER_TRANSITION_TYPE_SLIDE_LEFT,
+  GTK_REVEALER_TRANSITION_TYPE_SLIDE_UP,
+  GTK_REVEALER_TRANSITION_TYPE_SLIDE_DOWN
+} GtkRevealerTransitionType;
+
+GtkRevealerTransitionType
+gtk_revealer_get_transition_type ()
+{
+  return GTK_REVEALER_TRANSITION_TYPE_NONE;
+}
+
+void
+gtk_revealer_set_transition_type ()
+{
 }
