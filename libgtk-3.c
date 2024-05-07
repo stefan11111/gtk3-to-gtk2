@@ -1027,3 +1027,17 @@ GType gtk_header_bar_get_type (void)
 {
   return 0;
 }
+
+void
+gtk_color_selection_get_current_rgba (GtkColorSelection *colorsel,
+                                      GdkRGBA           *rgba)
+{
+  GdkColor color;
+
+  gtk_color_selection_get_current_color (colorsel, &color);
+
+  rgba->red = (gdouble)color.red/65535;
+  rgba->green = (gdouble)color.green/65535;
+  rgba->blue = (gdouble)color.blue/65535;
+  rgba->alpha = (gdouble)gtk_color_selection_get_current_alpha (colorsel)/65535;
+}
