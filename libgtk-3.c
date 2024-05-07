@@ -118,7 +118,10 @@ gtk_widget_get_style_context (GtkWidget *widget)
 const PangoFontDescription *
 gtk_style_context_get_font ()
 {
+#if 0
   return NULL;
+#endif
+  return "";
 }
 
 void
@@ -1047,4 +1050,11 @@ gtk_entry_set_max_width_chars (GtkEntry *entry,
                                gint      n_chars)
 {
   gtk_entry_set_max_length(entry, n_chars);
+}
+
+void
+gtk_style_context_get_margin (GtkStyleContext *context,
+                              GtkStateFlags    state,
+                              GtkBorder       *margin)
+{
 }
