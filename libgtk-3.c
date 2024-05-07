@@ -402,16 +402,6 @@ gtk_widget_set_margin_bottom (GtkWidget *widget,
 }
 
 void
-gtk_render_background (GtkStyleContext *context,
-                       cairo_t         *cr,
-                       gdouble          x,
-                       gdouble          y,
-                       gdouble          width,
-                       gdouble          height)
-{
-}
-
-void
 gtk_style_context_get_padding ()
 {
 }
@@ -968,16 +958,6 @@ gtk_separator_new (GtkOrientation orientation)
   return g_object_new (GTK_TYPE_SEPARATOR,
                        "orientation", orientation,
                        NULL);
-}
-
-void
-gtk_render_frame (GtkStyleContext *context,
-                  cairo_t         *cr,
-                  gdouble          x,
-                  gdouble          y,
-                  gdouble          width,
-                  gdouble          height)
-{
 }
 
 typedef struct _GdkFrameClock GdkFrameClock;
@@ -1602,4 +1582,118 @@ gtk_revealer_get_transition_type ()
 void
 gtk_revealer_set_transition_type ()
 {
+}
+
+typedef enum /*< skip >*/ {
+  GTK_CSS_IMAGE_BUILTIN_NONE,
+  GTK_CSS_IMAGE_BUILTIN_CHECK,
+  GTK_CSS_IMAGE_BUILTIN_CHECK_INCONSISTENT,
+  GTK_CSS_IMAGE_BUILTIN_OPTION,
+  GTK_CSS_IMAGE_BUILTIN_OPTION_INCONSISTENT,
+  GTK_CSS_IMAGE_BUILTIN_ARROW_UP,
+  GTK_CSS_IMAGE_BUILTIN_ARROW_DOWN,
+  GTK_CSS_IMAGE_BUILTIN_ARROW_LEFT,
+  GTK_CSS_IMAGE_BUILTIN_ARROW_RIGHT,
+  GTK_CSS_IMAGE_BUILTIN_EXPANDER_HORIZONTAL_LEFT,
+  GTK_CSS_IMAGE_BUILTIN_EXPANDER_VERTICAL_LEFT,
+  GTK_CSS_IMAGE_BUILTIN_EXPANDER_HORIZONTAL_RIGHT,
+  GTK_CSS_IMAGE_BUILTIN_EXPANDER_VERTICAL_RIGHT,
+  GTK_CSS_IMAGE_BUILTIN_EXPANDER_HORIZONTAL_LEFT_EXPANDED,
+  GTK_CSS_IMAGE_BUILTIN_EXPANDER_VERTICAL_LEFT_EXPANDED,
+  GTK_CSS_IMAGE_BUILTIN_EXPANDER_HORIZONTAL_RIGHT_EXPANDED,
+  GTK_CSS_IMAGE_BUILTIN_EXPANDER_VERTICAL_RIGHT_EXPANDED,
+  GTK_CSS_IMAGE_BUILTIN_GRIP_TOPLEFT,
+  GTK_CSS_IMAGE_BUILTIN_GRIP_TOP,
+  GTK_CSS_IMAGE_BUILTIN_GRIP_TOPRIGHT,
+  GTK_CSS_IMAGE_BUILTIN_GRIP_RIGHT,
+  GTK_CSS_IMAGE_BUILTIN_GRIP_BOTTOMRIGHT,
+  GTK_CSS_IMAGE_BUILTIN_GRIP_BOTTOM,
+  GTK_CSS_IMAGE_BUILTIN_GRIP_BOTTOMLEFT,
+  GTK_CSS_IMAGE_BUILTIN_GRIP_LEFT,
+  GTK_CSS_IMAGE_BUILTIN_PANE_SEPARATOR,
+  GTK_CSS_IMAGE_BUILTIN_HANDLE,
+  GTK_CSS_IMAGE_BUILTIN_SPINNER
+} GtkCssImageBuiltinType;
+
+void
+gtk_css_style_render_icon (GtkCssStyle            *style,
+                           cairo_t                *cr,
+                           double                  x,
+                           double                  y,
+                           double                  width,
+                           double                  height,
+                           GtkCssImageBuiltinType  builtin_type)
+{
+  g_return_if_fail (cr != NULL);
+
+  cairo_matrix_t matrix, saved_matrix;
+
+  cairo_get_matrix (cr, &saved_matrix);
+
+  cairo_translate (cr, x, y);
+
+  cairo_transform (cr, &matrix);
+
+  cairo_set_matrix (cr, &saved_matrix);
+}
+
+void
+gtk_css_style_render_background ()
+{
+}
+
+gboolean
+gtk_css_style_render_background_is_opaque (GtkCssStyle *style)
+{
+  return TRUE;
+}
+
+void
+gtk_render_background (GtkStyleContext *context,
+                       cairo_t         *cr,
+                       gdouble          x,
+                       gdouble          y,
+                       gdouble          width,
+                       gdouble          height)
+{
+}
+
+void
+gtk_css_style_render_border ()
+{
+}
+
+void
+gtk_render_frame (GtkStyleContext *context,
+                  cairo_t         *cr,
+                  gdouble          x,
+                  gdouble          y,
+                  gdouble          width,
+                  gdouble          height)
+{
+}
+
+void
+gtk_render_handle (GtkStyleContext *context,
+                      cairo_t         *cr,
+                      gdouble          x,
+                      gdouble          y,
+                      gdouble          width,
+                      gdouble          height)
+{
+  g_return_if_fail (cr != NULL);
+
+  if (width <= 0 || height <= 0) {
+    return;
+  }
+
+  cairo_matrix_t matrix, saved_matrix;
+
+  cairo_get_matrix (cr, &saved_matrix);
+
+  cairo_translate (cr, x, y);
+
+  cairo_transform (cr, &matrix);
+
+  cairo_set_matrix (cr, &saved_matrix);
 }
