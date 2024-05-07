@@ -265,3 +265,10 @@ gdk_window_get_visible_region (GdkWindow *window)
   return cairo_region_copy ((const cairo_region_t*)&tmp_region);
 }
 
+#ifdef _GDK_WIDOWING_X11
+Window
+gdk_x11_window_get_xid (GdkWindow *window)
+{
+  gdk_x11_drawable_get_xid (win);
+}
+#endif
