@@ -1456,3 +1456,21 @@ gtk_style_context_get_border (GtkStyleContext *context,
                               GtkBorder       *border)
 {
 }
+
+void
+gtk_color_button_set_rgba (GtkColorButton *button,
+                           const GdkRGBA  *rgba)
+{
+  GdkColor color;
+
+  color.pixel = 0;
+  color.red = (guint16)(rgba->red * 65535);
+  color.green = (guint16)(rgba->green * 65535);
+  color.blue = (guint16)(rgba->blue * 65535);
+
+  gtk_color_button_set_color (button, &color);
+
+  gtk_color_button_set_use_alpha (button, TRUE);
+
+  gtk_color_button_set_alpha (button, (guint16)(rgba->alpha * 65535));
+}
