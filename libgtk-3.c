@@ -1480,3 +1480,77 @@ gtk_color_button_new_with_rgba (const GdkRGBA *rgba)
 {
   return g_object_new (GTK_TYPE_COLOR_BUTTON, "rgba", rgba, NULL);
 }
+
+GQuark
+gtk_css_provider_error_quark (void)
+{
+  return g_quark_from_static_string ("gtk-css-provider-error-quark");
+}
+
+typedef struct _GtkCssProvider GtkCssProvider;
+
+void
+gtk_css_provider_set_keep_css_sections (void)
+{
+}
+
+GtkCssProvider *
+gtk_css_provider_new (void)
+{
+  return NULL;
+}
+
+GtkCssProvider *
+gtk_css_provider_get_default (void)
+{
+  return NULL;
+}
+
+#define GTK_CSS_PROVIDER_ERROR g_quark_from_static_string ("gtk-css-provider-error-quark")
+
+gboolean
+gtk_css_provider_load_from_data (GtkCssProvider  *css_provider,
+                                 const gchar     *data,
+                                 gssize           length,
+                                 GError         **error)
+{
+  g_set_error (error, GTK_CSS_PROVIDER_ERROR, 0, "css is not implemented");
+  return FALSE;
+}
+
+gboolean
+gtk_css_provider_load_from_file (GtkCssProvider  *css_provider,
+                                 GFile           *file,
+                                 GError         **error)
+{
+  g_set_error (error, GTK_CSS_PROVIDER_ERROR, 0, "css is not implemented");
+  return FALSE;
+}
+
+gboolean
+gtk_css_provider_load_from_path (GtkCssProvider  *css_provider,
+                                 const gchar     *path,
+                                 GError         **error)
+{
+  g_set_error (error, GTK_CSS_PROVIDER_ERROR, 0, "css is not implemented");
+  return FALSE;
+}
+
+void
+gtk_css_provider_load_from_resource (GtkCssProvider *css_provider,
+                                     const gchar    *resource_path)
+{
+}
+
+GtkCssProvider *
+gtk_css_provider_get_named (const gchar *name,
+                            const gchar *variant)
+{
+  return NULL;
+}
+
+char *
+gtk_css_provider_to_string (GtkCssProvider *provider)
+{
+  return g_string_free (g_string_new (""), FALSE);
+}
