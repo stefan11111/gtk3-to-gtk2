@@ -118,10 +118,7 @@ gtk_widget_get_style_context (GtkWidget *widget)
 const PangoFontDescription *
 gtk_style_context_get_font ()
 {
-#if 0
   return NULL;
-#endif
-  return "";
 }
 
 void
