@@ -714,3 +714,9 @@ gdk_device_manager_get_client_pointer (GdkDeviceManager *device_manager)
 {
   return NULL;
 }
+
+GType
+gdk_x11_display_get_type (void)
+{
+  return 0;
+}
