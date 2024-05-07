@@ -1043,6 +1043,21 @@ gtk_color_selection_get_current_rgba (GtkColorSelection *colorsel,
 }
 
 void
+gtk_color_selection_set_current_rgba (GtkColorSelection *colorsel,
+                                      const GdkRGBA     *rgba)
+{
+  GdkColor color;
+
+  color.pixel = 0;
+  color.red = (guint16)(rgba->red * 65535);
+  color.green = (guint16)(rgba->green * 65535);
+  color.blue = (guint16)(rgba->green * 65535);
+
+  gtk_color_selection_set_current_color (colorsel, &color);
+  gtk_color_selection_set_current_alpha (colorsel, (guint16)(rgba->alpha * 65535));
+}
+
+void
 gtk_entry_set_max_width_chars (GtkEntry *entry,
                                gint      n_chars)
 {
