@@ -1948,3 +1948,10 @@ gtk_progress_bar_set_inverted (GtkProgressBar *pbar,
                                gboolean        inverted)
 {
 }
+#if 0
+GtkWidget *
+gtk_header_bar_new (void)
+{
+  return GTK_WIDGET (g_object_new (GTK_TYPE_HEADER_BAR, NULL));
+}
+#endif
