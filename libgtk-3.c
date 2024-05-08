@@ -1017,6 +1017,12 @@ gtk_color_selection_set_current_rgba (GtkColorSelection *colorsel,
   gtk_color_selection_set_current_alpha (colorsel, (guint16)(rgba->alpha * 65535));
 }
 
+gint
+gtk_entry_get_max_width_chars (GtkEntry *entry)
+{
+  return gtk_entry_get_max_length (entry);
+}
+
 void
 gtk_entry_set_max_width_chars (GtkEntry *entry,
                                gint      n_chars)
