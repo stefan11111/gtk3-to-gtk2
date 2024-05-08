@@ -2534,3 +2534,23 @@ gtk_widget_path_iter_has_qclass (const GtkWidgetPath *path,
 {
   return FALSE;
 }
+
+gboolean
+gtk_widget_path_iter_has_class (const GtkWidgetPath *path,
+                                gint                 pos,
+                                const gchar         *name)
+{
+  return FALSE;
+}
+
+void
+gtk_widget_path_iter_add_region ()
+{
+}
+
+void
+gtk_widget_path_iter_remove_region (GtkWidgetPath *path,
+                                    gint           pos,
+                                    const gchar   *name)
+{
+}
