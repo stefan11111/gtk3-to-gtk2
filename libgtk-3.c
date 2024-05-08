@@ -1929,3 +1929,16 @@ gtk_cairo_should_draw_window (cairo_t   *cr,
 {
   return TRUE;
 }
+
+GtkWidget *
+gtk_scrollbar_new (GtkOrientation  orientation,
+                   GtkAdjustment  *adjustment)
+{
+  g_return_val_if_fail (adjustment == NULL || GTK_IS_ADJUSTMENT (adjustment),
+                        NULL);
+
+  return g_object_new (GTK_TYPE_SCROLLBAR,
+                       "orientation", orientation,
+                       "adjustment",  adjustment,
+                       NULL);
+}
