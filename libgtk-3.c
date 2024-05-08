@@ -2579,3 +2579,23 @@ gtk_widget_path_iter_has_region ()
 {
   return FALSE;
 }
+
+GType
+gtk_widget_path_get_object_type (const GtkWidgetPath *path)
+{
+  return G_TYPE_INVALID;
+}
+
+gboolean
+gtk_widget_path_is_type (const GtkWidgetPath *path,
+                         GType                type)
+{
+  return FALSE;
+}
+
+gboolean
+gtk_widget_path_has_parent (const GtkWidgetPath *path,
+                            GType                type)
+{
+  return FALSE;
+}
