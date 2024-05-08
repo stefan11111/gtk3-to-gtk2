@@ -1308,3 +1308,129 @@ gdk_keymap_get_modifier_state (GdkKeymap *keymap)
 {
   return 0;
 }
+
+static gboolean
+gdk_cairo_surface_extents (cairo_surface_t *surface,
+                            GdkRectangle    *extents)
+{
+  double x1, x2, y1, y2;
+  cairo_t *cr;
+
+  g_return_val_if_fail (surface != NULL, FALSE);
+  g_return_val_if_fail (extents != NULL, FALSE);
+
+  cr = cairo_create (surface);
+  cairo_clip_extents (cr, &x1, &y1, &x2, &y2);
+  cairo_destroy (cr);
+#if 0
+  x1 = (long)x1;
+  y1 = (long)y1;
+  x2 = x2 == (long)(x2) ? (long)(x2) : (long)(x2) + 1;
+  y2 = y2 == (long)(y2) ? (long)(y2) : (long)(y2) + 1;
+#endif
+
+  extern double floor(double x);
+  extern double ceil(double x);
+
+  x1 = floor(x1);
+  y1 = floor(y1);
+  x2 = ceil(x2);
+  y2 = ceil(y2);
+
+  x2 -= x1;
+  y2 -= y1;
+
+  if (x1 < G_MININT || x1 > G_MAXINT ||
+      y1 < G_MININT || y1 > G_MAXINT ||
+      x2 > G_MAXINT || y2 > G_MAXINT)
+    {
+      extents->x = extents->y = extents->width = extents->height = 0;
+      return FALSE;
+    }
+
+  extents->x = x1;
+  extents->y = y1;
+  extents->width = x2;
+  extents->height = y2;
+
+  return TRUE;
+}
+
+cairo_region_t *
+gdk_cairo_region_create_from_surface (cairo_surface_t *surface)
+{
+  cairo_region_t *region;
+  GdkRectangle extents, rect;
+  cairo_surface_t *image;
+  cairo_t *cr;
+  gint x, y, stride;
+  guchar *data;
+
+  gdk_cairo_surface_extents (surface, &extents);
+
+  if (cairo_surface_get_content (surface) == CAIRO_CONTENT_COLOR) {
+    return cairo_region_create_rectangle ((const cairo_rectangle_int_t*)&extents);
+  }
+
+  if (cairo_surface_get_type (surface) != CAIRO_SURFACE_TYPE_IMAGE ||
+      cairo_image_surface_get_format (surface) != CAIRO_FORMAT_A1)
+    {
+      /* coerce to an A1 image */
+      image = cairo_image_surface_create (CAIRO_FORMAT_A1,
+                                          extents.width, extents.height);
+      cr = cairo_create (image);
+      cairo_set_source_surface (cr, surface, -extents.x, -extents.y);
+      cairo_paint (cr);
+      cairo_destroy (cr);
+    }
+  else
+    image = cairo_surface_reference (surface);
+
+  /* Flush the surface to make sure that the rendering is up to date. */
+  cairo_surface_flush (image);
+
+  data = cairo_image_surface_get_data (image);
+  stride = cairo_image_surface_get_stride (image);
+
+  region = cairo_region_create ();
+
+  for (y = 0; y < extents.height; y++)
+    {
+      for (x = 0; x < extents.width; x++)
+        {
+          /* Search for a continuous range of "non transparent pixels"*/
+          gint x0 = x;
+          while (x < extents.width)
+            {
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+              if (((data[x / 8] >> (x%8)) & 1) == 0)
+#else
+              if (((data[x / 8] >> (7-(x%8))) & 1) == 0)
+#endif
+                /* This pixel is "transparent"*/
+                break;
+              x++;
+            }
+
+          if (x > x0)
+            {
+              /* Add the pixels (x0, y) to (x, y+1) as a new rectangle
+               * in the region
+               */
+              rect.x = x0;
+              rect.width = x - x0;
+              rect.y = y;
+              rect.height = 1;
+
+              cairo_region_union_rectangle (region, (const cairo_rectangle_int_t*)&rect);
+            }
+        }
+      data += stride;
+    }
+
+  cairo_surface_destroy (image);
+
+  cairo_region_translate (region, extents.x, extents.y);
+
+  return region;
+}
