@@ -904,8 +904,6 @@ gdk_screen_get_monitor_workarea (GdkScreen    *screen,
   gdk_screen_get_monitor_geometry (screen, monitor_num, dest);
 }
 
-typedef struct _GdkMonitor GdkMonitor;
-
 gint
 gdk_screen_get_monitor_scale_factor (GdkScreen *screen,
                                      gint       monitor_num)
@@ -913,12 +911,23 @@ gdk_screen_get_monitor_scale_factor (GdkScreen *screen,
   return 1;
 }
 
+typedef struct _GdkMonitor GdkMonitor;
+
 GdkMonitor *
 gdk_display_get_monitor (GdkDisplay *display,
                          gint        monitor_num)
 {
   return NULL;
 }
+
+typedef enum {
+  GDK_SUBPIXEL_LAYOUT_UNKNOWN,
+  GDK_SUBPIXEL_LAYOUT_NONE,
+  GDK_SUBPIXEL_LAYOUT_HORIZONTAL_RGB,
+  GDK_SUBPIXEL_LAYOUT_HORIZONTAL_BGR,
+  GDK_SUBPIXEL_LAYOUT_VERTICAL_RGB,
+  GDK_SUBPIXEL_LAYOUT_VERTICAL_BGR
+} GdkSubpixelLayout;
 
 struct _GdkMonitor {
   GObject parent;
@@ -932,12 +941,26 @@ struct _GdkMonitor {
   int height_mm;
   int scale_factor;
   int refresh_rate;
-#if 0 /* not needed for the function bellow */
   GdkSubpixelLayout subpixel_layout;
-#endif
 };
 
-typedef struct _GdkMonitor GdkMonitor;
+GdkDisplay *
+gdk_monitor_get_display (GdkMonitor *monitor)
+{
+  g_return_val_if_fail (monitor, NULL);
+
+  return monitor->display;
+}
+
+void
+gdk_monitor_get_geometry (GdkMonitor   *monitor,
+                          GdkRectangle *geometry)
+{
+  g_return_if_fail (monitor);
+  g_return_if_fail (geometry != NULL);
+
+  *geometry = monitor->geometry;
+}
 
 void
 gdk_monitor_get_workarea (GdkMonitor   *monitor,
@@ -947,4 +970,240 @@ gdk_monitor_get_workarea (GdkMonitor   *monitor,
   g_return_if_fail (workarea);
 
   *workarea = monitor->geometry;
+}
+
+int
+gdk_monitor_get_width_mm (GdkMonitor *monitor)
+{
+  g_return_val_if_fail (monitor, 0);
+
+  return monitor->width_mm;
+}
+
+int
+gdk_monitor_get_height_mm (GdkMonitor *monitor)
+{
+  g_return_val_if_fail (monitor, 0);
+
+  return monitor->height_mm;
+}
+
+const char *
+gdk_monitor_get_connector (GdkMonitor *monitor)
+{
+  g_return_val_if_fail (monitor, NULL);
+
+  return monitor->connector;
+}
+
+const char *
+gdk_monitor_get_manufacturer (GdkMonitor *monitor)
+{
+  g_return_val_if_fail (monitor, NULL);
+
+  return monitor->manufacturer;
+}
+
+const char *
+gdk_monitor_get_model (GdkMonitor *monitor)
+{
+  g_return_val_if_fail (monitor, NULL);
+
+  return monitor->model;
+}
+
+int
+gdk_monitor_get_scale_factor (GdkMonitor *monitor)
+{
+  g_return_val_if_fail (monitor, 1);
+
+  return monitor->scale_factor;
+}
+
+int
+gdk_monitor_get_refresh_rate (GdkMonitor *monitor)
+{
+  g_return_val_if_fail (monitor, 0);
+
+  return monitor->refresh_rate;
+}
+
+GdkSubpixelLayout
+gdk_monitor_get_subpixel_layout (GdkMonitor *monitor)
+{
+  g_return_val_if_fail (monitor, GDK_SUBPIXEL_LAYOUT_UNKNOWN);
+
+  return monitor->subpixel_layout;
+}
+
+gboolean
+gdk_monitor_is_primary (GdkMonitor *monitor)
+{
+  return TRUE;
+}
+
+struct _GdkMonitorClass {
+  GObjectClass parent_class;
+
+  void (* get_workarea) (GdkMonitor   *monitor,
+                         GdkRectangle *geometry);
+};
+
+typedef struct _GdkMonitorClass GdkMonitorClass;
+
+static void
+gdk_monitor_init(GdkMonitor *self)
+{
+}
+
+static void
+gdk_monitor_class_init(GdkMonitorClass *klass)
+{
+}
+
+G_DEFINE_TYPE (GdkMonitor, gdk_monitor, G_TYPE_OBJECT)
+
+#define GDK_TYPE_MONITOR gdk_monitor_get_type ()
+
+GdkMonitor *
+gdk_monitor_new (GdkDisplay *display)
+{
+  return g_object_new (GDK_TYPE_MONITOR, "display", display, NULL);
+}
+
+void
+gdk_monitor_set_manufacturer (GdkMonitor *monitor,
+                              const char *manufacturer)
+{
+  g_free (monitor->manufacturer);
+  monitor->manufacturer = g_strdup (manufacturer);
+
+  g_object_notify (G_OBJECT (monitor), "manufacturer");
+}
+
+void
+gdk_monitor_set_model (GdkMonitor *monitor,
+                       const char *model)
+{
+  g_free (monitor->model);
+  monitor->model = g_strdup (model);
+
+  g_object_notify (G_OBJECT (monitor), "model");
+}
+
+void
+gdk_monitor_set_connector (GdkMonitor *monitor,
+                           const char *connector)
+{
+  g_free (monitor->connector);
+  monitor->connector = g_strdup (connector);
+
+  /* g_object_notify (G_OBJECT (monitor), "connector"); */
+}
+
+void
+gdk_monitor_set_position (GdkMonitor *monitor,
+                          int         x,
+                          int         y)
+{
+  g_object_freeze_notify (G_OBJECT (monitor));
+
+  if (monitor->geometry.x != x)
+    {
+      monitor->geometry.x = x;
+      g_object_notify (G_OBJECT (monitor), "geometry");
+    }
+
+  if (monitor->geometry.y != y)
+    {
+      monitor->geometry.y = y;
+      g_object_notify (G_OBJECT (monitor), "geometry");
+    }
+
+  g_object_thaw_notify (G_OBJECT (monitor));
+}
+
+void
+gdk_monitor_set_size (GdkMonitor *monitor,
+                      int         width,
+                      int         height)
+{
+  g_object_freeze_notify (G_OBJECT (monitor));
+
+  if (monitor->geometry.width != width)
+    {
+      monitor->geometry.width = width;
+      g_object_notify (G_OBJECT (monitor), "geometry");
+    }
+
+  if (monitor->geometry.height != height)
+    {
+      monitor->geometry.height = height;
+      g_object_notify (G_OBJECT (monitor), "geometry");
+    }
+
+  g_object_thaw_notify (G_OBJECT (monitor));
+}
+
+void
+gdk_monitor_set_physical_size (GdkMonitor *monitor,
+                               int         width_mm,
+                               int         height_mm)
+{
+  g_object_freeze_notify (G_OBJECT (monitor));
+
+  if (monitor->width_mm != width_mm)
+    {
+      monitor->width_mm = width_mm;
+      g_object_notify (G_OBJECT (monitor), "width-mm");
+    }
+
+  if (monitor->height_mm != height_mm)
+    {
+      monitor->height_mm = height_mm;
+      g_object_notify (G_OBJECT (monitor), "height-mm");
+    }
+
+  g_object_thaw_notify (G_OBJECT (monitor));
+}
+
+void
+gdk_monitor_set_scale_factor (GdkMonitor *monitor,
+                              int         scale_factor)
+{
+  if (monitor->scale_factor == scale_factor)
+    return;
+
+  monitor->scale_factor = scale_factor;
+
+  g_object_notify (G_OBJECT (monitor), "scale-factor");
+}
+
+void
+gdk_monitor_set_refresh_rate (GdkMonitor *monitor,
+                              int         refresh_rate)
+{
+  if (monitor->refresh_rate == refresh_rate)
+    return;
+
+  monitor->refresh_rate = refresh_rate;
+
+  g_object_notify (G_OBJECT (monitor), "refresh-rate");
+}
+
+void
+gdk_monitor_set_subpixel_layout (GdkMonitor        *monitor,
+                                 GdkSubpixelLayout  subpixel_layout)
+{
+  if (monitor->subpixel_layout == subpixel_layout)
+    return;
+
+  monitor->subpixel_layout = subpixel_layout;
+
+  g_object_notify (G_OBJECT (monitor), "subpixel-layout");
+}
+
+void
+gdk_monitor_invalidate (GdkMonitor *monitor)
+{
 }
