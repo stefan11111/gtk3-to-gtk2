@@ -2624,3 +2624,9 @@ gtk_widget_get_clip (GtkWidget     *widget,
 {
   gtk_widget_get_allocation (widget, clip);
 }
+
+GtkStateFlags
+gtk_widget_get_state_flags (GtkWidget *widget)
+{
+  return gtk_widget_get_state (widget);
+}
