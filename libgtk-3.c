@@ -2478,7 +2478,7 @@ gtk_widget_path_iter_set_name (GtkWidgetPath *path,
 }
 
 gboolean
-gtk_widget_path_iter_has_name (const GtkWidgetPath *path,
+gtk_widget_path_iter_has_qname (const GtkWidgetPath *path,
                                gint                 pos,
                                const gchar         *name)
 {
@@ -2486,9 +2486,36 @@ gtk_widget_path_iter_has_name (const GtkWidgetPath *path,
 }
 
 gboolean
-gtk_widget_path_iter_has_qname (const GtkWidgetPath *path,
+gtk_widget_path_iter_has_name (const GtkWidgetPath *path,
                                 gint                 pos,
                                 GQuark               qname)
 {
   return FALSE;
+}
+
+void
+gtk_widget_path_iter_add_qclass (GtkWidgetPath *path,
+                                 gint           pos,
+                                 GQuark         qname)
+{
+}
+
+void
+gtk_widget_path_iter_add_class (GtkWidgetPath *path,
+                                gint           pos,
+                                const gchar   *name)
+{
+}
+
+void
+gtk_widget_path_iter_remove_class (GtkWidgetPath *path,
+                                   gint           pos,
+                                   const gchar   *name)
+{
+}
+
+void
+gtk_widget_path_iter_clear_classes (GtkWidgetPath *path,
+                                    gint           pos)
+{
 }
