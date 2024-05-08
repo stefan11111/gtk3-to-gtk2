@@ -1942,3 +1942,9 @@ gtk_scrollbar_new (GtkOrientation  orientation,
                        "adjustment",  adjustment,
                        NULL);
 }
+
+void
+gtk_progress_bar_set_inverted (GtkProgressBar *pbar,
+                               gboolean        inverted)
+{
+}
