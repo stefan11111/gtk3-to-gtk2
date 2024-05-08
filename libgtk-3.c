@@ -2341,3 +2341,53 @@ gtk_widget_path_to_string (const GtkWidgetPath *path)
 
   return g_string_free (string, FALSE);
 }
+
+void
+gtk_widget_path_prepend_type (GtkWidgetPath *path,
+                              GType          type)
+{
+  GtkPathElement new = { NULL };
+
+#if 0 /* runtime cost */
+  if (!path) {
+    return;
+  }
+#endif
+
+  g_array_prepend_val (path->elems, new);
+}
+
+gint
+gtk_widget_path_append_type (GtkWidgetPath *path,
+                             GType          type)
+{
+  GtkPathElement new = { NULL };
+#if 0 /* runtime cost */
+  if (!path) {
+    return 0;
+  }
+#endif
+  g_array_append_val (path->elems, new);
+
+  return path->elems->len - 1;
+}
+
+gint
+gtk_widget_path_append_with_siblings (GtkWidgetPath *path,
+                                      GtkWidgetPath *siblings,
+                                      guint          sibling_index)
+{
+#if 0 /* runtime cost */
+  if (!path || !siblings || sibling_index < gtk_widget_path_length (siblings)) {
+    return 0;
+  }
+#endif
+
+  GtkPathElement new;
+  gtk_path_element_copy (&new, &g_array_index (siblings->elems, GtkPathElement, sibling_index));
+  new.siblings = gtk_widget_path_ref (siblings);
+  new.sibling_index = sibling_index;
+  g_array_append_val (path->elems, new);
+
+  return path->elems->len - 1;
+}
