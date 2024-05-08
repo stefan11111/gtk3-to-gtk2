@@ -2658,3 +2658,64 @@ gtk_widget_set_visual (GtkWidget *widget,
 }
 
 #define gtk_widget_set_visual(widget,visual)  ((void) 0)
+
+static GHashTable *
+get_auto_child_hash (GtkWidget *widget,
+                     GType      type,
+                     gboolean   create)
+{
+  GHashTable *auto_children;
+  GHashTable *auto_child_hash;
+
+  auto_children = (GHashTable *)g_object_get_qdata (G_OBJECT (widget), 0);
+  if (auto_children == NULL)
+    {
+      if (!create)
+        return NULL;
+
+      auto_children = g_hash_table_new_full (g_direct_hash,
+                                             NULL,
+                                             NULL, (GDestroyNotify)g_hash_table_destroy);
+      g_object_set_qdata_full (G_OBJECT (widget),
+                               0,
+                               auto_children,
+                               (GDestroyNotify)g_hash_table_destroy);
+    }
+
+  auto_child_hash =
+    g_hash_table_lookup (auto_children, GSIZE_TO_POINTER (type));
+
+  if (!auto_child_hash && create)
+    {
+      auto_child_hash = g_hash_table_new_full (g_str_hash,
+                                               g_str_equal,
+                                               NULL,
+                                               (GDestroyNotify)g_object_unref);
+
+      g_hash_table_insert (auto_children,
+                           GSIZE_TO_POINTER (type),
+                           auto_child_hash);
+    }
+
+  return auto_child_hash;
+}
+
+GObject *
+gtk_widget_get_template_child (GtkWidget   *widget,
+                               GType        widget_type,
+                               const gchar *name)
+{
+  GHashTable *auto_child_hash;
+  GObject *ret = NULL;
+
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), NULL);
+  g_return_val_if_fail (g_type_name (widget_type) != NULL, NULL);
+  g_return_val_if_fail (name && name[0], NULL);
+
+  auto_child_hash = get_auto_child_hash (widget, widget_type, FALSE);
+
+  if (auto_child_hash)
+    ret = g_hash_table_lookup (auto_child_hash, name);
+
+  return ret;
+}
