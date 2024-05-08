@@ -2605,3 +2605,9 @@ gtk_widget_path_has_parent (const GtkWidgetPath *path,
 {
   return FALSE;
 }
+
+gint
+gtk_widget_get_scale_factor (GtkWidget *widget)
+{
+  return 1;
+}
