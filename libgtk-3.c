@@ -435,10 +435,22 @@ gtk_scrollable_set_vadjustment (GtkScrollable *scrollable,
   g_object_set (scrollable, "vadjustment", vadjustment, NULL);
 }
 
-GType gtk_scrollable_get_type (void)
+typedef struct _GtkScrollableInterface GtkScrollableInterface;
+
+struct _GtkScrollableInterface
 {
-  return 0;
+  GTypeInterface base_iface;
+
+  gboolean (* get_border) (GtkScrollable *scrollable,
+                           GtkBorder     *border);
+};
+
+static void
+gtk_scrollable_default_init (GtkScrollableInterface *klass)
+{
 }
+
+G_DEFINE_INTERFACE (GtkScrollable, gtk_scrollable, G_TYPE_OBJECT)
 
 void
 gtk_widget_path_iter_set_name ()
