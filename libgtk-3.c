@@ -2519,3 +2519,18 @@ gtk_widget_path_iter_clear_classes (GtkWidgetPath *path,
                                     gint           pos)
 {
 }
+
+GSList *
+gtk_widget_path_iter_list_classes (const GtkWidgetPath *path,
+                                   gint                 pos)
+{
+  return NULL;
+}
+
+gboolean
+gtk_widget_path_iter_has_qclass (const GtkWidgetPath *path,
+                                 gint                 pos,
+                                 GQuark               qname)
+{
+  return FALSE;
+}
