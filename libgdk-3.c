@@ -583,12 +583,97 @@ gdk_pixbuf_get_from_window (GdkWindow *src,
 
   return dest;
 }
+#ifdef X11
+typedef struct _GdkX11Screen GdkX11Screen;
 
+struct _GdkX11Screen
+{
+  GdkScreen parent_instance;
+
+  GdkDisplay *display;
+  Display *xdisplay;
+  Screen *xscreen;
+  Window xroot_window;
+  GdkWindow *root_window;
+  gint screen_num;
+
+  gint width;
+  gint height;
+
+  gint window_scale;
+  gboolean fixed_window_scale;
+
+  /* Xft resources for the display, used for default values for
+   * the Xft/ XSETTINGS
+   */
+  gint xft_hintstyle;
+  gint xft_rgba;
+  gint xft_dpi;
+
+  /* Window manager */
+  long last_wmspec_check_time;
+  Window wmspec_check_window;
+  char *window_manager_name;
+
+  /* X Settings */
+  GdkWindow *xsettings_manager_window;
+  Atom xsettings_selection_atom;
+  GHashTable *xsettings; /* string of GDK settings name => GValue */
+
+  /* TRUE if wmspec_check_window has changed since last
+   * fetch of _NET_SUPPORTED
+   */
+  guint need_refetch_net_supported : 1;
+  /* TRUE if wmspec_check_window has changed since last
+   * fetch of window manager name
+   */
+  guint need_refetch_wm_name : 1;
+  guint is_composited : 1;
+  guint xft_init : 1; /* Whether we've intialized these values yet */
+  guint xft_antialias : 1;
+  guint xft_hinting : 1;
+
+  /* Visual Part */
+  gint nvisuals;
+  GdkVisual **visuals;
+  GdkVisual *system_visual;
+  gint available_depths[7];
+  GdkVisualType available_types[6];
+  gint16 navailable_depths;
+  gint16 navailable_types;
+  GHashTable *visual_hash;
+  GdkVisual *rgba_visual;
+
+  /* cache for window->translate vfunc */
+  GC subwindow_gcs[32];
+};
+
+struct _GdkX11ScreenClass
+{
+  GdkScreenClass parent_class;
+
+  void (* window_manager_changed) (GdkX11Screen *x11_screen);
+};
+
+typedef struct _GdkX11ScreenClass GdkX11ScreenClass;
+
+static void
+gdk_x11_screen_init(GdkX11Screen *self)
+{
+}
+
+static void
+gdk_x11_screen_class_init(GdkX11ScreenClass *klass)
+{
+}
+
+G_DEFINE_TYPE (GdkX11Screen, gdk_x11_screen, GDK_TYPE_SCREEN)
+#else
 GType gdk_x11_screen_get_type (void)
 {
   return 0;
 }
-
+#endif
 typedef struct _GdkFrameClock GdkFrameClock;
 
 GdkFrameClock*
