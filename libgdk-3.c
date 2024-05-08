@@ -895,3 +895,56 @@ gdk_device_manager_get_client_pointer ()
 {
   return NULL;
 }
+
+void
+gdk_screen_get_monitor_workarea (GdkScreen    *screen,
+                                 gint          monitor_num,
+                                 GdkRectangle *dest)
+{
+  gdk_screen_get_monitor_geometry (screen, monitor_num, dest);
+}
+
+typedef struct _GdkMonitor GdkMonitor;
+
+gint
+gdk_screen_get_monitor_scale_factor (GdkScreen *screen,
+                                     gint       monitor_num)
+{
+  return 1;
+}
+
+GdkMonitor *
+gdk_display_get_monitor (GdkDisplay *display,
+                         gint        monitor_num)
+{
+  return NULL;
+}
+
+struct _GdkMonitor {
+  GObject parent;
+
+  GdkDisplay *display;
+  char *manufacturer;
+  char *model;
+  char *connector;
+  GdkRectangle geometry;
+  int width_mm;
+  int height_mm;
+  int scale_factor;
+  int refresh_rate;
+#if 0 /* not needed for the function bellow */
+  GdkSubpixelLayout subpixel_layout;
+#endif
+};
+
+typedef struct _GdkMonitor GdkMonitor;
+
+void
+gdk_monitor_get_workarea (GdkMonitor   *monitor,
+                          GdkRectangle *workarea)
+{
+  g_return_if_fail (monitor);
+  g_return_if_fail (workarea);
+
+  *workarea = monitor->geometry;
+}
