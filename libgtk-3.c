@@ -2631,6 +2631,14 @@ gtk_widget_get_state_flags (GtkWidget *widget)
   return gtk_widget_get_state (widget);
 }
 
+void
+gtk_widget_set_state_flags (GtkWidget     *widget,
+                            GtkStateFlags  flags,
+                            gboolean       clear)
+{
+    gtk_widget_set_state (widget, flags);
+}
+
 #undef gtk_widget_set_visual
 
 void
