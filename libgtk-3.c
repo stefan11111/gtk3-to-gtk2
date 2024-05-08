@@ -2554,3 +2554,28 @@ gtk_widget_path_iter_remove_region (GtkWidgetPath *path,
                                     const gchar   *name)
 {
 }
+
+void
+gtk_widget_path_iter_clear_regions (GtkWidgetPath *path,
+                                    gint           pos)
+{
+}
+
+GSList *
+gtk_widget_path_iter_list_regions (const GtkWidgetPath *path,
+                                   gint                 pos)
+{
+  return NULL;
+}
+
+gboolean
+gtk_widget_path_iter_has_qregion ()
+{
+  return FALSE;
+}
+
+gboolean
+gtk_widget_path_iter_has_region ()
+{
+  return FALSE;
+}
