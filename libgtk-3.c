@@ -1992,3 +1992,206 @@ gtk_header_bar_new (void)
 {
   return GTK_WIDGET (g_object_new (gtk_header_bar_get_type (), NULL));
 }
+
+typedef enum {
+  GTK_ICON_SOURCE_EMPTY,
+  GTK_ICON_SOURCE_ICON_NAME,
+  GTK_ICON_SOURCE_STATIC_ICON_NAME,
+  GTK_ICON_SOURCE_FILENAME,
+  GTK_ICON_SOURCE_PIXBUF
+} GtkIconSourceType;
+
+struct _GtkIconSource
+{
+  GtkIconSourceType type;
+
+  union {
+    gchar *icon_name;
+    gchar *filename;
+    GdkPixbuf *pixbuf;
+  } source;
+
+  GdkPixbuf *filename_pixbuf;
+
+  GtkTextDirection direction;
+  GtkStateType state;
+  GtkIconSize size;
+
+  /* If TRUE, then the parameter is wildcarded, and the above
+   * fields should be ignored. If FALSE, the parameter is
+   * specified, and the above fields should be valid.
+   */
+  guint any_direction : 1;
+  guint any_state : 1;
+  guint any_size : 1;
+};
+
+static GdkPixbuf *
+render_icon_name_pixbuf (GtkIconSource    *icon_source,
+                         GtkStyle         *style,
+                         GtkTextDirection  direction,
+                         GtkStateType      state,
+                         GtkIconSize       size,
+                         GtkWidget        *widget,
+                         const char       *detail)
+{
+  GdkPixbuf *pixbuf;
+  GdkPixbuf *tmp_pixbuf;
+  GtkIconSource tmp_source;
+  GdkScreen *screen;
+  GtkIconTheme *icon_theme;
+  GtkSettings *settings;
+  gint width, height, pixel_size;
+  gint *sizes, *s, dist;
+  GError *error = NULL;
+
+  if (widget && gtk_widget_has_screen (widget))
+    screen = gtk_widget_get_screen (widget);
+  else if (style && style->colormap)
+    screen = gdk_colormap_get_screen (style->colormap);
+  else
+    {
+      screen = gdk_screen_get_default ();
+      GTK_NOTE (MULTIHEAD,
+                g_warning ("Using the default screen for gtk_icon_source_render_icon()"));
+    }
+
+  icon_theme = gtk_icon_theme_get_for_screen (screen);
+  settings = gtk_settings_get_for_screen (screen);
+
+  if (!gtk_icon_size_lookup_for_settings (settings, size, &width, &height))
+    {
+      if (size == (GtkIconSize)-1)
+        {
+          /* Find an available size close to 48 */
+          sizes = gtk_icon_theme_get_icon_sizes (icon_theme, icon_source->source.icon_name);
+          dist = 1000;
+          width = height = 48;
+          for (s = sizes; *s; s++)
+            {
+              if (*s == -1)
+                {
+                  width = height = 48;
+                  break;
+                }
+              if (*s < 48)
+                {
+                  if (48 - *s < dist)
+                    {
+                      width = height = *s;
+                      dist = 48 - *s;
+                    }
+                }
+              else
+                {
+                  if (*s - 48 < dist)
+                    {
+                      width = height = *s;
+                      dist = *s - 48;
+                    }
+                }
+            }
+
+          g_free (sizes);
+        }
+      else
+        {
+          g_warning ("Invalid icon size %u\n", size);
+          width = height = 24;
+        }
+    }
+
+  pixel_size = MIN (width, height);
+
+  if (icon_source->direction != GTK_TEXT_DIR_NONE)
+    {
+      gchar *suffix[3] = { NULL, "-ltr", "-rtl" };
+      const gchar *names[3];
+      gchar *name_with_dir;
+      GtkIconInfo *info;
+
+      name_with_dir = g_strconcat (icon_source->source.icon_name, suffix[icon_source->direction], NULL);
+      names[0] = name_with_dir;
+      names[1] = icon_source->source.icon_name;
+      names[2] = NULL;
+
+      info = gtk_icon_theme_choose_icon (icon_theme,
+                                         names,
+                                         pixel_size, GTK_ICON_LOOKUP_USE_BUILTIN);
+      g_free (name_with_dir);
+      if (info)
+        {
+          tmp_pixbuf = gtk_icon_info_load_icon (info, &error);
+          gtk_icon_info_free (info);
+        }
+      else
+        tmp_pixbuf = NULL;
+    }
+  else
+    {
+      tmp_pixbuf = gtk_icon_theme_load_icon (icon_theme,
+                                             icon_source->source.icon_name,
+                                             pixel_size, 0,
+                                             &error);
+    }
+
+  if (!tmp_pixbuf)
+    {
+      g_warning ("Error loading theme icon '%s' for stock: %s",
+                 icon_source->source.icon_name, error ? error->message : "");
+      if (error)
+        g_error_free (error);
+      return NULL;
+    }
+
+  tmp_source = *icon_source;
+  tmp_source.type = GTK_ICON_SOURCE_PIXBUF;
+  tmp_source.source.pixbuf = tmp_pixbuf;
+
+  pixbuf = gtk_style_render_icon (style, &tmp_source,
+                                  direction, state, -1,
+                                  widget, detail);
+
+  if (!pixbuf)
+    g_warning ("Failed to render icon");
+
+  g_object_unref (tmp_pixbuf);
+
+  return pixbuf;
+}
+
+static GdkPixbuf*
+render_fallback_image (GtkCssStyle       *style,
+                       GtkTextDirection   direction,
+                       GtkStateType       state,
+                       GtkIconSize        size)
+{
+  /* This icon can be used for any direction/state/size */
+  static GtkIconSource fallback_source = {0};
+
+  if (fallback_source.type == GTK_ICON_SOURCE_EMPTY)
+    {
+      fallback_source.type = GTK_ICON_SOURCE_STATIC_ICON_NAME;
+      fallback_source.source.icon_name = (gchar *)"image-missing";
+      fallback_source.direction = GTK_TEXT_DIR_NONE;
+    }
+  return render_icon_name_pixbuf (&fallback_source, (GtkStyle*)style, direction, state, size, NULL, NULL);
+}
+
+GdkPixbuf*
+gtk_icon_set_render_icon_pixbuf_for_scale (GtkIconSet       *icon_set,
+                                           GtkCssStyle      *style,
+                                           GtkTextDirection  direction,
+                                           GtkIconSize       size,
+                                           gint              scale)
+{
+  return render_fallback_image (NULL, GTK_TEXT_DIR_LTR, GTK_STATE_NORMAL, size);
+}
+
+GdkPixbuf *
+gtk_icon_set_render_icon_pixbuf (GtkIconSet        *icon_set,
+                                 GtkStyleContext   *context,
+                                 GtkIconSize        size)
+{
+  return render_fallback_image (NULL, GTK_TEXT_DIR_LTR, GTK_STATE_NORMAL, size);
+}
