@@ -1148,12 +1148,10 @@ gdk_monitor_class_init(GdkMonitorClass *klass)
 
 G_DEFINE_TYPE (GdkMonitor, gdk_monitor, G_TYPE_OBJECT)
 
-#define GDK_TYPE_MONITOR gdk_monitor_get_type ()
-
 GdkMonitor *
 gdk_monitor_new (GdkDisplay *display)
 {
-  return g_object_new (GDK_TYPE_MONITOR, "display", display, NULL);
+  return g_object_new (gdk_monitor_get_type (), "display", display, NULL);
 }
 
 void
@@ -1291,4 +1289,22 @@ gdk_monitor_set_subpixel_layout (GdkMonitor        *monitor,
 void
 gdk_monitor_invalidate (GdkMonitor *monitor)
 {
+}
+
+gboolean
+gdk_keymap_get_num_lock_state (GdkKeymap *keymap)
+{
+  return TRUE;
+}
+
+gboolean
+gdk_keymap_get_scroll_lock_state (GdkKeymap *keymap)
+{
+  return FALSE;
+}
+
+guint
+gdk_keymap_get_modifier_state (GdkKeymap *keymap)
+{
+  return 0;
 }
