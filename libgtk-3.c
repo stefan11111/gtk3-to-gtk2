@@ -2630,3 +2630,23 @@ gtk_widget_get_state_flags (GtkWidget *widget)
 {
   return gtk_widget_get_state (widget);
 }
+
+#undef gtk_widget_set_visual
+
+void
+gtk_widget_set_visual (GtkWidget *widget,
+                       GdkVisual *visual)
+{
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (visual == NULL || GDK_IS_VISUAL (visual));
+
+  if (visual)
+    g_return_if_fail (gtk_widget_get_screen (widget) == gdk_visual_get_screen (visual));
+
+  g_object_set_qdata_full (G_OBJECT (widget),
+                           0,
+                           visual ? g_object_ref (visual) : NULL,
+                           g_object_unref);
+}
+
+#define gtk_widget_set_visual(widget,visual)  ((void) 0)
