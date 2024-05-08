@@ -1173,6 +1173,12 @@ gtk_style_context_set_path (GtkStyleContext *context,
 {
 }
 
+const GtkWidgetPath *
+gtk_style_context_get_path (GtkStyleContext *context)
+{
+  return NULL;
+}
+
 GtkStyleContext *
 gtk_style_context_get_parent (GtkStyleContext *context)
 {
