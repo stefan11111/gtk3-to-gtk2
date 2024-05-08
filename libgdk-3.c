@@ -60,22 +60,7 @@ gdk_display_get_device_manager (GdkDisplay *display)
   return NULL;
 }
 
-void
-gdk_device_ungrab (GdkDevice  *device,
-                   guint32     time_)
-{
-}
-
 typedef struct _GdkGrabOwnership GdkGrabOwnership;
-
-GdkGrabStatus
-gdk_device_grab ()
-{
-#if 0
-  return 5;
-#endif
-  return 0;
-}
 
 void
 gdk_window_set_background_pattern (GdkWindow       *window,
@@ -709,12 +694,6 @@ gdk_rgba_parse (GdkRGBA     *rgba,
   return TRUE;
 }
 
-GdkDevice *
-gdk_device_manager_get_client_pointer (GdkDeviceManager *device_manager)
-{
-  return NULL;
-}
-
 GType
 gdk_x11_display_get_type (void)
 {
@@ -737,6 +716,182 @@ gdk_window_get_device_position (GdkWindow       *window,
                                 gint            *x,
                                 gint            *y,
                                 GdkModifierType *mask)
+{
+  return NULL;
+}
+
+void
+gdk_device_get_position_double (GdkDevice        *device,
+                                GdkScreen       **screen,
+                                gdouble          *x,
+                                gdouble          *y)
+{
+}
+
+void
+gdk_device_get_position (GdkDevice        *device,
+                         GdkScreen       **screen,
+                         gint             *x,
+                         gint             *y)
+{
+}
+
+GdkWindow *
+gdk_device_get_window_at_position_double (GdkDevice  *device,
+                                          gdouble    *win_x,
+                                          gdouble    *win_y)
+{
+  return NULL;
+}
+
+GdkWindow *
+gdk_device_get_window_at_position (GdkDevice  *device,
+                                   gint       *win_x,
+                                   gint       *win_y)
+{
+  return NULL;
+}
+
+GdkDisplay *
+gdk_device_get_display (GdkDevice *device)
+{
+  return NULL;
+}
+
+GdkDevice *
+gdk_device_get_associated_device (GdkDevice *device)
+{
+  return NULL;
+}
+
+GList *
+gdk_device_list_slave_devices (GdkDevice *device)
+{
+  return NULL;
+}
+
+typedef enum {
+  GDK_DEVICE_TYPE_MASTER,
+  GDK_DEVICE_TYPE_SLAVE,
+  GDK_DEVICE_TYPE_FLOATING
+} GdkDeviceType;
+
+GdkDeviceType
+gdk_device_get_device_type (GdkDevice *device)
+{
+  return GDK_DEVICE_TYPE_MASTER;
+}
+
+GList *
+gdk_device_list_axes (GdkDevice *device)
+{
+  return NULL;
+}
+
+gboolean
+gdk_device_get_axis_value (GdkDevice *device,
+                           gdouble   *axes,
+                           GdkAtom    axis_label,
+                           gdouble   *value)
+{
+#if 0 /* closest translation to gtk2 calls */
+  return gdk_device_get_axis(device, axes, (GdkAxisUse)(*(char*)axis_label), value);
+#endif /* might return bogus data otherwise */
+  return FALSE;
+}
+
+GdkGrabStatus
+gdk_device_grab ()
+{
+#if 0 /* not in gtk2 */
+  return GDK_GRAB_FAILED;
+#endif
+  return GDK_GRAB_SUCCESS;
+}
+
+void
+gdk_device_ungrab (GdkDevice  *device,
+                   guint32     time_)
+{
+}
+
+void
+gdk_device_warp (GdkDevice  *device,
+                 GdkScreen  *screen,
+                 gint        x,
+                 gint        y)
+{
+}
+
+GdkWindow *
+gdk_device_get_last_event_window (GdkDevice *device)
+{
+  return NULL;
+}
+
+const gchar *
+gdk_device_get_vendor_id (GdkDevice *device)
+{
+  return NULL;
+}
+
+const gchar *
+gdk_device_get_product_id (GdkDevice *device)
+{
+  return NULL;
+}
+
+typedef struct _GdkSeat GdkSeat;
+
+void
+gdk_device_set_seat (GdkDevice *device,
+                     GdkSeat   *seat)
+{
+}
+
+GdkSeat *
+gdk_device_get_seat (GdkDevice *device)
+{
+  return NULL;
+}
+
+typedef enum
+{
+  GDK_AXIS_FLAG_X        = 1 << GDK_AXIS_X,
+  GDK_AXIS_FLAG_Y        = 1 << GDK_AXIS_Y,
+} GdkAxisFlags;
+
+GdkAxisFlags
+gdk_device_get_axes (GdkDevice *device)
+{
+  return 0;
+}
+
+void
+gdk_device_update_tool ()
+{
+}
+
+GdkInputMode
+gdk_device_get_input_mode (GdkDevice *device)
+{
+  return device ? device->mode : GDK_MODE_DISABLED;
+}
+
+GdkDisplay *
+gdk_device_manager_get_display ()
+{
+  return NULL;
+}
+
+GList *
+gdk_device_manager_list_devices ()
+{
+  return NULL;
+}
+
+GdkDevice *
+gdk_device_manager_get_client_pointer ()
 {
   return NULL;
 }
