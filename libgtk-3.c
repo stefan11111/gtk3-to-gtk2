@@ -542,26 +542,6 @@ gtk_style_context_set_junction_sides ()
 {
 }
 
-struct _GtkWidgetPath
-{
-  guint ref_count;
-
-  GArray *elems; /* First element contains the described widget */
-};
-
-typedef struct _GtkWidgetPath GtkWidgetPath;
-
-gint
-gtk_widget_path_length (const GtkWidgetPath *path)
-{
-#if 0 /* runtime cost */
-  if (!path) {
-    return 0;
-  }
-#endif
-  return path->elems->len;
-}
-
 void
 gtk_widget_shape_combine_region (GtkWidget *widget,
                                  cairo_region_t *region)
@@ -1183,16 +1163,19 @@ gtk_style_context_state_is_running (GtkStyleContext *context,
   return FALSE;
 }
 
+struct _GtkWidgetPath
+{
+  guint ref_count;
+
+  GArray *elems; /* First element contains the described widget */
+};
+
+typedef struct _GtkWidgetPath GtkWidgetPath;
+
 void
 gtk_style_context_set_path (GtkStyleContext *context,
                             GtkWidgetPath   *path)
 {
-}
-
-const GtkWidgetPath *
-gtk_style_context_get_path (GtkStyleContext *context)
-{
-  return NULL;
 }
 
 GtkStyleContext *
@@ -2201,3 +2184,221 @@ gtk_icon_set_render_icon_pixbuf (GtkIconSet        *icon_set,
 {
   return render_fallback_image (NULL, GTK_TEXT_DIR_LTR, GTK_STATE_NORMAL, size);
 }
+
+typedef struct GtkPathElement GtkPathElement;
+
+typedef struct _GtkCssNodeDeclaration GtkCssNodeDeclaration;
+
+struct GtkPathElement
+{
+  GtkCssNodeDeclaration *decl;
+  guint sibling_index;
+  GtkWidgetPath *siblings;
+};
+
+
+
+GtkWidgetPath *
+gtk_widget_path_ref (GtkWidgetPath *path)
+{
+  if (!path) {
+    return NULL;
+  }
+
+  path->ref_count += 1;
+
+  return path;
+}
+
+void
+gtk_widget_path_unref (GtkWidgetPath *path)
+{
+  if (!path) {
+    return;
+  }
+
+  path->ref_count -= 1;
+  if (path->ref_count > 0)
+    return;
+
+  guint i;
+
+  for (i = 0; i < path->elems->len; i++)
+    {
+      GtkPathElement *elem;
+
+      elem = &g_array_index (path->elems, GtkPathElement, i);
+
+      if (elem->siblings)
+        gtk_widget_path_unref (elem->siblings);
+    }
+
+  g_array_free (path->elems, TRUE);
+  g_slice_free (GtkWidgetPath, path);
+}
+
+
+G_DEFINE_BOXED_TYPE (GtkWidgetPath, gtk_widget_path,
+                     gtk_widget_path_ref, gtk_widget_path_unref)
+
+
+GtkWidgetPath *
+gtk_widget_path_new (void)
+{
+  GtkWidgetPath *path;
+
+  path = g_slice_new0 (GtkWidgetPath);
+  path->elems = g_array_new (FALSE, TRUE, sizeof (GtkPathElement));
+  path->ref_count = 1;
+
+  return path;
+}
+
+static void
+gtk_path_element_copy (GtkPathElement       *dest,
+                       const GtkPathElement *src)
+{
+  memset (dest, 0, sizeof (GtkPathElement));
+
+  dest->decl = src->decl;
+  if (src->siblings)
+    dest->siblings = gtk_widget_path_ref (src->siblings);
+  dest->sibling_index = src->sibling_index;
+}
+
+GtkWidgetPath *
+gtk_widget_path_copy (const GtkWidgetPath *path)
+{
+  GtkWidgetPath *new_path;
+  guint i;
+
+  if (!path) {
+    return NULL;
+  }
+
+  new_path = gtk_widget_path_new ();
+
+  g_array_set_size (new_path->elems, path->elems->len);
+
+  for (i = 0; i < path->elems->len; i++)
+    {
+      GtkPathElement *elem, *dest;
+
+      elem = &g_array_index (path->elems, GtkPathElement, i);
+      dest = &g_array_index (new_path->elems, GtkPathElement, i);
+
+      gtk_path_element_copy (dest, elem);
+    }
+
+  return new_path;
+}
+
+void
+gtk_widget_path_free (GtkWidgetPath *path)
+{
+  gtk_widget_path_unref (path);
+}
+
+gint
+gtk_widget_path_length (const GtkWidgetPath *path)
+{
+  return path ? path->elems->len : 0;
+}
+#if 0
+char *
+gtk_widget_path_to_string (const GtkWidgetPath *path)
+{
+  GString *string;
+  guint i, j, n;
+
+  if (!path) {
+    return NULL;
+  }
+
+  string = g_string_new ("");
+
+  for (i = 0; i < path->elems->len; i++)
+    {
+      GtkPathElement *elem;
+      GtkStateFlags state;
+      const GQuark *classes;
+      GList *list, *regions;
+
+      elem = &g_array_index (path->elems, GtkPathElement, i);
+
+      if (i > 0)
+        g_string_append_c (string, ' ');
+
+      if (gtk_css_node_declaration_get_name (elem->decl))
+        g_string_append (string, gtk_css_node_declaration_get_name (elem->decl));
+      else
+        g_string_append (string, g_type_name (gtk_css_node_declaration_get_type (elem->decl)));
+
+      if (gtk_css_node_declaration_get_id (elem->decl))
+        {
+          g_string_append_c (string, '(');
+          g_string_append (string, gtk_css_node_declaration_get_id (elem->decl));
+          g_string_append_c (string, ')');
+        }
+
+      state = gtk_css_node_declaration_get_state (elem->decl);
+      if (state)
+        {
+          GFlagsClass *fclass;
+
+          fclass = g_type_class_ref (GTK_TYPE_STATE_FLAGS);
+          for (j = 0; j < fclass->n_values; j++)
+            {
+              if (state & fclass->values[j].value)
+                {
+                  g_string_append_c (string, ':');
+                  g_string_append (string, fclass->values[j].value_nick);
+                }
+            }
+          g_type_class_unref (fclass);
+        }
+
+      if (elem->siblings)
+        g_string_append_printf (string, "[%d/%d]",
+                                elem->sibling_index + 1,
+                                gtk_widget_path_length (elem->siblings));
+
+      classes = gtk_css_node_declaration_get_classes (elem->decl, &n);
+      for (j = 0; j < n; j++)
+        {
+          g_string_append_c (string, '.');
+          g_string_append (string, g_quark_to_string (classes[j]));
+        }
+
+      regions = gtk_css_node_declaration_list_regions (elem->decl);
+      for (list = regions; list; list = list->next)
+        {
+          static const char *flag_names[] = {
+            "even",
+            "odd",
+            "first",
+            "last",
+            "only",
+            "sorted"
+          };
+          GtkRegionFlags flags;
+          GQuark region = GPOINTER_TO_UINT (regions->data);
+
+          gtk_css_node_declaration_has_region (elem->decl, region, &flags);
+          g_string_append_c (string, ' ');
+          g_string_append (string, g_quark_to_string (region));
+          for (j = 0; j < G_N_ELEMENTS(flag_names); j++)
+            {
+              if (flags & (1 << j))
+                {
+                  g_string_append_c (string, ':');
+                  g_string_append (string, flag_names[j]);
+                }
+            }
+        }
+      g_list_free (regions);
+    }
+
+  return g_string_free (string, FALSE);
+}
+#endif
