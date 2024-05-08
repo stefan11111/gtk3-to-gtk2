@@ -2430,5 +2430,47 @@ const char *
 gtk_widget_path_iter_get_object_name (const GtkWidgetPath *path,
                                       gint                 pos)
 {
-  return "";
+  return NULL;
+}
+
+void
+gtk_widget_path_iter_set_object_name (GtkWidgetPath *path,
+                                      gint           pos,
+                                      const char    *name)
+{
+}
+
+GType
+gtk_widget_path_iter_get_object_type (const GtkWidgetPath *path,
+                                      gint                 pos)
+{
+  return G_TYPE_INVALID;
+}
+
+void
+gtk_widget_path_iter_set_object_type (GtkWidgetPath *path,
+                                      gint           pos,
+                                      GType          type)
+{
+}
+
+GtkStateFlags
+gtk_widget_path_iter_get_state (const GtkWidgetPath *path,
+                                gint                 pos)
+{
+  return 0;
+}
+
+void
+gtk_widget_path_iter_set_state (GtkWidgetPath *path,
+                                gint           pos,
+                                GtkStateFlags  state)
+{
+}
+
+const gchar *
+gtk_widget_path_iter_get_name (const GtkWidgetPath *path,
+                               gint                 pos)
+{
+  return NULL;
 }
