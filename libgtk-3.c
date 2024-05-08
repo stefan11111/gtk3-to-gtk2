@@ -453,11 +453,6 @@ gtk_scrollable_default_init (GtkScrollableInterface *klass)
 G_DEFINE_INTERFACE (GtkScrollable, gtk_scrollable, G_TYPE_OBJECT)
 
 void
-gtk_widget_path_iter_set_name ()
-{
-}
-
-void
 gtk_style_context_get_style_property (GtkStyleContext *context,
                                       const gchar     *property_name,
                                       GValue          *value)
@@ -2473,4 +2468,27 @@ gtk_widget_path_iter_get_name (const GtkWidgetPath *path,
                                gint                 pos)
 {
   return NULL;
+}
+
+void
+gtk_widget_path_iter_set_name (GtkWidgetPath *path,
+                               gint           pos,
+                               const gchar   *name)
+{
+}
+
+gboolean
+gtk_widget_path_iter_has_name (const GtkWidgetPath *path,
+                               gint                 pos,
+                               const gchar         *name)
+{
+  return FALSE;
+}
+
+gboolean
+gtk_widget_path_iter_has_qname (const GtkWidgetPath *path,
+                                gint                 pos,
+                                GQuark               qname)
+{
+  return FALSE;
 }
