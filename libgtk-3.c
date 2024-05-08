@@ -957,10 +957,36 @@ gtk_style_context_set_parent (GtkStyleContext *context,
 {
 }
 
-GType gtk_header_bar_get_type (void)
+typedef struct _GtkHeaderBarClass GtkHeaderBarClass;
+typedef struct _GtkHeaderBar GtkHeaderBar;
+
+struct _GtkHeaderBar
 {
-  return 0;
+  GtkContainer container;
+};
+
+struct _GtkHeaderBarClass
+{
+  GtkContainerClass parent_class;
+
+  /* Padding for future expansion */
+  void (*_gtk_reserved1) (void);
+  void (*_gtk_reserved2) (void);
+  void (*_gtk_reserved3) (void);
+  void (*_gtk_reserved4) (void);
+};
+
+static void
+gtk_header_bar_init (GtkHeaderBar *self)
+{
 }
+
+static void
+gtk_header_bar_class_init (GtkHeaderBarClass *klass)
+{
+}
+
+G_DEFINE_TYPE (GtkHeaderBar, gtk_header_bar, GTK_TYPE_CONTAINER)
 
 void
 gtk_color_selection_get_current_rgba (GtkColorSelection *colorsel,
