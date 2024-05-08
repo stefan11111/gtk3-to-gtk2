@@ -1922,3 +1922,10 @@ gtk_render_content_path (GtkStyleContext *context,
                          double           height)
 {
 }
+
+gboolean
+gtk_cairo_should_draw_window (cairo_t   *cr,
+                              GdkWindow *window)
+{
+  return TRUE;
+}
