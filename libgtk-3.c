@@ -2201,9 +2201,11 @@ struct GtkPathElement
 GtkWidgetPath *
 gtk_widget_path_ref (GtkWidgetPath *path)
 {
+#if 0 /* runtime cost */
   if (!path) {
     return NULL;
   }
+#endif
 
   path->ref_count += 1;
 
@@ -2213,13 +2215,16 @@ gtk_widget_path_ref (GtkWidgetPath *path)
 void
 gtk_widget_path_unref (GtkWidgetPath *path)
 {
+#if 0 /* runtime cost */
   if (!path) {
     return;
   }
+#endif
 
   path->ref_count -= 1;
-  if (path->ref_count > 0)
+  if (path->ref_count > 0) {
     return;
+  }
 
   guint i;
 
@@ -2271,11 +2276,11 @@ gtk_widget_path_copy (const GtkWidgetPath *path)
 {
   GtkWidgetPath *new_path;
   guint i;
-
+#if 0 /* runtime cost */
   if (!path) {
     return NULL;
   }
-
+#endif
   new_path = gtk_widget_path_new ();
 
   g_array_set_size (new_path->elems, path->elems->len);
@@ -2302,15 +2307,20 @@ gtk_widget_path_free (GtkWidgetPath *path)
 gint
 gtk_widget_path_length (const GtkWidgetPath *path)
 {
+#if 0 /* runtime cost */
   return path ? path->elems->len : 0;
+#endif
+  return path->elems->len;
 }
 
 char *
 gtk_widget_path_to_string (const GtkWidgetPath *path)
 {
+#if 0 /* runtime cost */
   if (!path) {
     return NULL;
   }
+#endif
 
   GString *string = g_string_new ("");
 
