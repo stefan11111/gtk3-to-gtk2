@@ -2617,3 +2617,10 @@ gtk_window_set_titlebar (GtkWindow *window,
                          GtkWidget *titlebar)
 {
 }
+
+void
+gtk_widget_get_clip (GtkWidget     *widget,
+                     GtkAllocation *clip)
+{
+  gtk_widget_get_allocation (widget, clip);
+}
