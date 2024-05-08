@@ -2391,3 +2391,44 @@ gtk_widget_path_append_with_siblings (GtkWidgetPath *path,
 
   return path->elems->len - 1;
 }
+
+const GtkWidgetPath *
+gtk_widget_path_iter_get_siblings (const GtkWidgetPath *path,
+                                   gint                 pos)
+{
+#if 0 /* runtime cost */
+  if (!path || !path->elems->len) {
+    return NULL;
+  }
+#endif
+  if (pos < 0 || pos >= path->elems->len) {
+    pos = path->elems->len - 1;
+  }
+
+  GtkPathElement *elem = &g_array_index (path->elems, GtkPathElement, pos);
+  return elem->siblings;
+}
+
+guint
+gtk_widget_path_iter_get_sibling_index (const GtkWidgetPath *path,
+                                        gint                 pos)
+{
+#if 0 /* runtime cost */
+  if (!path || !path->elems->len) {
+    return  G_TYPE_INVALID;
+  }
+#endif
+  if (pos < 0 || pos >= path->elems->len) {
+    pos = path->elems->len - 1;
+  }
+
+  GtkPathElement *elem = &g_array_index (path->elems, GtkPathElement, pos);
+  return elem->sibling_index;
+}
+
+const char *
+gtk_widget_path_iter_get_object_name (const GtkWidgetPath *path,
+                                      gint                 pos)
+{
+  return "";
+}
