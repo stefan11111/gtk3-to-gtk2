@@ -2611,3 +2611,9 @@ gtk_widget_get_scale_factor (GtkWidget *widget)
 {
   return 1;
 }
+
+void
+gtk_window_set_titlebar (GtkWindow *window,
+                         GtkWidget *titlebar)
+{
+}
