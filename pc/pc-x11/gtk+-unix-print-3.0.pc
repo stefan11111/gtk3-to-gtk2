@@ -10,5 +10,5 @@ gtk_host=x86_64-linux
 Name: GTK+
 Description: GTK+ Unix print support
 Version: 3.24.39
-Requires: gtk+-3.0 cairo >= 1.14.0 cairo-gobject >= 1.14.0 gdk-pixbuf-2.0 >= 2.30.0 gio-2.0 >= 2.57.2
+Requires: gtk+-3.0 cairo >= 1.14.0 gdk-pixbuf-2.0 >= 2.30.0 gio-2.0 >= 2.57.2
 Cflags: -I${includedir}/gtk-3.0/unix-print
