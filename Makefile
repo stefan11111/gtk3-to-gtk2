@@ -4,27 +4,36 @@
 
 INCLUDES = $(shell pkg-config --cflags gtk+-2.0)
 
-GDK_WINDOWING = X11
-
-XCFLAGS = ${CPPFLAGS} ${CFLAGS} -lm -std=c99 -fPIC -Wall -Wno-pedantic ${INCLUDES} -D${GDK_WINDOWING}
+XCFLAGS = ${CPPFLAGS} ${CFLAGS} -lm -std=c99 -fPIC -Wall -Wno-pedantic ${INCLUDES}
 XLDFLAGS = ${LDFLAGS} -shared -Wl
 
-TARGET = x11
+TARGET = $(shell pkg-config gtk+-2.0 --variable=target)
 
-all: libgtk-3.so.0 libgdk-3.so.0
+ifeq ($(TARGET), x11)
+	XCFLAGS += -DX11=1
+endif
+
+MAKE_ARGS = XCFLAGS="${XCFLAGS}" TARGET="${TARGET}"
+
+# For deptracking
+ALL_OBJ = $(shell ls {gtk,gdk}/*.c | sed --expression='s/\.c/.o/g')
+
+all: gtk/libgtk-3.so.0 gdk/libgdk-3.so.0 ${ALL_OBJ}
 
 .c.o:
-	${CC} ${XCFLAGS} -c -o $@ $<
+	cd gtk && make ${MAKE_ARGS} XLDFLAGS="${XLDFLAGS},-soname,libgtk-3.so.0"
+	cd gdk && make ${MAKE_ARGS} XLDFLAGS="${XLDFLAGS},-soname,libgdk-3.so.0"
 
-libgtk-3.so.0:
-	${CC} ${XCFLAGS} libgtk-3.c -lgtk-${TARGET}-2.0 -o libgtk-3.so.0 ${XLDFLAGS},-soname,libgtk-3.so.0
+gtk/libgtk-3.so.0:
+	cd gtk && make ${MAKE_ARGS} XLDFLAGS="${XLDFLAGS},-soname,libgtk-3.so.0"
 
-libgdk-3.so.0:
-	${CC} ${XCFLAGS} libgdk-3.c -lgdk-${TARGET}-2.0 -o libgdk-3.so.0 ${XLDFLAGS},-soname,libgdk-3.so.0
+gdk/libgdk-3.so.0:
+	cd gdk && make ${MAKE_ARGS} XLDFLAGS="${XLDFLAGS},-soname,libgdk-3.so.0"
 
-install: libgtk-3.so.0 libgdk-3.so.0
+install: gtk/libgtk-3.so.0 gdk/libgdk-3.so.0
 	mkdir -p ${DESTDIR}/usr/lib64
-	cp -f *.so.0 ${DESTDIR}/usr/lib64
+	cp -f gtk/libgtk-3.so.0 ${DESTDIR}/usr/lib64/libgtk-3.so.0
+	cp -f gdk/libgdk-3.so.0 ${DESTDIR}/usr/lib64/libgdk-3.so.0
 	ln -rsf ${DESTDIR}/usr/lib64/libgtk-3.so.0 ${DESTDIR}/usr/lib64/libgtk-3.so
 	ln -rsf ${DESTDIR}/usr/lib64/libgdk-3.so.0 ${DESTDIR}/usr/lib64/libgdk-3.so
 	mkdir -p ${DESTDIR}/usr/lib64/pkgconfig
@@ -32,9 +41,11 @@ install: libgtk-3.so.0 libgdk-3.so.0
 	mkdir -p ${DESTDIR}/usr/include/gtk-3.0/gtk
 	cp -rf headers/* ${DESTDIR}/usr/include/gtk-3.0
 uninstall:
-	rm -f ${DESTDIR}/usr/lib64/libgtk-3.so.0 ${DESTDIR}/usr/lib64/libgdk-3.so.0
+	rm -f ${DESTDIR}/usr/lib64/libgtk-3.so.0
+	rm -f ${DESTDIR}/usr/lib64/libgdk-3.so.0
 
 clean:
-	rm -f *.so.0
+	cd gtk && make clean ${MAKE_ARGS}
+	cd gdk && make clean ${MAKE_ARGS}
 
 .PHONY: all clean install uninstall

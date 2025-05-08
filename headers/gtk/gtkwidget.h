@@ -29,8 +29,10 @@
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
+#include <gdkconfig.h>
 #include <gdk/gdk.h>
 #include <gtk/gtkaccelgroup.h>
+#include <gtk/gtkobject.h>
 #include <gtk/gtkborder.h>
 #include <gtk/gtktypes.h>
 
@@ -131,11 +133,68 @@ struct _GtkRequisition
  */
 struct _GtkWidget
 {
-  GInitiallyUnowned parent_instance;
+  /* The object structure needs to be the first
+   *  element in the widget structure in order for
+   *  the object mechanism to work correctly. This
+   *  allows a GtkWidget pointer to be cast to a
+   *  GtkObject pointer.
+   */
+  GtkObject object;
 
-  /*< private >*/
+  /* 16 bits of internally used private flags.
+   * this will be packed into the same 4 byte alignment frame that
+   * state and saved_state go. we therefore don't waste any new
+   * space on this.
+   */
+  guint16 GSEAL (private_flags);
 
-  GtkWidgetPrivate *priv;
+  /* The state of the widget. There are actually only
+   *  5 widget states (defined in "gtkenums.h").
+   */
+  guint8 GSEAL (state);
+
+  /* The saved state of the widget. When a widget's state
+   *  is changed to GTK_STATE_INSENSITIVE via
+   *  "gtk_widget_set_state" or "gtk_widget_set_sensitive"
+   *  the old state is kept around in this field. The state
+   *  will be restored once the widget gets sensitive again.
+   */
+  guint8 GSEAL (saved_state);
+
+  /* The widget's name. If the widget does not have a name
+   *  (the name is NULL), then its name (as returned by
+   *  "gtk_widget_get_name") is its class's name.
+   * Among other things, the widget name is used to determine
+   *  the style to use for a widget.
+   */
+  gchar *GSEAL (name);
+
+  /*< public >*/
+
+  /* The style for the widget. The style contains the
+   *  colors the widget should be drawn in for each state
+   *  along with graphics contexts used to draw with and
+   *  the font to use for text.
+   */
+  GtkStyle *GSEAL (style);
+
+  /* The widget's desired size.
+   */
+  GtkRequisition GSEAL (requisition);
+
+  /* The widget's allocated size.
+   */
+  GtkAllocation GSEAL (allocation);
+
+  /* The widget's window or its parent window if it does
+   *  not have a window. (Which will be indicated by the
+   *  GTK_NO_WINDOW flag being set).
+   */
+  GdkWindow *GSEAL (window);
+
+  /* The widget's parent.
+   */
+  GtkWidget *GSEAL (parent);
 };
 
 /**
@@ -360,32 +419,42 @@ struct _GtkWidget
  */
 struct _GtkWidgetClass
 {
-  GInitiallyUnownedClass parent_class;
+  /* The object class structure needs to be the first
+   *  element in the widget class structure in order for
+   *  the class mechanism to work correctly. This allows a
+   *  GtkWidgetClass pointer to be cast to a GtkObjectClass
+   *  pointer.
+   */
+  GtkObjectClass parent_class;
 
   /*< public >*/
-
+  
   guint activate_signal;
 
+  guint set_scroll_adjustments_signal;
+
+  /*< private >*/
+  
   /* seldomly overidden */
   void (*dispatch_child_properties_changed) (GtkWidget   *widget,
 					     guint        n_pspecs,
 					     GParamSpec **pspecs);
 
   /* basics */
-  void (* destroy)             (GtkWidget        *widget);
   void (* show)		       (GtkWidget        *widget);
   void (* show_all)            (GtkWidget        *widget);
   void (* hide)		       (GtkWidget        *widget);
+  void (* hide_all)            (GtkWidget        *widget);
   void (* map)		       (GtkWidget        *widget);
   void (* unmap)	       (GtkWidget        *widget);
   void (* realize)	       (GtkWidget        *widget);
   void (* unrealize)	       (GtkWidget        *widget);
+  void (* size_request)	       (GtkWidget        *widget,
+				GtkRequisition   *requisition);
   void (* size_allocate)       (GtkWidget        *widget,
 				GtkAllocation    *allocation);
   void (* state_changed)       (GtkWidget        *widget,
 				GtkStateType   	  previous_state);
-  void (* state_flags_changed) (GtkWidget        *widget,
-				GtkStateFlags  	  previous_state_flags);
   void (* parent_set)	       (GtkWidget        *widget,
 				GtkWidget        *previous_parent);
   void (* hierarchy_changed)   (GtkWidget        *widget,
@@ -397,43 +466,17 @@ struct _GtkWidgetClass
   void (* grab_notify)         (GtkWidget        *widget,
 				gboolean          was_grabbed);
   void (* child_notify)        (GtkWidget	 *widget,
-				GParamSpec       *child_property);
-  gboolean (* draw)	       (GtkWidget	 *widget,
-                                cairo_t          *cr);
-
-  /* size requests */
-  GtkSizeRequestMode (* get_request_mode)               (GtkWidget      *widget);
-
-  void               (* get_preferred_height)           (GtkWidget       *widget,
-                                                         gint            *minimum_height,
-                                                         gint            *natural_height);
-  void               (* get_preferred_width_for_height) (GtkWidget       *widget,
-                                                         gint             height,
-                                                         gint            *minimum_width,
-                                                         gint            *natural_width);
-  void               (* get_preferred_width)            (GtkWidget       *widget,
-                                                         gint            *minimum_width,
-                                                         gint            *natural_width);
-  void               (* get_preferred_height_for_width) (GtkWidget       *widget,
-                                                         gint             width,
-                                                         gint            *minimum_height,
-                                                         gint            *natural_height);
-
+				GParamSpec       *pspec);
+  
   /* Mnemonics */
-  gboolean (* mnemonic_activate)        (GtkWidget           *widget,
-                                         gboolean             group_cycling);
-
+  gboolean (* mnemonic_activate) (GtkWidget    *widget,
+				  gboolean      group_cycling);
+  
   /* explicit focus */
-  void     (* grab_focus)               (GtkWidget           *widget);
-  gboolean (* focus)                    (GtkWidget           *widget,
-                                         GtkDirectionType     direction);
-
-  /* keyboard navigation */
-  void     (* move_focus)               (GtkWidget           *widget,
-                                         GtkDirectionType     direction);
-  gboolean (* keynav_failed)            (GtkWidget           *widget,
-                                         GtkDirectionType     direction);
-
+  void     (* grab_focus)      (GtkWidget        *widget);
+  gboolean (* focus)           (GtkWidget        *widget,
+                                GtkDirectionType  direction);
+  
   /* events */
   gboolean (* event)			(GtkWidget	     *widget,
 					 GdkEvent	     *event);
@@ -449,6 +492,8 @@ struct _GtkWidgetClass
 					 GdkEventAny	     *event);
   gboolean (* destroy_event)		(GtkWidget	     *widget,
 					 GdkEventAny	     *event);
+  gboolean (* expose_event)		(GtkWidget	     *widget,
+					 GdkEventExpose      *event);
   gboolean (* key_press_event)		(GtkWidget	     *widget,
 					 GdkEventKey	     *event);
   gboolean (* key_release_event)	(GtkWidget	     *widget,
@@ -481,37 +526,37 @@ struct _GtkWidgetClass
 					 GdkEventProximity   *event);
   gboolean (* visibility_notify_event)	(GtkWidget	     *widget,
 					 GdkEventVisibility  *event);
+  gboolean (* client_event)		(GtkWidget	     *widget,
+					 GdkEventClient	     *event);
+  gboolean (* no_expose_event)		(GtkWidget	     *widget,
+					 GdkEventAny	     *event);
   gboolean (* window_state_event)	(GtkWidget	     *widget,
 					 GdkEventWindowState *event);
-  gboolean (* damage_event)             (GtkWidget           *widget,
-                                         GdkEventExpose      *event);
-  gboolean (* grab_broken_event)        (GtkWidget           *widget,
-                                         GdkEventGrabBroken  *event);
-
+  
   /* selection */
-  void     (* selection_get)       (GtkWidget          *widget,
+  void (* selection_get)           (GtkWidget          *widget,
 				    GtkSelectionData   *selection_data,
 				    guint               info,
 				    guint               time_);
-  void     (* selection_received)  (GtkWidget          *widget,
+  void (* selection_received)      (GtkWidget          *widget,
 				    GtkSelectionData   *selection_data,
 				    guint               time_);
 
   /* Source side drag signals */
-  void     (* drag_begin)          (GtkWidget         *widget,
+  void (* drag_begin)	           (GtkWidget	       *widget,
 				    GdkDragContext     *context);
-  void     (* drag_end)	           (GtkWidget	       *widget,
+  void (* drag_end)	           (GtkWidget	       *widget,
 				    GdkDragContext     *context);
-  void     (* drag_data_get)       (GtkWidget          *widget,
+  void (* drag_data_get)           (GtkWidget          *widget,
 				    GdkDragContext     *context,
 				    GtkSelectionData   *selection_data,
 				    guint               info,
 				    guint               time_);
-  void     (* drag_data_delete)    (GtkWidget          *widget,
+  void (* drag_data_delete)        (GtkWidget	       *widget,
 				    GdkDragContext     *context);
 
   /* Target side drag signals */
-  void     (* drag_leave)          (GtkWidget          *widget,
+  void (* drag_leave)	           (GtkWidget	       *widget,
 				    GdkDragContext     *context,
 				    guint               time_);
   gboolean (* drag_motion)         (GtkWidget	       *widget,
@@ -524,16 +569,13 @@ struct _GtkWidgetClass
 				    gint                x,
 				    gint                y,
 				    guint               time_);
-  void     (* drag_data_received)  (GtkWidget          *widget,
+  void (* drag_data_received)      (GtkWidget          *widget,
 				    GdkDragContext     *context,
 				    gint                x,
 				    gint                y,
 				    GtkSelectionData   *selection_data,
 				    guint               info,
 				    guint               time_);
-  gboolean (* drag_failed)         (GtkWidget          *widget,
-                                    GdkDragContext     *context,
-                                    GtkDragResult       result);
 
   /* Signals used only for keybindings */
   gboolean (* popup_menu)          (GtkWidget          *widget);
@@ -545,16 +587,19 @@ struct _GtkWidgetClass
    */
   gboolean (* show_help)           (GtkWidget          *widget,
                                     GtkWidgetHelpType   help_type);
-
-  /* accessibility support
+  
+  /* accessibility support 
    */
-  void*        (* get_accessible)     (GtkWidget *widget);
+  void*   (*get_accessible)     (GtkWidget *widget);
 
-  void         (* screen_changed)     (GtkWidget *widget,
-                                       GdkScreen *previous_screen);
-  gboolean     (* can_activate_accel) (GtkWidget *widget,
-                                       guint      signal_id);
+  void         (*screen_changed)     (GtkWidget *widget,
+                                      GdkScreen *previous_screen);
+  gboolean     (*can_activate_accel) (GtkWidget *widget,
+                                      guint      signal_id);
 
+  /* Sent when a grab is broken. */
+  gboolean (*grab_broken_event) (GtkWidget	     *widget,
+                                 GdkEventGrabBroken  *event);
 
   void         (* composited_changed) (GtkWidget *widget);
 
@@ -563,50 +608,16 @@ struct _GtkWidgetClass
 				       gint        y,
 				       gboolean    keyboard_tooltip,
 				       GtkTooltip *tooltip);
-
-  void         (* compute_expand)     (GtkWidget  *widget,
-                                       gboolean   *hexpand_p,
-                                       gboolean   *vexpand_p);
-
-  void         (* adjust_size_request)    (GtkWidget         *widget,
-                                           GtkOrientation     orientation,
-                                           gint              *minimum_size,
-                                           gint              *natural_size);
-  void         (* adjust_size_allocation) (GtkWidget         *widget,
-                                           GtkOrientation     orientation,
-                                           gint              *minimum_size,
-                                           gint              *natural_size,
-                                           gint              *allocated_pos,
-                                           gint              *allocated_size);
-
-  void         (* style_updated)          (GtkWidget *widget);
-
-  gboolean     (* touch_event)            (GtkWidget     *widget,
-                                           GdkEventTouch *event);
-
-  void         (* get_preferred_height_and_baseline_for_width)  (GtkWidget     *widget,
-								 gint           width,
-								 gint          *minimum_height,
-								 gint          *natural_height,
-								 gint          *minimum_baseline,
-								 gint          *natural_baseline);
-  void         (* adjust_baseline_request)(GtkWidget         *widget,
-                                           gint              *minimum_baseline,
-                                           gint              *natural_baseline);
-  void         (* adjust_baseline_allocation) (GtkWidget         *widget,
-					       gint              *baseline);
-  void         (*queue_draw_region)           (GtkWidget         *widget,
-					       const cairo_region_t *region);
-
-  /*< private >*/
-
-  GtkWidgetClassPrivate *priv;
+  /* Signals without a C default handler class slot:
+   * gboolean	(*damage_event)	(GtkWidget      *widget,
+   *                             GdkEventExpose *event);
+   */
 
   /* Padding for future expansion */
+  void (*_gtk_reserved5) (void);
   void (*_gtk_reserved6) (void);
   void (*_gtk_reserved7) (void);
 };
-
 
 GDK_AVAILABLE_IN_ALL
 GType	   gtk_widget_get_type		  (void) G_GNUC_CONST;

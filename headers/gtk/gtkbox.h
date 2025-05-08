@@ -52,8 +52,10 @@ struct _GtkBox
 {
   GtkContainer container;
 
-  /*< private >*/
-  GtkBoxPrivate *priv;
+  /*< public >*/
+  GList *GSEAL (children);
+  gint16 GSEAL (spacing);
+  guint GSEAL (homogeneous) : 1;
 };
 
 /**
@@ -63,14 +65,6 @@ struct _GtkBox
 struct _GtkBoxClass
 {
   GtkContainerClass parent_class;
-
-  /*< private >*/
-
-  /* Padding for future expansion */
-  void (*_gtk_reserved1) (void);
-  void (*_gtk_reserved2) (void);
-  void (*_gtk_reserved3) (void);
-  void (*_gtk_reserved4) (void);
 };
 
 

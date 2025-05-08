@@ -1,0 +1,5 @@
+gdkconfig.h
+gtk/gtkobject.h
+gtk/gtktypeutils.h
+gtk/gtkwidget.h
+gtk/gtkbox.h

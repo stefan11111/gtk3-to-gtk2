@@ -1099,6 +1099,22 @@ struct _GdkEventProximity
   GdkDevice *device;
 };
 
+/* a gtk2 struct */
+typedef struct _GdkEventClient GdkEventClient;
+struct _GdkEventClient
+{
+  GdkEventType type;
+  GdkWindow *window;
+  gint8 send_event;
+  GdkAtom message_type;
+  gushort data_format;
+  union {
+    char b[20];
+    short s[10];
+    long l[5];
+  } data;
+};
+
 /**
  * GdkEventSetting:
  * @type: the type of the event (%GDK_SETTING).
