@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include "gtkprivate.h"
 
 typedef struct _GtkStyleContext GtkStyleContext;
 
@@ -69,4 +70,35 @@ void
 gtk_widget_set_vexpand_set (GtkWidget      *widget,
                             gboolean        set)
 {
+}
+
+void
+gtk_widget_set_halign (GtkWidget *widget,
+                       GtkAlign   align)
+{
+}
+
+GtkAlign
+gtk_widget_get_halign (GtkWidget *widget)
+{
+  return GTK_ALIGN_FILL;
+}
+
+void
+gtk_widget_set_valign (GtkWidget *widget,
+                       GtkAlign   align)
+{
+}
+
+GtkAlign
+gtk_widget_get_valign (GtkWidget *widget)
+{
+  return GTK_ALIGN_FILL;
+}
+
+GtkAlign
+gtk_widget_get_valign_with_baseline (GtkWidget *widget)
+{
+  /* doesn't actually return GTK_ALIGN_BASELINE */
+  return GTK_ALIGN_FILL;
 }
