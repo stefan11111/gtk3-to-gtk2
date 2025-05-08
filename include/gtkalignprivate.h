@@ -1,4 +1,3 @@
-//
 typedef enum
 {
   GTK_ALIGN_FILL,

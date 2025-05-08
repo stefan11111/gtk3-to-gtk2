@@ -3,7 +3,7 @@
 
 #INCLUDES = -I. -I.. -I/usr/include/gtk-2.0 -I/usr/lib64/gtk-2.0/include -I/usr/include/pango-1.0 -I/usr/include/gdk-pixbuf-2.0 -I/usr/lib64/libffi/include -pthread -I/usr/include/fribidi -I/usr/include/harfbuzz -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/cairo -I/usr/include/libpng16 -I/usr/include/freetype2 -I/usr/include/pixman-1
 
-INCLUDES = $(shell pkg-config --cflags gtk+-2.0)
+INCLUDES = -I. -I.. $(shell pkg-config --cflags gtk+-2.0)
 
 XCFLAGS = ${CPPFLAGS} ${CFLAGS} -lm -std=c99 -fPIC -Wall -Wno-pedantic ${INCLUDES}
 XLDFLAGS = ${LDFLAGS} -shared -Wl
@@ -32,14 +32,13 @@ ALL_OBJ = $(shell ls {gtk,gdk}/*.c | sed --expression='s/\.c/.o/g')
 ALL_HEADERS = $(shell ls include/*.h | sed --expression='s/\.h/.hh/g')
 HEADER_REBUILD = 0
 ifeq ($(HEADER_REBUILD), 0)
-	HEADER_REBUILD_EXEC = make clean && make HEADER_REBUILD=1
+	HEADER_REBUILD_EXEC = (([ ! -e gtk/libgtk-3.so.0 ] && [ ! -e gdk/libgdk-3.so.0 ]) || make clean) && make HEADER_REBUILD=1
 else
-	HEADER_REBUILD_EXED = \
+	HEADER_REBUILD_EXEC = \
 
 endif
 
-all: gtk/libgtk-3.so.0 gdk/libgdk-3.so.0 ${ALL_OBJ} ${ALL_HEADERS}
-	touch ${ALL_HEADERS}
+all: ${ALL_HEADERS} gtk/libgtk-3.so.0 gdk/libgdk-3.so.0 ${ALL_OBJ}
 
 .c.o:
 	cd gtk && make ${MAKE_ARGS} XLDFLAGS="${XLDFLAGS},-soname,libgtk-3.so.0"

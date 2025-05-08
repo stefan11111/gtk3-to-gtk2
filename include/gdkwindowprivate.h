@@ -1,4 +1,3 @@
-//
 typedef struct _GdkInputWindow GdkInputWindow;
 typedef struct _GdkWindowPaint GdkWindowPaint;
 
