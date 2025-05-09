@@ -1,8 +1,0 @@
-#include <gtk/gtk.h>
-
-GtkWidget*
-gtk_box_new (GtkOrientation orientation,
-             gint           spacing)
-{
-  return orientation ? gtk_vbox_new(FALSE, spacing) : gtk_hbox_new(FALSE, spacing);
-}

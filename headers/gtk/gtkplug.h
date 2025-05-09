@@ -12,7 +12,8 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 /*
@@ -25,18 +26,14 @@
 #ifndef __GTK_PLUG_H__
 #define __GTK_PLUG_H__
 
-#if !defined (__GTKX_H_INSIDE__) && !defined (GTK_COMPILATION)
-#error "Only <gtk/gtkx.h> can be included directly."
+
+#if defined(GTK_DISABLE_SINGLE_INCLUDES) && !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
+#error "Only <gtk/gtk.h> can be included directly."
 #endif
-
-#include <gdk/gdk.h>
-
-#ifdef GDK_WINDOWING_X11
-
-#include <gdk/gdkx.h>
 
 #include <gtk/gtksocket.h>
 #include <gtk/gtkwindow.h>
+
 
 G_BEGIN_DECLS
 
@@ -49,7 +46,6 @@ G_BEGIN_DECLS
 
 
 typedef struct _GtkPlug        GtkPlug;
-typedef struct _GtkPlugPrivate GtkPlugPrivate;
 typedef struct _GtkPlugClass   GtkPlugClass;
 
 
@@ -57,7 +53,12 @@ struct _GtkPlug
 {
   GtkWindow window;
 
-  GtkPlugPrivate *priv;
+  GdkWindow *GSEAL (socket_window);
+  GtkWidget *GSEAL (modality_window);
+  GtkWindowGroup *GSEAL (modality_group);
+  GHashTable *GSEAL (grabbed_keys);
+
+  guint GSEAL (same_app) : 1;
 };
 
 struct _GtkPlugClass
@@ -73,31 +74,32 @@ struct _GtkPlugClass
   void (*_gtk_reserved4) (void);
 };
 
-GDK_AVAILABLE_IN_ALL
-GType      gtk_plug_get_type              (void) G_GNUC_CONST;
 
-GDK_AVAILABLE_IN_ALL
-void       gtk_plug_construct             (GtkPlug    *plug,
-                                           Window      socket_id);
-GDK_AVAILABLE_IN_ALL
-GtkWidget *gtk_plug_new                   (Window      socket_id);
+GType      gtk_plug_get_type  (void) G_GNUC_CONST;
 
-GDK_AVAILABLE_IN_ALL
-void       gtk_plug_construct_for_display (GtkPlug    *plug,
-                                           GdkDisplay *display,
-                                           Window      socket_id);
-GDK_AVAILABLE_IN_ALL
-GtkWidget *gtk_plug_new_for_display       (GdkDisplay *display,
-                                           Window      socket_id);
-GDK_AVAILABLE_IN_ALL
-Window     gtk_plug_get_id                (GtkPlug    *plug);
-GDK_AVAILABLE_IN_ALL
-gboolean   gtk_plug_get_embedded          (GtkPlug    *plug);
-GDK_AVAILABLE_IN_ALL
-GdkWindow *gtk_plug_get_socket_window     (GtkPlug    *plug);
+#ifndef GDK_MULTIHEAD_SAFE
+void       gtk_plug_construct (GtkPlug         *plug,
+			       GdkNativeWindow  socket_id);
+GtkWidget* gtk_plug_new       (GdkNativeWindow  socket_id);
+#endif
+
+void       gtk_plug_construct_for_display (GtkPlug         *plug,
+					   GdkDisplay      *display,
+					   GdkNativeWindow  socket_id);
+GtkWidget* gtk_plug_new_for_display       (GdkDisplay      *display,
+					   GdkNativeWindow  socket_id);
+
+GdkNativeWindow gtk_plug_get_id (GtkPlug         *plug);
+
+gboolean  gtk_plug_get_embedded (GtkPlug         *plug);
+
+GdkWindow *gtk_plug_get_socket_window (GtkPlug   *plug);
+
+void _gtk_plug_add_to_socket      (GtkPlug   *plug,
+				   GtkSocket *socket_);
+void _gtk_plug_remove_from_socket (GtkPlug   *plug,
+				   GtkSocket *socket_);
 
 G_END_DECLS
-
-#endif /* GDK_WINDOWING_X11 */
 
 #endif /* __GTK_PLUG_H__ */

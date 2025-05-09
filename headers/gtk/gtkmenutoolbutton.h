@@ -14,13 +14,15 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #ifndef __GTK_MENU_TOOL_BUTTON_H__
 #define __GTK_MENU_TOOL_BUTTON_H__
 
-#if !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
+#if defined(GTK_DISABLE_SINGLE_INCLUDES) && !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
@@ -45,23 +47,14 @@ struct _GtkMenuToolButton
   GtkToolButton parent;
 
   /*< private >*/
-  GtkMenuToolButtonPrivate *priv;
+  GtkMenuToolButtonPrivate *GSEAL (priv);
 };
 
-/**
- * GtkMenuToolButtonClass:
- * @parent_class: The parent class.
- * @show_menu: Signal emitted before the menu is shown.
- */
 struct _GtkMenuToolButtonClass
 {
   GtkToolButtonClass parent_class;
 
-  /*< public >*/
-
   void (*show_menu) (GtkMenuToolButton *button);
-
-  /*< private >*/
 
   /* Padding for future expansion */
   void (*_gtk_reserved1) (void);
@@ -70,23 +63,24 @@ struct _GtkMenuToolButtonClass
   void (*_gtk_reserved4) (void);
 };
 
-GDK_AVAILABLE_IN_ALL
 GType         gtk_menu_tool_button_get_type       (void) G_GNUC_CONST;
-GDK_AVAILABLE_IN_ALL
 GtkToolItem  *gtk_menu_tool_button_new            (GtkWidget   *icon_widget,
                                                    const gchar *label);
-GDK_DEPRECATED_IN_3_10_FOR(gtk_menu_tool_button_new)
 GtkToolItem  *gtk_menu_tool_button_new_from_stock (const gchar *stock_id);
 
-GDK_AVAILABLE_IN_ALL
 void          gtk_menu_tool_button_set_menu       (GtkMenuToolButton *button,
                                                    GtkWidget         *menu);
-GDK_AVAILABLE_IN_ALL
 GtkWidget    *gtk_menu_tool_button_get_menu       (GtkMenuToolButton *button);
-GDK_AVAILABLE_IN_ALL
+
+#ifndef GTK_DISABLE_DEPRECATED
+void          gtk_menu_tool_button_set_arrow_tooltip (GtkMenuToolButton *button,
+                                                      GtkTooltips       *tooltips,
+                                                      const gchar       *tip_text,
+                                                      const gchar       *tip_private);
+#endif /* GTK_DISABLE_DEPRECATED */
+
 void          gtk_menu_tool_button_set_arrow_tooltip_text   (GtkMenuToolButton *button,
 							     const gchar       *text);
-GDK_AVAILABLE_IN_ALL
 void          gtk_menu_tool_button_set_arrow_tooltip_markup (GtkMenuToolButton *button,
 							     const gchar       *markup);
 

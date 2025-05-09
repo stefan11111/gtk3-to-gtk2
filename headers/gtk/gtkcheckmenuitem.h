@@ -12,7 +12,9 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 /*
@@ -26,7 +28,7 @@
 #define __GTK_CHECK_MENU_ITEM_H__
 
 
-#if !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
+#if defined(GTK_DISABLE_SINGLE_INCLUDES) && !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
@@ -43,35 +45,26 @@ G_BEGIN_DECLS
 #define GTK_CHECK_MENU_ITEM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_CHECK_MENU_ITEM, GtkCheckMenuItemClass))
 
 
-typedef struct _GtkCheckMenuItem              GtkCheckMenuItem;
-typedef struct _GtkCheckMenuItemPrivate       GtkCheckMenuItemPrivate;
-typedef struct _GtkCheckMenuItemClass         GtkCheckMenuItemClass;
+typedef struct _GtkCheckMenuItem       GtkCheckMenuItem;
+typedef struct _GtkCheckMenuItemClass  GtkCheckMenuItemClass;
 
 struct _GtkCheckMenuItem
 {
   GtkMenuItem menu_item;
 
-  /*< private >*/
-  GtkCheckMenuItemPrivate *priv;
+  guint GSEAL (active) : 1;
+  guint GSEAL (always_show_toggle) : 1;
+  guint GSEAL (inconsistent) : 1;
+  guint GSEAL (draw_as_radio) : 1;
 };
 
-/**
- * GtkCheckMenuItemClass:
- * @parent_class: The parent class.
- * @toggled: Signal emitted when the state of the check box is changed.
- * @draw_indicator: Called to draw the check indicator.
- */
 struct _GtkCheckMenuItemClass
 {
   GtkMenuItemClass parent_class;
 
-  /*< public >*/
-
   void (* toggled)	  (GtkCheckMenuItem *check_menu_item);
   void (* draw_indicator) (GtkCheckMenuItem *check_menu_item,
-			   cairo_t          *cr);
-
-  /*< private >*/
+			   GdkRectangle	    *area);
 
   /* Padding for future expansion */
   void (*_gtk_reserved1) (void);
@@ -81,32 +74,28 @@ struct _GtkCheckMenuItemClass
 };
 
 
-GDK_AVAILABLE_IN_ALL
 GType	   gtk_check_menu_item_get_type	         (void) G_GNUC_CONST;
 
-GDK_AVAILABLE_IN_ALL
 GtkWidget* gtk_check_menu_item_new               (void);
-GDK_AVAILABLE_IN_ALL
 GtkWidget* gtk_check_menu_item_new_with_label    (const gchar      *label);
-GDK_AVAILABLE_IN_ALL
 GtkWidget* gtk_check_menu_item_new_with_mnemonic (const gchar      *label);
-GDK_AVAILABLE_IN_ALL
 void       gtk_check_menu_item_set_active        (GtkCheckMenuItem *check_menu_item,
 						  gboolean          is_active);
-GDK_AVAILABLE_IN_ALL
 gboolean   gtk_check_menu_item_get_active        (GtkCheckMenuItem *check_menu_item);
-GDK_AVAILABLE_IN_ALL
 void       gtk_check_menu_item_toggled           (GtkCheckMenuItem *check_menu_item);
-GDK_AVAILABLE_IN_ALL
 void       gtk_check_menu_item_set_inconsistent  (GtkCheckMenuItem *check_menu_item,
 						  gboolean          setting);
-GDK_AVAILABLE_IN_ALL
 gboolean   gtk_check_menu_item_get_inconsistent  (GtkCheckMenuItem *check_menu_item);
-GDK_AVAILABLE_IN_ALL
 void       gtk_check_menu_item_set_draw_as_radio (GtkCheckMenuItem *check_menu_item,
 						  gboolean          draw_as_radio);
-GDK_AVAILABLE_IN_ALL
 gboolean   gtk_check_menu_item_get_draw_as_radio (GtkCheckMenuItem *check_menu_item);
+
+
+#ifndef GTK_DISABLE_DEPRECATED
+void	   gtk_check_menu_item_set_show_toggle (GtkCheckMenuItem *menu_item,
+						gboolean	  always);
+#define	gtk_check_menu_item_set_state		gtk_check_menu_item_set_active
+#endif
 
 G_END_DECLS
 

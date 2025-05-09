@@ -21,7 +21,8 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  * Original Tk license:
  *
@@ -86,14 +87,23 @@ G_BEGIN_DECLS
 
 /* The drawable should be pre-initialized to your preferred background.
  * widget            - Widget to grab some style info from
- * cr                - Context to render to, matrix set so that (0, 0)
- *                     is the top left of the layout
+ * drawable          - Drawable to render to
+ * cursor_gc         - Graphics context to use for cursor
+ * x_offset/y_offset - Position of the drawable in layout coordinates
+ * x/y/width/height  - Region of the layout to render. x,y must be inside
+ *                     the drawable.
  * widgets           - list of widgets that need exposing
  */
-GDK_AVAILABLE_IN_ALL
 void gtk_text_layout_draw (GtkTextLayout        *layout,
                            GtkWidget            *widget,
-                           cairo_t              *cr,
+                           GdkDrawable          *drawable,
+			   GdkGC                *cursor_gc,
+                           gint                  x_offset,
+                           gint                  y_offset,
+                           gint                  x,
+                           gint                  y,
+                           gint                  width,
+                           gint                  height,
                            GList               **widgets);
 
 

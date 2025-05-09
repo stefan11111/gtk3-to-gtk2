@@ -15,7 +15,9 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #ifndef __GTK_SHOW_H__
@@ -25,21 +27,12 @@
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
-#include <gtk/gtkwindow.h>
-
 G_BEGIN_DECLS
 
-GDK_DEPRECATED_IN_3_22_FOR(gtk_show_uri_on_window)
 gboolean gtk_show_uri  (GdkScreen   *screen,
                         const gchar *uri,
                         guint32      timestamp,
                         GError     **error);
-
-GDK_AVAILABLE_IN_3_22
-gboolean gtk_show_uri_on_window (GtkWindow   *parent,
-                                 const char  *uri,
-                                 guint32      timestamp,
-                                 GError     **error);
 
 G_END_DECLS
 

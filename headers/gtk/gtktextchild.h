@@ -12,7 +12,9 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 /*
@@ -25,23 +27,21 @@
 #ifndef __GTK_TEXT_CHILD_H__
 #define __GTK_TEXT_CHILD_H__
 
-#if !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
+#if defined(GTK_DISABLE_SINGLE_INCLUDES) && !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
-#include <gdk/gdk.h>
+#include <gdkconfig.h>
 #include <glib-object.h>
 
 G_BEGIN_DECLS
 
-
-/**
- * GtkTextChildAnchor:
- *
- * A #GtkTextChildAnchor is a spot in the buffer where child widgets can
- * be “anchored” (inserted inline, as if they were characters). The anchor
- * can have multiple widgets anchored, to allow for multiple views.
+/* A GtkTextChildAnchor is a spot in the buffer where child widgets
+ * can be "anchored" (inserted inline, as if they were characters).
+ * The anchor can have multiple widgets anchored, to allow for multiple
+ * views.
  */
+
 typedef struct _GtkTextChildAnchor      GtkTextChildAnchor;
 typedef struct _GtkTextChildAnchorClass GtkTextChildAnchorClass;
 
@@ -56,8 +56,7 @@ struct _GtkTextChildAnchor
 {
   GObject parent_instance;
 
-  /*< private >*/
-  gpointer segment;
+  gpointer GSEAL (segment);
 };
 
 struct _GtkTextChildAnchorClass
@@ -71,16 +70,12 @@ struct _GtkTextChildAnchorClass
   void (*_gtk_reserved4) (void);
 };
 
-GDK_AVAILABLE_IN_ALL
-GType               gtk_text_child_anchor_get_type    (void) G_GNUC_CONST;
+GType gtk_text_child_anchor_get_type (void) G_GNUC_CONST;
 
-GDK_AVAILABLE_IN_ALL
-GtkTextChildAnchor* gtk_text_child_anchor_new         (void);
+GtkTextChildAnchor* gtk_text_child_anchor_new (void);
 
-GDK_AVAILABLE_IN_ALL
-GList*              gtk_text_child_anchor_get_widgets (GtkTextChildAnchor *anchor);
-GDK_AVAILABLE_IN_ALL
-gboolean            gtk_text_child_anchor_get_deleted (GtkTextChildAnchor *anchor);
+GList*   gtk_text_child_anchor_get_widgets (GtkTextChildAnchor *anchor);
+gboolean gtk_text_child_anchor_get_deleted (GtkTextChildAnchor *anchor);
 
 G_END_DECLS
 

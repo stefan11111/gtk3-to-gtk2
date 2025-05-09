@@ -12,7 +12,9 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 /*
@@ -25,7 +27,7 @@
 #ifndef __GTK_TEXT_TAG_TABLE_H__
 #define __GTK_TEXT_TAG_TABLE_H__
 
-#if !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
+#if defined(GTK_DISABLE_SINGLE_INCLUDES) && !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
@@ -33,11 +35,6 @@
 
 G_BEGIN_DECLS
 
-/**
- * GtkTextTagTableForeach:
- * @tag: the #GtkTextTag
- * @data: (closure): data passed to gtk_text_tag_table_foreach()
- */
 typedef void (* GtkTextTagTableForeach) (GtkTextTag *tag, gpointer data);
 
 #define GTK_TYPE_TEXT_TAG_TABLE            (gtk_text_tag_table_get_type ())
@@ -47,14 +44,17 @@ typedef void (* GtkTextTagTableForeach) (GtkTextTag *tag, gpointer data);
 #define GTK_IS_TEXT_TAG_TABLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_TEXT_TAG_TABLE))
 #define GTK_TEXT_TAG_TABLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_TEXT_TAG_TABLE, GtkTextTagTableClass))
 
-typedef struct _GtkTextTagTablePrivate       GtkTextTagTablePrivate;
-typedef struct _GtkTextTagTableClass         GtkTextTagTableClass;
+typedef struct _GtkTextTagTableClass GtkTextTagTableClass;
 
 struct _GtkTextTagTable
 {
   GObject parent_instance;
 
-  GtkTextTagTablePrivate *priv;
+  GHashTable *GSEAL (hash);
+  GSList *GSEAL (anonymous);
+  gint GSEAL (anon_count);
+
+  GSList *GSEAL (buffers);
 };
 
 struct _GtkTextTagTableClass
@@ -72,26 +72,28 @@ struct _GtkTextTagTableClass
   void (*_gtk_reserved4) (void);
 };
 
-GDK_AVAILABLE_IN_ALL
 GType          gtk_text_tag_table_get_type (void) G_GNUC_CONST;
 
-GDK_AVAILABLE_IN_ALL
 GtkTextTagTable *gtk_text_tag_table_new      (void);
-GDK_AVAILABLE_IN_ALL
-gboolean         gtk_text_tag_table_add      (GtkTextTagTable        *table,
+void             gtk_text_tag_table_add      (GtkTextTagTable        *table,
                                               GtkTextTag             *tag);
-GDK_AVAILABLE_IN_ALL
 void             gtk_text_tag_table_remove   (GtkTextTagTable        *table,
                                               GtkTextTag             *tag);
-GDK_AVAILABLE_IN_ALL
 GtkTextTag      *gtk_text_tag_table_lookup   (GtkTextTagTable        *table,
                                               const gchar            *name);
-GDK_AVAILABLE_IN_ALL
 void             gtk_text_tag_table_foreach  (GtkTextTagTable        *table,
                                               GtkTextTagTableForeach  func,
                                               gpointer                data);
-GDK_AVAILABLE_IN_ALL
 gint             gtk_text_tag_table_get_size (GtkTextTagTable        *table);
+
+
+/* INTERNAL private stuff - not even exported from the library on
+ * many platforms
+ */
+void _gtk_text_tag_table_add_buffer    (GtkTextTagTable *table,
+                                        gpointer         buffer);
+void _gtk_text_tag_table_remove_buffer (GtkTextTagTable *table,
+                                        gpointer         buffer);
 
 G_END_DECLS
 

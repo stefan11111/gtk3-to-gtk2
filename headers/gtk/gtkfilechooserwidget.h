@@ -13,18 +13,20 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #ifndef __GTK_FILE_CHOOSER_WIDGET_H__
 #define __GTK_FILE_CHOOSER_WIDGET_H__
 
-#if !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
+#if defined(GTK_DISABLE_SINGLE_INCLUDES) && !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
 #include <gtk/gtkfilechooser.h>
-#include <gtk/gtkbox.h>
+#include <gtk/gtkvbox.h>
 
 G_BEGIN_DECLS
 
@@ -41,32 +43,24 @@ typedef struct _GtkFileChooserWidgetClass   GtkFileChooserWidgetClass;
 
 struct _GtkFileChooserWidget
 {
-  GtkBox parent_instance;
+  GtkVBox parent_instance;
 
-  GtkFileChooserWidgetPrivate *priv;
+  GtkFileChooserWidgetPrivate *GSEAL (priv);
 };
 
-/**
- * GtkFileChooserWidgetClass:
- * @parent_class: The parent class.
- */
 struct _GtkFileChooserWidgetClass
 {
-  GtkBoxClass parent_class;
-
-  /*< private >*/
-
-  /* Padding for future expansion */
-  void (*_gtk_reserved1) (void);
-  void (*_gtk_reserved2) (void);
-  void (*_gtk_reserved3) (void);
-  void (*_gtk_reserved4) (void);
+  GtkVBoxClass parent_class;
 };
 
-GDK_AVAILABLE_IN_ALL
 GType      gtk_file_chooser_widget_get_type         (void) G_GNUC_CONST;
-GDK_AVAILABLE_IN_ALL
 GtkWidget *gtk_file_chooser_widget_new              (GtkFileChooserAction  action);
+
+
+#ifndef GTK_DISABLE_DEPRECATED
+GtkWidget *gtk_file_chooser_widget_new_with_backend (GtkFileChooserAction  action,
+						     const gchar          *backend);
+#endif /* GTK_DISABLE_DEPRECATED */
 
 G_END_DECLS
 

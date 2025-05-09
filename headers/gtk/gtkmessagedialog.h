@@ -12,7 +12,9 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 /*
@@ -25,7 +27,7 @@
 #ifndef __GTK_MESSAGE_DIALOG_H__
 #define __GTK_MESSAGE_DIALOG_H__
 
-#if !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
+#if defined(GTK_DISABLE_SINGLE_INCLUDES) && !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
@@ -42,16 +44,17 @@ G_BEGIN_DECLS
 #define GTK_IS_MESSAGE_DIALOG_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_MESSAGE_DIALOG))
 #define GTK_MESSAGE_DIALOG_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_MESSAGE_DIALOG, GtkMessageDialogClass))
 
-typedef struct _GtkMessageDialog              GtkMessageDialog;
-typedef struct _GtkMessageDialogPrivate       GtkMessageDialogPrivate;
-typedef struct _GtkMessageDialogClass         GtkMessageDialogClass;
+typedef struct _GtkMessageDialog        GtkMessageDialog;
+typedef struct _GtkMessageDialogClass   GtkMessageDialogClass;
 
 struct _GtkMessageDialog
 {
-  GtkDialog parent_instance;
-
   /*< private >*/
-  GtkMessageDialogPrivate *priv;
+  
+  GtkDialog parent_instance;
+  
+  GtkWidget *GSEAL (image);
+  GtkWidget *GSEAL (label);
 };
 
 struct _GtkMessageDialogClass
@@ -77,10 +80,11 @@ struct _GtkMessageDialogClass
  * Prebuilt sets of buttons for the dialog. If
  * none of these choices are appropriate, simply use %GTK_BUTTONS_NONE
  * then call gtk_dialog_add_buttons().
- *
- * > Please note that %GTK_BUTTONS_OK, %GTK_BUTTONS_YES_NO
- * > and %GTK_BUTTONS_OK_CANCEL are discouraged by the
- * > [GNOME Human Interface Guidelines](http://library.gnome.org/devel/hig-book/stable/).
+ * <note>
+ *  Please note that %GTK_BUTTONS_OK, %GTK_BUTTONS_YES_NO
+ *  and %GTK_BUTTONS_OK_CANCEL are discouraged by the
+ *  <ulink url="http://library.gnome.org/devel/hig-book/stable/">GNOME HIG</ulink>.
+ * </note>
  */
 typedef enum
 {
@@ -92,10 +96,8 @@ typedef enum
   GTK_BUTTONS_OK_CANCEL
 } GtkButtonsType;
 
-GDK_AVAILABLE_IN_ALL
 GType      gtk_message_dialog_get_type (void) G_GNUC_CONST;
 
-GDK_AVAILABLE_IN_ALL
 GtkWidget* gtk_message_dialog_new      (GtkWindow      *parent,
                                         GtkDialogFlags  flags,
                                         GtkMessageType  type,
@@ -103,7 +105,6 @@ GtkWidget* gtk_message_dialog_new      (GtkWindow      *parent,
                                         const gchar    *message_format,
                                         ...) G_GNUC_PRINTF (5, 6);
 
-GDK_AVAILABLE_IN_ALL
 GtkWidget* gtk_message_dialog_new_with_markup   (GtkWindow      *parent,
                                                  GtkDialogFlags  flags,
                                                  GtkMessageType  type,
@@ -111,28 +112,22 @@ GtkWidget* gtk_message_dialog_new_with_markup   (GtkWindow      *parent,
                                                  const gchar    *message_format,
                                                  ...) G_GNUC_PRINTF (5, 6);
 
-GDK_DEPRECATED_IN_3_12
 void       gtk_message_dialog_set_image    (GtkMessageDialog *dialog,
 					    GtkWidget        *image);
 
-GDK_DEPRECATED_IN_3_12
 GtkWidget * gtk_message_dialog_get_image   (GtkMessageDialog *dialog);
 
-GDK_AVAILABLE_IN_ALL
 void       gtk_message_dialog_set_markup  (GtkMessageDialog *message_dialog,
                                            const gchar      *str);
 
-GDK_AVAILABLE_IN_ALL
 void       gtk_message_dialog_format_secondary_text (GtkMessageDialog *message_dialog,
                                                      const gchar      *message_format,
                                                      ...) G_GNUC_PRINTF (2, 3);
 
-GDK_AVAILABLE_IN_ALL
 void       gtk_message_dialog_format_secondary_markup (GtkMessageDialog *message_dialog,
                                                        const gchar      *message_format,
                                                        ...) G_GNUC_PRINTF (2, 3);
 
-GDK_AVAILABLE_IN_ALL
 GtkWidget *gtk_message_dialog_get_message_area (GtkMessageDialog *message_dialog);
 
 G_END_DECLS

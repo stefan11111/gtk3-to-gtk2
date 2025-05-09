@@ -15,7 +15,9 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA  02111-1307, USA.
  */
 
 #ifndef __GTK_CELL_RENDERER_SPINNER_H__
@@ -43,8 +45,6 @@ typedef struct _GtkCellRendererSpinnerPrivate GtkCellRendererSpinnerPrivate;
 struct _GtkCellRendererSpinner
 {
   GtkCellRenderer                parent;
-
-  /*< private >*/
   GtkCellRendererSpinnerPrivate *priv;
 };
 
@@ -59,9 +59,7 @@ struct _GtkCellRendererSpinnerClass
   void (*_gtk_reserved4) (void);
 };
 
-GDK_AVAILABLE_IN_ALL
 GType            gtk_cell_renderer_spinner_get_type (void) G_GNUC_CONST;
-GDK_AVAILABLE_IN_ALL
 GtkCellRenderer *gtk_cell_renderer_spinner_new      (void);
 
 G_END_DECLS
