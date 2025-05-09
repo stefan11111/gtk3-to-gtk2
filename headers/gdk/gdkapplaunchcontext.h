@@ -29,6 +29,7 @@
 
 #include <gio/gio.h>
 #include <gdk/gdkscreen.h>
+#include <gdk/gdkversionmacros.h>
 
 G_BEGIN_DECLS
 

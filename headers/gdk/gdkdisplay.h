@@ -30,6 +30,7 @@
 
 #include <gdk/gdktypes.h>
 #include <gdk/gdkevents.h>
+#include <gdk/gdkversionmacros.h>
 
 G_BEGIN_DECLS
 

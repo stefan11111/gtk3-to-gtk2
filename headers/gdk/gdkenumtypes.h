@@ -9,6 +9,7 @@
 #define __GDK_ENUM_TYPES_H__
 
 #include <glib-object.h>
+#include <gdk/gdkversionmacros.h>
 
 G_BEGIN_DECLS
 

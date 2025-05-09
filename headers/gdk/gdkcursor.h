@@ -33,6 +33,7 @@
 
 #include <gdk/gdktypes.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
+#include <gdk/gdkversionmacros.h>
 
 G_BEGIN_DECLS
 

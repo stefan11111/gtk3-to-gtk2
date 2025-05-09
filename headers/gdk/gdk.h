@@ -57,6 +57,7 @@
 #include <gdk/gdktypes.h>
 #include <gdk/gdkvisual.h>
 #include <gdk/gdkwindow.h>
+#include <gdk/gdkversionmacros.h>
 
 #undef __GDK_H_INSIDE__
 
