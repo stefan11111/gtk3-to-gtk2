@@ -5,7 +5,7 @@
 
 INCLUDES = -I. -I.. $(shell pkg-config --cflags gtk+-2.0)
 
-XCFLAGS = ${CPPFLAGS} ${CFLAGS} -lm -std=c99 -fPIC -Wall -Wno-pedantic ${INCLUDES}
+XCFLAGS = ${CPPFLAGS} ${CFLAGS} -DGTK_COMPILATION=1 -DGDK_COMPILATION=1 -lm -std=c99 -fPIC -Wall -Wno-pedantic ${INCLUDES}
 XLDFLAGS = ${LDFLAGS} -shared -Wl
 
 LIBDIR = /lib64
@@ -32,6 +32,7 @@ MAKE_ARGS = XCFLAGS="${XCFLAGS}" TARGET="${TARGET}"
 # For deptracking
 ALL_OBJ = $(shell ls {gtk,gdk}/*.c | sed --expression='s/\.c/.o/g')
 ALL_HEADERS = $(shell ls include/*.h | sed --expression='s/\.h/.hh/g')
+
 HEADER_REBUILD = 0
 ifeq ($(HEADER_REBUILD), 0)
 	HEADER_REBUILD_EXEC = (([ ! -e gtk/libgtk-3.so.0 ] && [ ! -e gdk/libgdk-3.so.0 ]) || make clean) && make HEADER_REBUILD=1

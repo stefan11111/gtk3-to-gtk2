@@ -103,7 +103,6 @@ struct _GtkBoxChild
 
 GType       gtk_box_get_type            (void) G_GNUC_CONST;
 
-GDK_AVAILABLE_IN_ALL
 GtkWidget*  gtk_box_new                 (GtkOrientation  orientation,
                                          gint            spacing);
 

@@ -35,7 +35,10 @@
 #include <gtk/gtkaccelgroup.h>
 #include <gtk/gtkobject.h>
 #include <gtk/gtkadjustment.h>
+
 #include <gtk/gtkstyle.h>
+#include <gtk/gtkstylecontext.h>
+
 #include <gtk/gtksettings.h>
 
 G_BEGIN_DECLS
@@ -1017,6 +1020,10 @@ void                  gtk_widget_set_allocation         (GtkWidget     *widget,
 void                  gtk_widget_get_requisition        (GtkWidget     *widget,
                                                          GtkRequisition *requisition);
 
+
+int                   gtk_widget_get_allocated_height   (GtkWidget *widget);
+
+
 gboolean   gtk_widget_child_focus         (GtkWidget           *widget,
                                            GtkDirectionType     direction);
 gboolean   gtk_widget_keynav_failed       (GtkWidget           *widget,
@@ -1061,6 +1068,46 @@ GtkClipboard *gtk_widget_get_clipboard   (GtkWidget *widget,
 					  GdkAtom    selection);
 GdkPixmap *   gtk_widget_get_snapshot    (GtkWidget    *widget,
                                           GdkRectangle *clip_rect);
+
+/* Expand flags and related support */
+gboolean gtk_widget_get_hexpand          (GtkWidget      *widget);
+
+void     gtk_widget_set_hexpand          (GtkWidget      *widget,
+                                          gboolean        expand);
+
+gboolean gtk_widget_get_hexpand_set      (GtkWidget      *widget);
+
+void     gtk_widget_set_hexpand_set      (GtkWidget      *widget,
+                                          gboolean        set);
+
+gboolean gtk_widget_get_vexpand          (GtkWidget      *widget);
+
+void     gtk_widget_set_vexpand          (GtkWidget      *widget,
+                                          gboolean        expand);
+
+gboolean gtk_widget_get_vexpand_set      (GtkWidget      *widget);
+
+void     gtk_widget_set_vexpand_set      (GtkWidget      *widget,
+                                          gboolean        set);
+
+void     gtk_widget_queue_compute_expand (GtkWidget      *widget);
+
+gboolean gtk_widget_compute_expand       (GtkWidget      *widget,
+                                          GtkOrientation  orientation);
+
+/* Margin and alignment */
+GtkAlign gtk_widget_get_halign        (GtkWidget *widget);
+
+void     gtk_widget_set_halign        (GtkWidget *widget,
+                                       GtkAlign   align);
+
+GtkAlign gtk_widget_get_valign        (GtkWidget *widget);
+
+GtkAlign gtk_widget_get_valign_with_baseline (GtkWidget *widget);
+
+void     gtk_widget_set_valign        (GtkWidget *widget,
+                                       GtkAlign   align);
+
 
 #ifndef GTK_DISABLE_DEPRECATED
 
@@ -1159,6 +1206,11 @@ void        gtk_widget_modify_cursor      (GtkWidget            *widget,
 					   const GdkColor       *secondary);
 void        gtk_widget_modify_font        (GtkWidget            *widget,
 					   PangoFontDescription *font_desc);
+
+GtkStyleContext * gtk_widget_get_style_context (GtkWidget *widget);
+
+void         gtk_widget_override_font             (GtkWidget                  *widget,
+                                                   const PangoFontDescription *font_desc);
 
 #ifndef GTK_DISABLE_DEPRECATED
 

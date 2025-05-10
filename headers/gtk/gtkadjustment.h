@@ -76,7 +76,7 @@ struct _GtkAdjustmentClass
 
 
 GType	   gtk_adjustment_get_type		(void) G_GNUC_CONST;
-GtkObject* gtk_adjustment_new			(gdouble	  value,
+GtkAdjustment* gtk_adjustment_new		(gdouble	  value,
 						 gdouble	  lower,
 						 gdouble	  upper,
 						 gdouble	  step_increment,

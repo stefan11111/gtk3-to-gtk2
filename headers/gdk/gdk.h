@@ -31,7 +31,10 @@
 
 #include <gdk/gdkapplaunchcontext.h>
 #include <gdk/gdkcairo.h>
+
 #include <gdk/gdkcolor.h>
+#include <gdk/gdkrgba.h>
+
 #include <gdk/gdkcursor.h>
 #include <gdk/gdkdisplay.h>
 #include <gdk/gdkdisplaymanager.h>

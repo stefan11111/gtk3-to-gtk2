@@ -1,10 +1,10 @@
-#include <gtk/gtk.h>
+#include "gtk.h"
 
 GtkWidget*
 gtk_box_new (GtkOrientation orientation,
              gint           spacing)
 {
-#if 0
+#if 1
   return orientation ? gtk_vbox_new(FALSE, spacing) : gtk_hbox_new(FALSE, spacing);
 #else
   return _gtk_box_new(orientation, FALSE, spacing);

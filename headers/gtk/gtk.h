@@ -91,7 +91,11 @@
 #include <gtk/gtkfilechooserwidget.h>
 #include <gtk/gtkfilefilter.h>
 #include <gtk/gtkfontbutton.h>
+
 #include <gtk/gtkfontsel.h>
+#include <gtk/gtkfontchooser.h>
+#include <gtk/gtkfontchooserdialog.h>
+
 #include <gtk/gtkframe.h>
 #include <gtk/gtkgc.h>
 #include <gtk/gtkhandlebox.h>
@@ -154,6 +158,7 @@
 #include <gtk/gtkrecentchooserwidget.h>
 #include <gtk/gtkrecentfilter.h>
 #include <gtk/gtkrecentmanager.h>
+#include <gtk/gtkrender.h>
 #include <gtk/gtkruler.h>
 #include <gtk/gtkscale.h>
 #include <gtk/gtkscalebutton.h>
@@ -172,8 +177,13 @@
 #include <gtk/gtkstatusbar.h>
 #include <gtk/gtkstatusicon.h>
 #include <gtk/gtkstock.h>
+
 #include <gtk/gtkstyle.h>
+#include <gtk/gtkstylecontext.h>
+
 #include <gtk/gtktable.h>
+#include <gtk/gtkgrid.h>
+
 #include <gtk/gtktearoffmenuitem.h>
 #include <gtk/gtktextbuffer.h>
 #include <gtk/gtktextbufferrichtext.h>
