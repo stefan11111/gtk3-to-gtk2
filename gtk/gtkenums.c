@@ -1,4 +1,4 @@
-#include "gtk.h"
+#include <gtk/gtk.h>
 
 GtkStateType
 GtkStateType_from_GtkStateFlags (GtkStateFlags flags)

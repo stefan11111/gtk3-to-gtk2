@@ -1,4 +1,4 @@
-#include "gdk.h"
+#include <gdk/gdk.h>
 
 GdkRGBA GdkRGBA_from_GdkColor (const GdkColor * const restrict color)
 {

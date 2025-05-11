@@ -1,5 +1,6 @@
-#include "gdk.h"
-#include "gtk.h"
+#include <gdk/gdk.h>
+#include <gtk/gtk.h>
+#include "util.h"
 
 typedef GtkStyle GtkStyleContext;
 typedef GtkStyleClass GtkStyleContextClass;

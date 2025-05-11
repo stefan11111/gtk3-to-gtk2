@@ -1,4 +1,4 @@
-#include "gdk.h"
+#include <gdk/gdk.h>
 
 /**
  * gdk_cairo_set_source_rgba:

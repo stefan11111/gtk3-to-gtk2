@@ -9,16 +9,6 @@
 
 G_BEGIN_DECLS
 
-typedef struct _GdkRGBA GdkRGBA;
-
-struct _GdkRGBA
-{
-  gdouble red;
-  gdouble green;
-  gdouble blue;
-  gdouble alpha;
-};
-
 GdkRGBA GdkRGBA_from_GdkColor (const GdkColor * const restrict color);
 GdkColor GdkColor_from_GdkRGBA (const GdkRGBA * const restrict rgba);
 

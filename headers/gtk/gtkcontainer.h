@@ -33,6 +33,7 @@
 #endif
 
 #include <gtk/gtkwidget.h>
+#include <gtk/gtkwidgetpath.h>
 #include <gtk/gtkadjustment.h>
 
 
@@ -95,8 +96,12 @@ struct _GtkContainerClass
 				 GValue          *value,
 				 GParamSpec      *pspec);
 
+  /* api compat */
+  GtkWidgetPath * (*get_path_for_child) (GtkContainer *container,
+                                         GtkWidget    *child);
+
   /* Padding for future expansion */
-  void (*_gtk_reserved1) (void);
+  /* void (*_gtk_reserved1) (void); */ /* used by the above */
   void (*_gtk_reserved2) (void);
   void (*_gtk_reserved3) (void);
   void (*_gtk_reserved4) (void);
@@ -169,6 +174,11 @@ GType   gtk_container_child_type	   (GtkContainer     *container);
 void         gtk_container_class_install_child_property (GtkContainerClass *cclass,
 							 guint		    property_id,
 							 GParamSpec	   *pspec);
+
+void         gtk_container_class_install_child_properties (GtkContainerClass *cclass,
+                                                           guint              n_pspecs,
+                                                           GParamSpec       **pspecs);
+
 GParamSpec*  gtk_container_class_find_child_property	(GObjectClass	   *cclass,
 							 const gchar	   *property_name);
 GParamSpec** gtk_container_class_list_child_properties	(GObjectClass	   *cclass,
@@ -202,6 +212,14 @@ void	     gtk_container_child_get_property		(GtkContainer	   *container,
 							 const gchar	   *property_name,
 							 GValue		   *value);
 
+void gtk_container_child_notify (GtkContainer *container,
+                                 GtkWidget    *child,
+                                 const gchar  *child_property);
+
+void gtk_container_child_notify_by_pspec (GtkContainer *container,
+                                          GtkWidget    *child,
+                                          GParamSpec   *pspec);
+
 #define GTK_CONTAINER_WARN_INVALID_CHILD_PROPERTY_ID(object, property_id, pspec) \
     G_OBJECT_WARN_INVALID_PSPEC ((object), "child property id", (property_id), (pspec))
 
@@ -224,6 +242,13 @@ GList *_gtk_container_focus_sort             (GtkContainer     *container,
 #ifndef GTK_DISABLE_DEPRECATED
 #define	gtk_container_border_width		gtk_container_set_border_width
 #endif /* GTK_DISABLE_DEPRECATED */
+
+void    gtk_container_class_handle_border_width (GtkContainerClass *klass);
+
+GtkWidgetPath * gtk_container_get_path_for_child (GtkContainer      *container,
+                                                  GtkWidget         *child);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(GtkContainer, g_object_unref)
 
 G_END_DECLS
 

@@ -111,6 +111,19 @@ GdkPixbuf *gdk_pixbuf_get_from_image    (GdkPixbuf   *dest,
                                          int          width,
                                          int          height);
 
+GdkPixbuf *gdk_pixbuf_get_from_window  (GdkWindow       *window,
+                                        gint             src_x,
+                                        gint             src_y,
+                                        gint             width,
+                                        gint             height);
+
+
+GdkPixbuf *gdk_pixbuf_get_from_surface (cairo_surface_t *surface,
+                                        gint             src_x,
+                                        gint             src_y,
+                                        gint             width,
+                                        gint             height);
+
 G_END_DECLS
 
 #endif /* __GDK_PIXBUF_H__ */

@@ -1,4 +1,4 @@
-#include "gtk.h"
+#include <gtk/gtk.h>
 
 GtkWidget*
 gtk_box_new (GtkOrientation orientation,

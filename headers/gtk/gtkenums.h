@@ -35,6 +35,44 @@
 
 G_BEGIN_DECLS
 
+/**
+ * GtkAlign:
+ * @GTK_ALIGN_FILL: stretch to fill all space if possible, center if
+ *     no meaningful way to stretch
+ * @GTK_ALIGN_START: snap to left or top side, leaving space on right
+ *     or bottom
+ * @GTK_ALIGN_END: snap to right or bottom side, leaving space on left
+ *     or top
+ * @GTK_ALIGN_CENTER: center natural width of widget inside the
+ *     allocation
+ * @GTK_ALIGN_BASELINE: align the widget according to the baseline. Since 3.10.
+ *
+ * Controls how a widget deals with extra space in a single (x or y)
+ * dimension.
+ *
+ * Alignment only matters if the widget receives a “too large” allocation,
+ * for example if you packed the widget with the #GtkWidget:expand
+ * flag inside a #GtkBox, then the widget might get extra space.  If
+ * you have for example a 16x16 icon inside a 32x32 space, the icon
+ * could be scaled and stretched, it could be centered, or it could be
+ * positioned to one side of the space.
+ *
+ * Note that in horizontal context @GTK_ALIGN_START and @GTK_ALIGN_END
+ * are interpreted relative to text direction.
+ *
+ * GTK_ALIGN_BASELINE support for it is optional for containers and widgets, and
+ * it is only supported for vertical alignment.  When its not supported by
+ * a child or a container it is treated as @GTK_ALIGN_FILL.
+ */
+typedef enum
+{
+  GTK_ALIGN_FILL,
+  GTK_ALIGN_START,
+  GTK_ALIGN_END,
+  GTK_ALIGN_CENTER,
+  GTK_ALIGN_BASELINE
+} GtkAlign;
+
 /* Anchor types */
 typedef enum
 {
@@ -82,6 +120,28 @@ typedef enum
   GTK_SHRINK = 1 << 1,
   GTK_FILL   = 1 << 2
 } GtkAttachOptions;
+
+/**
+ * GtkBaselinePosition:
+ * @GTK_BASELINE_POSITION_TOP: Align the baseline at the top
+ * @GTK_BASELINE_POSITION_CENTER: Center the baseline
+ * @GTK_BASELINE_POSITION_BOTTOM: Align the baseline at the bottom
+ *
+ * Whenever a container has some form of natural row it may align
+ * children in that row along a common typographical baseline. If
+ * the amount of verical space in the row is taller than the total
+ * requested height of the baseline-aligned children then it can use a
+ * #GtkBaselinePosition to select where to put the baseline inside the
+ * extra availible space.
+ *
+ * Since: 3.10
+ */
+typedef enum
+{
+  GTK_BASELINE_POSITION_TOP,
+  GTK_BASELINE_POSITION_CENTER,
+  GTK_BASELINE_POSITION_BOTTOM
+} GtkBaselinePosition;
 
 /* Button box styles */
 typedef enum
@@ -422,6 +482,26 @@ typedef enum
   GTK_STATE_FLAG_CHECKED      = 1 << 11,
   GTK_STATE_FLAG_DROP_ACTIVE  = 1 << 12
 } GtkStateFlags;
+
+/**
+ * GtkRegionFlags:
+ * @GTK_REGION_EVEN: Region has an even number within a set.
+ * @GTK_REGION_ODD: Region has an odd number within a set.
+ * @GTK_REGION_FIRST: Region is the first one within a set.
+ * @GTK_REGION_LAST: Region is the last one within a set.
+ * @GTK_REGION_ONLY: Region is the only one within a set.
+ * @GTK_REGION_SORTED: Region is part of a sorted area.
+ *
+ * Describes a region within a widget.
+ */
+typedef enum {
+  GTK_REGION_EVEN    = 1 << 0,
+  GTK_REGION_ODD     = 1 << 1,
+  GTK_REGION_FIRST   = 1 << 2,
+  GTK_REGION_LAST    = 1 << 3,
+  GTK_REGION_ONLY    = 1 << 4,
+  GTK_REGION_SORTED  = 1 << 5
+} GtkRegionFlags;
 
 #if !defined(GTK_DISABLE_DEPRECATED) || defined (GTK_MENU_INTERNALS)
 /* Directions for submenus */

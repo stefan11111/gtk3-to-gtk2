@@ -1,5 +1,6 @@
-#include "gtk.h"
-#include "gdk.h"
+#include <gtk/gtk.h>
+#include <gdk/gdk.h>
+#include "util.h"
 
 static void
 prepare_context_for_layout (cairo_t *cr,

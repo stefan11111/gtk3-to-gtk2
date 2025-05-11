@@ -1,4 +1,4 @@
-#include "gtk.h"
+#include <gtk/gtk.h>
 
 int
 gtk_widget_get_allocated_height (GtkWidget *widget)
