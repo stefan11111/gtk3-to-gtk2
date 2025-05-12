@@ -36,6 +36,7 @@
 #include <glib.h>
 #include <pango/pango.h>
 #include <glib-object.h>
+#include <cairo/cairo.h>
 
 #define GDKVAR extern
 
@@ -58,7 +59,6 @@ G_BEGIN_DECLS
 /* Type definitions for the basic structures.
  */
 typedef struct _GdkPoint	      GdkPoint;
-typedef struct _GdkRectangle	      GdkRectangle;
 typedef struct _GdkSegment	      GdkSegment;
 typedef struct _GdkSpan	              GdkSpan;
 
@@ -190,13 +190,29 @@ struct _GdkPoint
   gint y;
 };
 
+/**
+ * GdkRectangle:
+ *
+ * Defines the position and size of a rectangle. It is identical to
+ * #cairo_rectangle_int_t.
+ */
+#ifdef __GI_SCANNER__
+/* The introspection scanner is currently unable to lookup how
+ * cairo_rectangle_int_t is actually defined. This prevents
+ * introspection data for the GdkRectangle type to include fields
+ * descriptions. To workaround this issue, we define it with the same
+ * content as cairo_rectangle_int_t, but only under the introspection
+ * define.
+ */
 struct _GdkRectangle
 {
-  gint x;
-  gint y;
-  gint width;
-  gint height;
+    int x, y;
+    int width, height;
 };
+typedef struct _GdkRectangle          GdkRectangle;
+#else
+typedef cairo_rectangle_int_t         GdkRectangle;
+#endif
 
 struct _GdkSegment
 {

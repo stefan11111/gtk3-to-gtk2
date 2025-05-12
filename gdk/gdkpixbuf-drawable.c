@@ -193,6 +193,25 @@ gdk_window_ref_cairo_surface (GdkDrawable *drawable)
   return surface;
 }
 
+/**
+ * gdk_pixbuf_get_from_surface:
+ * @surface: surface to copy from
+ * @src_x: Source X coordinate within @surface
+ * @src_y: Source Y coordinate within @surface
+ * @width: Width in pixels of region to get
+ * @height: Height in pixels of region to get
+ *
+ * Transfers image data from a #cairo_surface_t and converts it to an RGB(A)
+ * representation inside a #GdkPixbuf. This allows you to efficiently read
+ * individual pixels from cairo surfaces. For #GdkWindows, use
+ * gdk_pixbuf_get_from_window() instead.
+ *
+ * This function will create an RGB pixbuf with 8 bits per channel.
+ * The pixbuf will contain an alpha channel if the @surface contains one.
+ *
+ * Returns: (nullable) (transfer full): A newly-created pixbuf with a
+ *     reference count of 1, or %NULL on error
+ */
 GdkPixbuf *
 gdk_pixbuf_get_from_surface  (cairo_surface_t *surface,
                               gint             src_x,
@@ -251,6 +270,49 @@ gdk_pixbuf_get_from_surface  (cairo_surface_t *surface,
   return dest;
 }
 
+/**
+ * gdk_pixbuf_get_from_window:
+ * @window: Source window
+ * @src_x: Source X coordinate within @window
+ * @src_y: Source Y coordinate within @window
+ * @width: Width in pixels of region to get
+ * @height: Height in pixels of region to get
+ *
+ * Transfers image data from a #GdkWindow and converts it to an RGB(A)
+ * representation inside a #GdkPixbuf.
+ *
+ * In other words, copies image data from a server-side drawable to a
+ * client-side RGB(A) buffer. This allows you to efficiently read
+ * individual pixels on the client side.
+ *
+ * This function will create an RGB pixbuf with 8 bits per channel with
+ * the size specified by the @width and @height arguments scaled by the
+ * scale factor of @window. The pixbuf will contain an alpha channel if
+ * the @window contains one.
+ *
+ * If the window is off the screen, then there is no image data in the
+ * obscured/offscreen regions to be placed in the pixbuf. The contents of
+ * portions of the pixbuf corresponding to the offscreen region are
+ * undefined.
+ *
+ * If the window you’re obtaining data from is partially obscured by
+ * other windows, then the contents of the pixbuf areas corresponding
+ * to the obscured regions are undefined.
+ *
+ * If the window is not mapped (typically because it’s iconified/minimized
+ * or not on the current workspace), then %NULL will be returned.
+ *
+ * If memory can’t be allocated for the return value, %NULL will be returned
+ * instead.
+ *
+ * In short, there are several ways this function can fail, and if it fails
+ * it returns %NULL; so check the return value.
+ *
+ * You should rarely, if ever, need to call this function.
+ *
+ * Returns: (nullable) (transfer full): A newly-created pixbuf with a
+ *   reference count of 1, or %NULL on error
+ */
 GdkPixbuf *
 gdk_pixbuf_get_from_window (GdkWindow *src,
                             gint       src_x,

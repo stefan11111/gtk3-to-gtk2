@@ -1,4 +1,44 @@
 #include <gdk/gdk.h>
+#include <math.h>
+
+/**
+ * gdk_cairo_get_clip_rectangle:
+ * @cr: a cairo context
+ * @rect: (out) (allow-none): return location for the clip, or %NULL
+ *
+ * This is a convenience function around cairo_clip_extents().
+ * It rounds the clip extents to integer coordinates and returns
+ * a boolean indicating if a clip area exists.
+ *
+ * Returns: %TRUE if a clip rectangle exists, %FALSE if all of @cr is
+ *     clipped and all drawing can be skipped
+ */
+gboolean
+gdk_cairo_get_clip_rectangle (cairo_t      *cr,
+                              GdkRectangle *rect)
+{
+  double x1, y1, x2, y2;
+  gboolean clip_exists;
+
+  cairo_clip_extents (cr, &x1, &y1, &x2, &y2);
+
+  clip_exists = x1 < x2 && y1 < y2;
+
+  if (rect)
+    {
+      x1 = floor (x1);
+      y1 = floor (y1);
+      x2 = ceil (x2);
+      y2 = ceil (y2);
+
+      rect->x      = CLAMP (x1,      G_MININT, G_MAXINT);
+      rect->y      = CLAMP (y1,      G_MININT, G_MAXINT);
+      rect->width  = CLAMP (x2 - x1, G_MININT, G_MAXINT);
+      rect->height = CLAMP (y2 - y1, G_MININT, G_MAXINT);
+    }
+
+  return clip_exists;
+}
 
 /**
  * gdk_cairo_set_source_rgba:
@@ -21,4 +61,292 @@ gdk_cairo_set_source_rgba (cairo_t       *cr,
                          rgba->green,
                          rgba->blue,
                          rgba->alpha);
+}
+
+/*
+ * _gdk_cairo_surface_extents:
+ * @surface: surface to measure
+ * @extents: (out): rectangle to put the extents
+ *
+ * Measures the area covered by @surface and puts it into @extents.
+ *
+ * Note that this function respects device offsets set on @surface.
+ * If @surface is unbounded, the resulting extents will be empty and
+ * not be a maximal sized rectangle. This is to avoid careless coding.
+ * You must explicitly check the return value of you want to handle
+ * that case.
+ *
+ * Returns: %TRUE if the extents fit in a #GdkRectangle, %FALSE if not
+ */
+gboolean
+_gdk_cairo_surface_extents (cairo_surface_t *surface,
+                            GdkRectangle    *extents)
+{
+  double x1, x2, y1, y2;
+  cairo_t *cr;
+
+  g_return_val_if_fail (surface != NULL, FALSE);
+  g_return_val_if_fail (extents != NULL, FALSE);
+
+  cr = cairo_create (surface);
+  cairo_clip_extents (cr, &x1, &y1, &x2, &y2);
+  cairo_destroy (cr);
+
+  x1 = floor (x1);
+  y1 = floor (y1);
+  x2 = ceil (x2);
+  y2 = ceil (y2);
+  x2 -= x1;
+  y2 -= y1;
+
+  if (x1 < G_MININT || x1 > G_MAXINT ||
+      y1 < G_MININT || y1 > G_MAXINT ||
+      x2 > G_MAXINT || y2 > G_MAXINT)
+    {
+      extents->x = extents->y = extents->width = extents->height = 0;
+      return FALSE;
+    }
+
+  extents->x = x1;
+  extents->y = y1;
+  extents->width = x2;
+  extents->height = y2;
+
+  return TRUE;
+}
+
+/* This function originally from Jean-Edouard Lachand-Robert, and
+ * available at www.codeguru.com. Simplified for our needs, not sure
+ * how much of the original code left any longer. Now handles just
+ * one-bit deep bitmaps (in Window parlance, ie those that GDK calls
+ * bitmaps (and not pixmaps), with zero pixels being transparent.
+ */
+/**
+ * gdk_cairo_region_create_from_surface:
+ * @surface: a cairo surface
+ *
+ * Creates region that describes covers the area where the given
+ * @surface is more than 50% opaque.
+ *
+ * This function takes into account device offsets that might be
+ * set with cairo_surface_set_device_offset().
+ *
+ * Returns: A #cairo_region_t; must be freed with cairo_region_destroy()
+ */
+cairo_region_t *
+gdk_cairo_region_create_from_surface (cairo_surface_t *surface)
+{
+  cairo_region_t *region;
+  GdkRectangle extents, rect;
+  cairo_surface_t *image;
+  cairo_t *cr;
+  gint x, y, stride;
+  guchar *data;
+
+  _gdk_cairo_surface_extents (surface, &extents);
+
+  if (cairo_surface_get_content (surface) == CAIRO_CONTENT_COLOR)
+    return cairo_region_create_rectangle (&extents);
+
+  if (cairo_surface_get_type (surface) != CAIRO_SURFACE_TYPE_IMAGE ||
+      cairo_image_surface_get_format (surface) != CAIRO_FORMAT_A1)
+    {
+      /* coerce to an A1 image */
+      image = cairo_image_surface_create (CAIRO_FORMAT_A1,
+                                          extents.width, extents.height);
+      cr = cairo_create (image);
+      cairo_set_source_surface (cr, surface, -extents.x, -extents.y);
+      cairo_paint (cr);
+      cairo_destroy (cr);
+    }
+  else
+    image = cairo_surface_reference (surface);
+
+  /* Flush the surface to make sure that the rendering is up to date. */
+  cairo_surface_flush (image);
+
+  data = cairo_image_surface_get_data (image);
+  stride = cairo_image_surface_get_stride (image);
+
+  region = cairo_region_create ();
+
+  for (y = 0; y < extents.height; y++)
+    {
+      for (x = 0; x < extents.width; x++)
+        {
+          /* Search for a continuous range of "non transparent pixels"*/
+          gint x0 = x;
+          while (x < extents.width)
+            {
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+              if (((data[x / 8] >> (x%8)) & 1) == 0)
+#else
+              if (((data[x / 8] >> (7-(x%8))) & 1) == 0)
+#endif
+                /* This pixel is "transparent"*/
+                break;
+              x++;
+            }
+
+          if (x > x0)
+            {
+              /* Add the pixels (x0, y) to (x, y+1) as a new rectangle
+               * in the region
+               */
+              rect.x = x0;
+              rect.width = x - x0;
+              rect.y = y;
+              rect.height = 1;
+
+              cairo_region_union_rectangle (region, &rect);
+            }
+        }
+      data += stride;
+    }
+
+  cairo_surface_destroy (image);
+
+  cairo_region_translate (region, extents.x, extents.y);
+
+  return region;
+}
+
+static void
+gdk_cairo_surface_paint_pixbuf (cairo_surface_t *surface,
+                                const GdkPixbuf *pixbuf)
+{
+  gint width, height;
+  guchar *gdk_pixels, *cairo_pixels;
+  int gdk_rowstride, cairo_stride;
+  int n_channels;
+  int j;
+
+  if (cairo_surface_status (surface) != CAIRO_STATUS_SUCCESS)
+    return;
+
+  /* This function can't just copy any pixbuf to any surface, be
+   * sure to read the invariants here before calling it */
+
+  g_assert (cairo_surface_get_type (surface) == CAIRO_SURFACE_TYPE_IMAGE);
+  g_assert (cairo_image_surface_get_format (surface) == CAIRO_FORMAT_RGB24 ||
+            cairo_image_surface_get_format (surface) == CAIRO_FORMAT_ARGB32);
+  g_assert (cairo_image_surface_get_width (surface) == gdk_pixbuf_get_width (pixbuf));
+  g_assert (cairo_image_surface_get_height (surface) == gdk_pixbuf_get_height (pixbuf));
+
+  cairo_surface_flush (surface);
+
+  width = gdk_pixbuf_get_width (pixbuf);
+  height = gdk_pixbuf_get_height (pixbuf);
+  gdk_pixels = gdk_pixbuf_get_pixels (pixbuf);
+  gdk_rowstride = gdk_pixbuf_get_rowstride (pixbuf);
+  n_channels = gdk_pixbuf_get_n_channels (pixbuf);
+  cairo_stride = cairo_image_surface_get_stride (surface);
+  cairo_pixels = cairo_image_surface_get_data (surface);
+
+  for (j = height; j; j--)
+    {
+      guchar *p = gdk_pixels;
+      guchar *q = cairo_pixels;
+
+      if (n_channels == 3)
+        {
+          guchar *end = p + 3 * width;
+
+          while (p < end)
+            {
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+              q[0] = p[2];
+              q[1] = p[1];
+              q[2] = p[0];
+#else
+              q[1] = p[0];
+              q[2] = p[1];
+              q[3] = p[2];
+#endif
+              p += 3;
+              q += 4;
+            }
+        }
+      else
+        {
+          guchar *end = p + 4 * width;
+          guint t1,t2,t3;
+
+#define MULT(d,c,a,t) G_STMT_START { t = c * a + 0x80; d = ((t >> 8) + t) >> 8; } G_STMT_END
+
+          while (p < end)
+            {
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+              MULT(q[0], p[2], p[3], t1);
+              MULT(q[1], p[1], p[3], t2);
+              MULT(q[2], p[0], p[3], t3);
+              q[3] = p[3];
+#else
+              q[0] = p[3];
+              MULT(q[1], p[0], p[3], t1);
+              MULT(q[2], p[1], p[3], t2);
+              MULT(q[3], p[2], p[3], t3);
+#endif
+
+              p += 4;
+              q += 4;
+            }
+
+#undef MULT
+        }
+
+      gdk_pixels += gdk_rowstride;
+      cairo_pixels += cairo_stride;
+    }
+
+  cairo_surface_mark_dirty (surface);
+}
+
+/**
+ * gdk_cairo_surface_create_from_pixbuf:
+ * @pixbuf: a #GdkPixbuf
+ * @scale: the scale of the new surface, or 0 to use same as @window
+ * @for_window: (allow-none): The window this will be drawn to, or %NULL
+ *
+ * Creates an image surface with the same contents as
+ * the pixbuf.
+ *
+ * Returns: a new cairo surface, must be freed with cairo_surface_destroy()
+ *
+ * Since: 3.10
+ */
+cairo_surface_t *
+gdk_cairo_surface_create_from_pixbuf (const GdkPixbuf *pixbuf,
+                                      int              scale,
+                                      GdkWindow       *for_window)
+{
+  cairo_format_t format;
+  cairo_surface_t *surface;
+
+  GdkDisplay *display;
+  GdkScreen *screen;
+
+  g_return_val_if_fail (GDK_IS_PIXBUF (pixbuf), NULL);
+  g_return_val_if_fail (scale >= 0, NULL);
+  g_return_val_if_fail (for_window == NULL || GDK_IS_WINDOW (for_window), NULL);
+
+  if (gdk_pixbuf_get_n_channels (pixbuf) == 3)
+    format = CAIRO_FORMAT_RGB24;
+  else
+    format = CAIRO_FORMAT_ARGB32;
+
+  if (for_window == NULL)
+    {
+      display = gdk_display_get_default ();
+      screen = gdk_display_get_default_screen (display);
+      for_window = gdk_screen_get_root_window (screen);
+    }
+  surface = gdk_window_create_similar_surface (for_window,
+                                               format,
+                                               gdk_pixbuf_get_width (pixbuf),
+                                               gdk_pixbuf_get_height (pixbuf));
+
+  gdk_cairo_surface_paint_pixbuf (surface, pixbuf);
+
+  return surface;
 }

@@ -33,6 +33,7 @@
 #endif
 
 #include <gtk/gtkcontainer.h>
+#include <gtk/gtkenums.h>
 
 
 G_BEGIN_DECLS
@@ -135,6 +136,13 @@ void        gtk_box_set_spacing         (GtkBox         *box,
                                          gint            spacing);
 gint        gtk_box_get_spacing         (GtkBox         *box);
 
+
+void        gtk_box_set_baseline_position (GtkBox             *box,
+                                           GtkBaselinePosition position);
+
+GtkBaselinePosition gtk_box_get_baseline_position (GtkBox         *box);
+
+
 void        gtk_box_reorder_child       (GtkBox         *box,
                                          GtkWidget      *child,
                                          gint            position);
@@ -151,6 +159,13 @@ void        gtk_box_set_child_packing   (GtkBox         *box,
                                          gboolean        fill,
                                          guint           padding,
                                          GtkPackType     pack_type);
+
+
+void        gtk_box_set_center_widget   (GtkBox         *box,
+                                         GtkWidget      *widget);
+
+GtkWidget  *gtk_box_get_center_widget   (GtkBox         *box);
+
 
 /* internal API */
 void        _gtk_box_set_old_defaults   (GtkBox         *box);

@@ -33,6 +33,9 @@ G_BEGIN_DECLS
 
 cairo_t *gdk_cairo_create            (GdkDrawable        *drawable);
 
+gboolean   gdk_cairo_get_clip_rectangle (cairo_t            *cr,
+                                         GdkRectangle       *rect);
+
 void     gdk_cairo_set_source_rgba   (cairo_t              *cr,
                                       const GdkRGBA        *rgba);
 
@@ -58,6 +61,27 @@ void     gdk_cairo_rectangle         (cairo_t            *cr,
                                       const GdkRectangle *rectangle);
 void     gdk_cairo_region            (cairo_t            *cr,
                                       const GdkRegion    *region);
+
+
+cairo_region_t *
+           gdk_cairo_region_create_from_surface
+                                        (cairo_surface_t      *surface);
+
+cairo_surface_t * gdk_cairo_surface_create_from_pixbuf      (const GdkPixbuf *pixbuf,
+                                                             int scale,
+                                                             GdkWindow *for_window);
+
+void       gdk_cairo_draw_from_gl (cairo_t              *cr,
+                                   GdkWindow            *window,
+                                   int                   source,
+                                   int                   source_type,
+                                   int                   buffer_scale,
+                                   int                   x,
+                                   int                   y,
+                                   int                   width,
+                                   int                   height);
+
+GdkDrawingContext *     gdk_cairo_get_drawing_context   (cairo_t *cr);
 
 G_END_DECLS
 

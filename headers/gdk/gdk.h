@@ -29,6 +29,11 @@
 
 #define __GDK_H_INSIDE__
 
+/* GL support */
+/* Not Implemented */
+/* TODO: Maybe Implement later */
+#include <gdk/gdkdrawingcontext.h>
+
 #include <gdk/gdkapplaunchcontext.h>
 #include <gdk/gdkcairo.h>
 
