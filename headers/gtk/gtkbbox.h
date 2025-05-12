@@ -76,6 +76,16 @@ void              gtk_button_box_set_child_secondary (GtkButtonBox      *widget,
 						      GtkWidget         *child,
 						      gboolean           is_secondary);
 
+GtkWidget       * gtk_button_box_new                 (GtkOrientation     orientation);
+
+gboolean          gtk_button_box_get_child_non_homogeneous (GtkButtonBox *widget,
+                                                            GtkWidget    *child);
+
+void              gtk_button_box_set_child_non_homogeneous (GtkButtonBox *widget,
+                                                            GtkWidget    *child,
+                                                            gboolean      non_homogeneous);
+
+
 #ifndef GTK_DISABLE_DEPRECATED
 #define gtk_button_box_set_spacing(b,s) gtk_box_set_spacing (GTK_BOX (b), s)
 #define gtk_button_box_get_spacing(b)   gtk_box_get_spacing (GTK_BOX (b))

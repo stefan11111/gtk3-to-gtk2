@@ -2,7 +2,16 @@
 
 OBJ = $(shell ls *.c | sed --expression='s/\.c/.o/g')
 
-all: libgtk-3.so.0
+INCS = $(shell find ../include -name *.h)
+HEADERS = $(shell find ../headers -name *.h)
+ALL_HEADERS = ${INCS} ${HEADERS}
+
+all:
+	cd .. && make
+
+gtk: libgtk-3.so.0
+
+${OBJ}: ${ALL_HEADERS}
 
 .c.o:
 	${CC} ${XCFLAGS} -c -o $@ $<
@@ -14,4 +23,4 @@ clean:
 	rm -f ${OBJ}
 	rm -f libgtk-3.so.0
 
-.PHONY: all clean
+.PHONY: all clean gtk

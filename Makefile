@@ -36,37 +36,24 @@ XCFLAGS += -O0 -ggdb3
 MAKE_ARGS = XCFLAGS="${XCFLAGS}" TARGET="${TARGET}"
 
 # For deptracking
-ALL_OBJ = $(shell ls {gtk,gdk}/*.c | sed --expression='s/\.c/.o/g')
-ALL_INCS = $(shell ls include/*.h | sed --expression='s/\.h/.hh/g')
-ALL_HEADERS = $(shell find headers -name *.h | sed --expression='s/\.h/.hh/g')
+INCS = $(shell find include -name *.h)
+HEADERS = $(shell find headers -name *.h)
+ALL_HEADERS = ${INCS} ${HEADERS}
 
-ALL_DEPS = ${ALL_INCS} ${ALL_HEADERS} gtk/libgtk-3.so.0 gdk/libgdk-3.so.0 ${ALL_OBJ}
+ALL_LIBS = gtk/libgtk-3.so.0 gdk/libgdk-3.so.0
 
-HEADER_REBUILD = 0
-ifeq ($(HEADER_REBUILD), 0)
-	HEADER_REBUILD_EXEC = (([ ! -e gtk/libgtk-3.so.0 ] && [ ! -e gdk/libgdk-3.so.0 ]) || make clean) && make HEADER_REBUILD=1
-else
-	HEADER_REBUILD_EXEC = \
+all: ${ALL_LIBS}
 
-endif
+${ALL_LIBS} : ${ALL_HEADERS}
 
-all: ${ALL_DEPS}
+gtk/libgtk-3.so.0: ${ALL_HEADERS}
+	cd gtk && make gtk ${MAKE_ARGS} XLDFLAGS="${XLDFLAGS},-soname,libgtk-3.so.0"
 
-.c.o:
-	cd gtk && make ${MAKE_ARGS} XLDFLAGS="${XLDFLAGS},-soname,libgtk-3.so.0"
-	cd gdk && make ${MAKE_ARGS} XLDFLAGS="${XLDFLAGS},-soname,libgdk-3.so.0"
+gdk/libgdk-3.so.0: ${ALL_HEADERS}
+	cd gdk && make gdk ${MAKE_ARGS} XLDFLAGS="${XLDFLAGS},-soname,libgdk-3.so.0"
 
-.h.hh:
-	@touch ${ALL_INCS} ${ALL_HEADERS}
-	${HEADER_REBUILD_EXEC}
 
-gtk/libgtk-3.so.0:
-	cd gtk && make ${MAKE_ARGS} XLDFLAGS="${XLDFLAGS},-soname,libgtk-3.so.0"
-
-gdk/libgdk-3.so.0:
-	cd gdk && make ${MAKE_ARGS} XLDFLAGS="${XLDFLAGS},-soname,libgdk-3.so.0"
-
-install: ${ALL_DEPS}
+install: ${ALL_LIBS}
 	mkdir -p ${DESTDIR}${XLIBDIR}
 	cp -f gtk/libgtk-3.so.0 ${DESTDIR}${XLIBDIR}/libgtk-3.so.0
 	cp -f gdk/libgdk-3.so.0 ${DESTDIR}${XLIBDIR}/libgdk-3.so.0
@@ -80,12 +67,8 @@ install: ${ALL_DEPS}
 	sed 's/@libdir@/\${LIBDIR}/g' pc/pc-${TARGET}/gtk+-3.0.pc > ${DESTDIR}${XPKGCONFDIR}/gtk+-3.0.pc
 	sed 's/@libdir@/\${LIBDIR}/g' pc/pc-${TARGET}/gtk+-unix-print-3.0.pc > ${DESTDIR}${XPKGCONFDIR}/gtk+-unix-print-3.0.pc
 
-#	Don't install .hh files for deptracking
-	@rm -f ${ALL_HEADERS}
 	mkdir -p ${DESTDIR}/usr/include/gtk-3.0/gtk
 	cp -rf headers/* ${DESTDIR}/usr/include/gtk-3.0
-#	Put .hh files back
-	@touch ${ALL_HEADERS}
 
 uninstall:
 	rm -f ${DESTDIR}${XLIBDIR}/libgtk-3.so.0
@@ -94,7 +77,5 @@ uninstall:
 clean:
 	cd gtk && make clean ${MAKE_ARGS}
 	cd gdk && make clean ${MAKE_ARGS}
-	@rm -f ${ALL_HEADERS}
-	@rm -f ${ALL_INCS}
 
-.PHONY: all clean install uninstall libgtk libgdk
+.PHONY: all clean install uninstall
