@@ -358,6 +358,12 @@ gtk_grid_insert_row (GtkGrid *grid,
 
   g_return_if_fail (GTK_IS_GRID (grid));
 
+  if (position > grid->nrows) {
+    g_warning ("gtk3-to-gtk2 warning: gtk_grid_insert_row called with position: %d, but grid has only %d rows",
+               position, grid->nrows);
+    position = grid->nrows;
+  }
+
   gtk_table_resize (grid, grid->nrows + 1, grid->ncols);
 
   for (list = grid->children; list; list = list->next)
@@ -405,6 +411,12 @@ gtk_grid_remove_row (GtkGrid *grid,
   gint top, bottom;
 
   g_return_if_fail (GTK_IS_GRID (grid));
+
+  if (position > grid->nrows - 1) {
+    g_warning ("gtk3-to-gtk2 warning: gtk_grid_remove_row called with position: %d, but grid has only %d rows",
+               position, grid->nrows);
+    position = grid->nrows - 1;
+  }
 
   list = grid->children;
   while (list)
@@ -455,6 +467,12 @@ gtk_grid_insert_column (GtkGrid *grid,
 
   g_return_if_fail (GTK_IS_GRID (grid));
 
+  if (position > grid->ncols) {
+    g_warning ("gtk3-to-gtk2 warning: gtk_grid_insert_column called with position: %d, but grid has only %d columns",
+               position, grid->ncols);
+    position = grid->ncols;
+  }
+
   gtk_table_resize (grid, grid->nrows, grid->ncols + 1);
 
   for (list = grid->children; list; list = list->next)
@@ -502,6 +520,12 @@ gtk_grid_remove_column (GtkGrid *grid,
   gint left, right;
 
   g_return_if_fail (GTK_IS_GRID (grid));
+
+  if (position > grid->ncols - 1) {
+    g_warning ("gtk3-to-gtk2 warning: gtk_grid_remove_column called with position: %d, but grid has only %d columns",
+               position, grid->ncols);
+    position = grid->ncols - 1;
+  }
 
   list = grid->children;
   while (list)

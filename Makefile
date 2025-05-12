@@ -40,16 +40,19 @@ INCS = $(shell find include -name *.h)
 HEADERS = $(shell find headers -name *.h)
 ALL_HEADERS = ${INCS} ${HEADERS}
 
+GTK_SRC = $(shell find gtk -name *.c)
+GDK_SRC = $(shell find gdk -name *.c)
+
 ALL_LIBS = gtk/libgtk-3.so.0 gdk/libgdk-3.so.0
 
 all: ${ALL_LIBS}
 
 ${ALL_LIBS} : ${ALL_HEADERS}
 
-gtk/libgtk-3.so.0: ${ALL_HEADERS}
+gtk/libgtk-3.so.0: ${ALL_HEADERS} ${GTK_SRC}
 	cd gtk && make gtk ${MAKE_ARGS} XLDFLAGS="${XLDFLAGS},-soname,libgtk-3.so.0"
 
-gdk/libgdk-3.so.0: ${ALL_HEADERS}
+gdk/libgdk-3.so.0: ${ALL_HEADERS} ${GDK_SRC}
 	cd gdk && make gdk ${MAKE_ARGS} XLDFLAGS="${XLDFLAGS},-soname,libgdk-3.so.0"
 
 

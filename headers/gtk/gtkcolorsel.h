@@ -34,6 +34,7 @@
 
 #include <gtk/gtkdialog.h>
 #include <gtk/gtkvbox.h>
+#include <gdk/gdktypes.h>
 
 G_BEGIN_DECLS
 
@@ -48,6 +49,8 @@ G_BEGIN_DECLS
 typedef struct _GtkColorSelection       GtkColorSelection;
 typedef struct _GtkColorSelectionClass  GtkColorSelectionClass;
 
+typedef GtkColorSelection      GtkColorChooser;
+typedef GtkColorSelectionClass GtkColorChooserInterface;
 
 typedef void (* GtkColorSelectionChangePaletteFunc) (const GdkColor    *colors,
                                                      gint               n_colors);
@@ -69,10 +72,23 @@ struct _GtkColorSelectionClass
 
   void (*color_changed)	(GtkColorSelection *color_selection);
 
+  /* gtk3 api */
+  void (* get_rgba)    (GtkColorChooser *chooser,
+                        GdkRGBA         *color);
+  void (* set_rgba)    (GtkColorChooser *chooser,
+                        const GdkRGBA   *color);
+
+  void (* add_palette) (GtkColorChooser *chooser,
+                        GtkOrientation   orientation,
+                        gint             colors_per_line,
+                        gint             n_colors,
+                        GdkRGBA         *colors);
+
+
   /* Padding for future expansion */
-  void (*_gtk_reserved1) (void);
-  void (*_gtk_reserved2) (void);
-  void (*_gtk_reserved3) (void);
+  /* void (*_gtk_reserved1) (void); */ /* used by the above */
+  /* void (*_gtk_reserved2) (void); */
+  /* void (*_gtk_reserved3) (void); */
   void (*_gtk_reserved4) (void);
 };
 

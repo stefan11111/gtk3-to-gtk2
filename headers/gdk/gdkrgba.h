@@ -19,6 +19,25 @@ struct _GdkRGBA
 
 #define GDK_TYPE_RGBA (gdk_rgba_get_type ())
 
+GType     gdk_rgba_get_type  (void) G_GNUC_CONST;
+
+
+GdkRGBA * gdk_rgba_copy      (const GdkRGBA *rgba);
+
+void      gdk_rgba_free      (GdkRGBA       *rgba);
+
+
+guint     gdk_rgba_hash      (gconstpointer  p);
+
+gboolean  gdk_rgba_equal     (gconstpointer  p1,
+                              gconstpointer  p2);
+
+
+gboolean  gdk_rgba_parse     (GdkRGBA       *rgba,
+                              const gchar   *spec);
+
+gchar *   gdk_rgba_to_string (const GdkRGBA *rgba);
+
 G_END_DECLS
 
 #endif /* __GDK_RGBA_H__ */

@@ -90,12 +90,12 @@ typedef guint32 GdkNativeWindow;
  
 /* Forward declarations of commonly used types
  */
-typedef struct _GdkColor	      GdkColor;
-typedef struct _GdkRGBA              GdkRGBA;
+typedef struct _GdkColor              GdkColor;
+typedef struct _GdkRGBA               GdkRGBA;
 
-typedef struct _GdkColormap	      GdkColormap;
-typedef struct _GdkCursor	      GdkCursor;
-typedef struct _GdkFont		      GdkFont;
+typedef struct _GdkColormap           GdkColormap;
+typedef struct _GdkCursor             GdkCursor;
+typedef struct _GdkFont               GdkFont;
 typedef struct _GdkGC                 GdkGC;
 typedef struct _GdkImage              GdkImage;
 typedef struct _GdkRegion             GdkRegion;
@@ -105,8 +105,8 @@ typedef struct _GdkDrawable           GdkDrawable;
 typedef struct _GdkDrawable           GdkBitmap;
 typedef struct _GdkDrawable           GdkPixmap;
 typedef struct _GdkDrawable           GdkWindow;
-typedef struct _GdkDisplay	      GdkDisplay;
-typedef struct _GdkScreen	      GdkScreen;
+typedef struct _GdkDisplay            GdkDisplay;
+typedef struct _GdkScreen             GdkScreen;
 
 typedef enum
 {
