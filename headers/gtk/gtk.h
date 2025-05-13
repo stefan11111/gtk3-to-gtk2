@@ -185,6 +185,7 @@
 #include <gtk/gtkstylecontext.h>
 #include <gtk/gtkstyleprovider.h>
 #include <gtk/gtksymboliccolor.h>
+#include <gtk/gtkgradient.h>
 
 #include <gtk/gtktable.h>
 #include <gtk/gtkgrid.h>

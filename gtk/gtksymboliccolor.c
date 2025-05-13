@@ -1,8 +1,5 @@
 #include <gtk/gtk.h>
-
-typedef struct _GtkCssValue GtkCssValue;
-typedef struct _GtkCssParser GtkCssParser;
-
+#include "gtksymboliccolorprivate.h"
 
 /* XXX Not Implemented XXX*/
 
