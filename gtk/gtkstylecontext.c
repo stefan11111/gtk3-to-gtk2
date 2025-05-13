@@ -1,4 +1,3 @@
-#include <gdk/gdk.h>
 #include <gtk/gtk.h>
 #include "util.h"
 
@@ -13,6 +12,12 @@ gtk_style_context_get_type (void)
 #else
   return GTK_TYPE_STYLE;
 #endif
+}
+
+GtkStyleContext *
+gtk_style_context_new (void)
+{
+  return gtk_style_new ();
 }
 
 const PangoFontDescription *

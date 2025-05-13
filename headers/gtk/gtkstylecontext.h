@@ -37,6 +37,8 @@ typedef GtkStyleClass GtkStyleContextClass;
 
 GType gtk_style_context_get_type (void) G_GNUC_CONST;
 
+GtkStyleContext * gtk_style_context_new (void);
+
 void gtk_style_context_get_color            (GtkStyleContext *context,
                                              GtkStateFlags    state,
                                              GdkRGBA         *color);

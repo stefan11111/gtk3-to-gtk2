@@ -18,6 +18,8 @@
 #include <gtk/gtk.h>
 #include <string.h>
 
+/* Almost everything is not implemented here */
+
 /**
  * SECTION:gtkwidgetpath
  * @Short_description: Widget path abstraction

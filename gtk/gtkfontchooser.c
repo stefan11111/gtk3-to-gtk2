@@ -140,7 +140,7 @@ char *
 gtk_font_chooser_get_font_features (GtkFontChooser *fontchooser)
 {
 #if 0
-  /* TODO: fix later */
+  /* TODO: remove this when pango 1.56 hits ::gentoo */
   /* pango_font_description_get_features was added in pango 1.56 */
   /* which is too new, and isn't packaged in gentoo */
   /* stub for now */
