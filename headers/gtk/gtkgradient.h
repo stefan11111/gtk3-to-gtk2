@@ -28,7 +28,7 @@
 #if 0
 #include <gtk/deprecated/gtkstyleproperties.h>
 #else
-/* TODO: remove after fixing the other header */
+/* TODO: remove when gtkstyleprovider is implemented */
 typedef struct _GtkStyleProperties GtkStyleProperties;
 #endif
 

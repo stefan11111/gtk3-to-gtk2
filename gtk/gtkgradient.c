@@ -18,7 +18,7 @@
 #include <gtk/gtk.h>
 #include "gtkgradientprivate.h"
 
-/* TODO: remove when gtkstyleprovider is implemented */
+/* TODO: remove when gtkstyleproperties is implemented */
 #define GTK_IS_STYLE_PROPERTIES(x) 1
 
 /* XXX This depends on gtksymboliccolor, which is implemented an stubs XXX */
