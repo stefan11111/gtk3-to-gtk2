@@ -2,8 +2,8 @@
 
 OBJ = $(shell ls *.c | sed --expression='s/\.c/.o/g')
 
-INCS = $(shell find ../include -name *.h)
-HEADERS = $(shell find ../headers -name *.h)
+INCS = $(shell find ../include -name '*.h')
+HEADERS = $(shell find ../headers -name '*.h')
 ALL_HEADERS = ${INCS} ${HEADERS}
 
 all:

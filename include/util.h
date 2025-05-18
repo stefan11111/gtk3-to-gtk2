@@ -2,6 +2,7 @@
 #include "gtkenums.h"
 #include "gdkwindowinternal.h"
 #include "gdkdrawingcontextprivate.h"
+#include "gtkpango.h"
 
 #if 0 /* These include forward declatarions that are not implemented */
 #include "gtksymboliccolorprivate.h"

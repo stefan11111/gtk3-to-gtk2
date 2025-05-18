@@ -36,12 +36,12 @@ XCFLAGS += -O0 -ggdb3
 MAKE_ARGS = XCFLAGS="${XCFLAGS}" TARGET="${TARGET}"
 
 # For deptracking
-INCS = $(shell find include -name *.h)
-HEADERS = $(shell find headers -name *.h)
+INCS = $(shell find include -name '*.h')
+HEADERS = $(shell find headers -name '*.h')
 ALL_HEADERS = ${INCS} ${HEADERS}
 
-GTK_SRC = $(shell find gtk -name *.c)
-GDK_SRC = $(shell find gdk -name *.c)
+GTK_SRC = $(shell find gtk -name '*.c')
+GDK_SRC = $(shell find gdk -name '*.c')
 
 ALL_LIBS = gtk/libgtk-3.so.0 gdk/libgdk-3.so.0
 
