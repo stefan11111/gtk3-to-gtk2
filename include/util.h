@@ -12,4 +12,5 @@
 
 #include "gtkstyleproviderprivate.h"
 #include "gtkstylecascadeprivate.h"
+#include "gtksettingsprivate.h"
 #endif
