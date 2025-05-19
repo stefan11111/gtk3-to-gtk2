@@ -9,5 +9,7 @@
 #if 0 /* These include forward declatarions that are not implemented */
 #include "gtksymboliccolorprivate.h"
 #include "gtkgradientprivate.h"
+
 #include "gtkstyleproviderprivate.h"
+#include "gtkstylecascadeprivate.h"
 #endif
