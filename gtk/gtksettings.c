@@ -809,3 +809,45 @@ gtk_settings_get_font_size_is_absolute (GtkSettings *settings)
   desc = pango_font_description_from_string (font_name);
   return desc ? pango_font_description_get_size_is_absolute (desc) : FALSE;
 }
+
+/* This function is public */
+/* everything else in here is private */
+
+/**
+ * gtk_settings_reset_property:
+ * @settings: a #GtkSettings object
+ * @name: the name of the setting to reset
+ *
+ * Undoes the effect of calling g_object_set() to install an
+ * application-specific value for a setting. After this call,
+ * the setting will again follow the session-wide value for
+ * this setting.
+ *
+ * Since: 3.20
+ */
+void
+gtk_settings_reset_property (GtkSettings *settings,
+                             const gchar *name)
+{
+  GParamSpec *pspec;
+  GtkRcPropertyParser parser;
+  GValue *value;
+  GValue tmp_value = G_VALUE_INIT;
+
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (settings), name);
+
+  g_return_if_fail (pspec != NULL);
+
+  parser = (GtkRcPropertyParser) g_param_spec_get_qdata (pspec, quark_property_parser);
+  value = g_param_spec_get_qdata (pspec, g_quark_from_string (name));
+
+  g_value_init (&tmp_value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+  if (value && _gtk_settings_parse_convert (parser, value, pspec, &tmp_value))
+    g_value_copy (&tmp_value, &settings->property_values[pspec->param_id - 1].value);
+  else
+    g_param_value_set_default (pspec, &settings->property_values[pspec->param_id - 1].value);
+
+  settings->property_values[pspec->param_id - 1].source = GTK_SETTINGS_SOURCE_DEFAULT;
+  g_object_notify_by_pspec (G_OBJECT (settings), pspec);
+}
+

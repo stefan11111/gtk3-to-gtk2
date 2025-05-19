@@ -134,6 +134,9 @@ gboolean	    _gtk_settings_parse_convert       (GtkRcPropertyParser parser,
 						       GValue	          *dest_value);
 
 
+void     gtk_settings_reset_property       (GtkSettings            *settings,
+                                            const gchar            *name);
+
 G_END_DECLS
 
 #endif /* __GTK_SETTINGS_H__ */
