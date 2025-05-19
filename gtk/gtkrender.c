@@ -3107,3 +3107,30 @@ gtk_render_icon_surface (GtkStyleContext *context,
 
   gtk_default_draw_icon_surface (context, cr, surface, x, y);
 }
+
+/*
+ * gtk_render_content_path:
+ * @context: style context to get style information from
+ * @cr: cairo context to add path to
+ * @x: x coordinate of CSS box
+ * @y: y coordinate of CSS box
+ * @width: width of CSS box
+ * @height: height of CSS box
+ *
+ * Adds the path of the content box to @cr for a given border box.
+ * This function respects rounded corners.
+ *
+ * This is useful if you are drawing content that is supposed to
+ * fill the whole content area, like the color buttons in
+ * #GtkColorChooserDialog.
+ **/
+void
+gtk_render_content_path (GtkStyleContext *context,
+                         cairo_t         *cr,
+                         double           x,
+                         double           y,
+                         double           width,
+                         double           height)
+{
+  gtk_cairo_paint_box (context, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, (GtkWidget*)NULL, NULL, x, y, width, height);
+}
