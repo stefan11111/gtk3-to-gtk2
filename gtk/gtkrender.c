@@ -3,6 +3,8 @@
 #include "util.h"
 #include <math.h>
 
+/* XXX The code is this file should be FAST XXX */
+
 #define LIGHTNESS_MULT  1.3
 #define DARKNESS_MULT   0.7
 
@@ -92,45 +94,47 @@ gtk_default_draw_check (GtkStyle      *style,
       break;
     }
 
-  if (shadow_type == GTK_SHADOW_IN)
-    {
-      cairo_translate (cr,
-		       x + pad, y + pad);
-      
-      cairo_scale (cr, interior_size / 7., interior_size / 7.);
-      
-      cairo_move_to  (cr, 7.0, 0.0);
-      cairo_line_to  (cr, 7.5, 1.0);
-      cairo_curve_to (cr, 5.3, 2.0,
-		      4.3, 4.0,
-		      3.5, 7.0);
-      cairo_curve_to (cr, 3.0, 5.7,
-		      1.3, 4.7,
-		      0.0, 4.7);
-      cairo_line_to  (cr, 0.2, 3.5);
-      cairo_curve_to (cr, 1.1, 3.5,
-		      2.3, 4.3,
-		      3.0, 5.0);
-      cairo_curve_to (cr, 1.0, 3.9,
-		      2.4, 4.1,
-		      3.2, 4.9);
-      cairo_curve_to (cr, 3.5, 3.1,
-		      5.2, 2.0,
-		      7.0, 0.0);
-      
-      cairo_fill (cr);
-    }
-  else if (shadow_type == GTK_SHADOW_ETCHED_IN) /* inconsistent */
-    {
-      int line_thickness = MAX (1, (3 + interior_size * 2) / 7);
+  switch (shadow_type) {
+  case GTK_SHADOW_IN:
+    cairo_translate (cr,
+                     x + pad, y + pad);
 
-      cairo_rectangle (cr,
-		       x + pad,
-		       y + pad + (1 + interior_size - line_thickness) / 2,
-		       interior_size,
-		       line_thickness);
-      cairo_fill (cr);
-    }
+    cairo_scale (cr, interior_size / 7., interior_size / 7.);
+
+    cairo_move_to  (cr, 7.0, 0.0);
+    cairo_line_to  (cr, 7.5, 1.0);
+    cairo_curve_to (cr, 5.3, 2.0,
+                    4.3, 4.0,
+                    3.5, 7.0);
+    cairo_curve_to (cr, 3.0, 5.7,
+                    1.3, 4.7,
+                    0.0, 4.7);
+    cairo_line_to  (cr, 0.2, 3.5);
+    cairo_curve_to (cr, 1.1, 3.5,
+                    2.3, 4.3,
+                    3.0, 5.0);
+    cairo_curve_to (cr, 1.0, 3.9,
+                    2.4, 4.1,
+                    3.2, 4.9);
+    cairo_curve_to (cr, 3.5, 3.1,
+                    5.2, 2.0,
+                    7.0, 0.0);
+
+    cairo_fill (cr);
+  break;
+  case GTK_SHADOW_ETCHED_IN: /* inconsistent */
+    int line_thickness = MAX (1, (3 + interior_size * 2) / 7);
+
+    cairo_rectangle (cr,
+                    x + pad,
+                    y + pad + (1 + interior_size - line_thickness) / 2,
+                    interior_size,
+                    line_thickness);
+    cairo_fill (cr);
+  break;
+  default: /* silence gcc */
+  break;
+  }
 }
 
 /**
@@ -352,31 +356,29 @@ draw_arrow (cairo_t       *cr,
 {
   gdk_cairo_set_source_color (cr, color);
   cairo_save (cr);
-    
-  if (arrow_type == GTK_ARROW_DOWN)
-    {
-      cairo_move_to (cr, x,              y);
-      cairo_line_to (cr, x + width,      y);
-      cairo_line_to (cr, x + width / 2., y + height);
-    }
-  else if (arrow_type == GTK_ARROW_UP)
-    {
-      cairo_move_to (cr, x,              y + height);
-      cairo_line_to (cr, x + width / 2., y);
-      cairo_line_to (cr, x + width,      y + height);
-    }
-  else if (arrow_type == GTK_ARROW_LEFT)
-    {
-      cairo_move_to (cr, x + width,      y);
-      cairo_line_to (cr, x + width,      y + height);
-      cairo_line_to (cr, x,              y + height / 2.);
-    }
-  else if (arrow_type == GTK_ARROW_RIGHT)
-    {
-      cairo_move_to (cr, x,              y);
-      cairo_line_to (cr, x + width,      y + height / 2.);
-      cairo_line_to (cr, x,              y + height);
-    }
+
+  switch (arrow_type & 0x3) {
+  case GTK_ARROW_DOWN:
+    cairo_move_to (cr, x,              y);
+    cairo_line_to (cr, x + width,      y);
+    cairo_line_to (cr, x + width / 2., y + height);
+  break;
+  case GTK_ARROW_UP:
+    cairo_move_to (cr, x,              y + height);
+    cairo_line_to (cr, x + width / 2., y);
+    cairo_line_to (cr, x + width,      y + height);
+  break;
+  case GTK_ARROW_LEFT:
+    cairo_move_to (cr, x + width,      y);
+    cairo_line_to (cr, x + width,      y + height);
+    cairo_line_to (cr, x,              y + height / 2.);
+  break;
+  case GTK_ARROW_RIGHT:
+    cairo_move_to (cr, x,              y);
+    cairo_line_to (cr, x + width,      y + height / 2.);
+    cairo_line_to (cr, x,              y + height);
+  break;
+  }
 
   cairo_close_path (cr);
   cairo_fill (cr);
@@ -551,9 +553,7 @@ gtk_render_arrow (GtkStyleContext *context,
   GtkArrowType arrow_type;
 
   /* map [0, 2 * pi] to [0, 4] */
-  int tmp = round (2 * angle / G_PI);
-
-  switch (tmp & 3)
+  switch ((int)(2 * angle / G_PI + 0.5) & 0x3)
   {
   case 0: /* 4 & 3 == 0 */
     arrow_type = GTK_ARROW_UP;
@@ -1331,18 +1331,23 @@ gtk_default_draw_expander (GtkStyle        *style,
   
   cairo_set_line_width (cr, line_width);
 
-  if (state_type == GTK_STATE_PRELIGHT)
+  switch (state_type) {
+  case GTK_STATE_PRELIGHT:
     gdk_cairo_set_source_color (cr,
 				&style->fg[GTK_STATE_PRELIGHT]);
-  else if (state_type == GTK_STATE_ACTIVE)
+  break;
+  case GTK_STATE_ACTIVE:
     gdk_cairo_set_source_color (cr,
 				&style->light[GTK_STATE_ACTIVE]);
-  else
+  break;
+  default:
     gdk_cairo_set_source_color (cr,
 				&style->base[GTK_STATE_NORMAL]);
-  
+  break;
+  }
+
   cairo_fill_preserve (cr);
-  
+
   gdk_cairo_set_source_color (cr, &style->fg[state_type]);
   cairo_stroke (cr);
 }
@@ -2972,32 +2977,29 @@ gtk_default_render_icon_pixbuf (GtkStyle            *style,
   /* If the state was wildcarded, then generate a state. */
   if (gtk_icon_source_get_state_wildcarded (source))
     {
-      if (state == GTK_STATE_INSENSITIVE)
-        {
-          stated = gdk_pixbuf_copy (scaled);      
-          
-          gdk_pixbuf_saturate_and_pixelate (scaled, stated,
+      switch (state) {
+      case GTK_STATE_INSENSITIVE:
+        stated = gdk_pixbuf_copy (scaled);
+
+        gdk_pixbuf_saturate_and_pixelate (scaled, stated,
                                             0.8, TRUE);
-          
-          g_object_unref (scaled);
-        }
-      else if (state == GTK_STATE_PRELIGHT)
-        {
-          stated = gdk_pixbuf_copy (scaled);      
-          
-          gdk_pixbuf_saturate_and_pixelate (scaled, stated,
+
+        g_object_unref (scaled);
+      break;
+      case GTK_STATE_PRELIGHT:
+        stated = gdk_pixbuf_copy (scaled);
+        gdk_pixbuf_saturate_and_pixelate (scaled, stated,
                                             1.2, FALSE);
-          
-          g_object_unref (scaled);
-        }
-      else
-        {
-          stated = scaled;
-        }
+        g_object_unref (scaled);
+      break;
+      default:
+        stated = scaled;
+      break;
+      }
     }
   else
     stated = scaled;
-  
+
   return stated;
 }
 
@@ -3026,3 +3028,82 @@ gtk_render_icon_pixbuf (GtkStyleContext     *context,
   return gtk_default_render_icon_pixbuf (context, source, GTK_TEXT_DIR_LTR, GTK_STATE_NORMAL, size, (GtkWidget*)NULL, NULL);
 }
 
+static void
+gtk_default_draw_icon_surface (GtkStyleContext    *context,
+                               cairo_t            *cr,
+                               cairo_surface_t    *surface,
+                               gdouble             x,
+                               gdouble             y)
+{
+  /* g_return_if_fail (GTK_IS_STYLE_CONTEXT (context)); */
+  g_return_if_fail (cr != NULL);
+  g_return_if_fail (surface != NULL);
+
+  cairo_set_source_surface (cr, surface, x, y);
+  /* coould draw a shadow here */
+  /* right now, this doesn't do anything */
+  cairo_paint (cr);
+}
+
+/**
+ * gtk_render_icon:
+ * @context: a #GtkStyleContext
+ * @cr: a #cairo_t
+ * @pixbuf: a #GdkPixbuf containing the icon to draw
+ * @x: X position for the @pixbuf
+ * @y: Y position for the @pixbuf
+ *
+ * Renders the icon in @pixbuf at the specified @x and @y coordinates.
+ *
+ * This function will render the icon in @pixbuf at exactly its size,
+ * regardless of scaling factors, which may not be appropriate when
+ * drawing on displays with high pixel densities.
+ *
+ * You probably want to use gtk_render_icon_surface() instead, if you
+ * already have a Cairo surface.
+ *
+ * Since: 3.2
+ **/
+void
+gtk_render_icon (GtkStyleContext *context,
+                 cairo_t         *cr,
+                 GdkPixbuf       *pixbuf,
+                 gdouble          x,
+                 gdouble          y)
+{
+  cairo_surface_t *surface;
+
+  /* g_return_if_fail (GTK_IS_STYLE_CONTEXT (context)); */
+  g_return_if_fail (cr != NULL);
+
+  surface = gdk_cairo_surface_create_from_pixbuf (pixbuf, 1, NULL);
+
+  gtk_default_draw_icon_surface (context, cr, surface, x, y);
+
+  cairo_surface_destroy (surface);
+}
+
+/**
+ * gtk_render_icon_surface:
+ * @context: a #GtkStyleContext
+ * @cr: a #cairo_t
+ * @surface: a #cairo_surface_t containing the icon to draw
+ * @x: X position for the @icon
+ * @y: Y position for the @incon
+ *
+ * Renders the icon in @surface at the specified @x and @y coordinates.
+ *
+ * Since: 3.10
+ **/
+void
+gtk_render_icon_surface (GtkStyleContext *context,
+                         cairo_t         *cr,
+                         cairo_surface_t *surface,
+                         gdouble          x,
+                         gdouble          y)
+{
+  /* g_return_if_fail (GTK_IS_STYLE_CONTEXT (context)); */
+  g_return_if_fail (cr != NULL);
+
+  gtk_default_draw_icon_surface (context, cr, surface, x, y);
+}
