@@ -24,6 +24,9 @@
 
 #include <gtk/gtkstyle.h>
 #include <gdk/gdktypes.h>
+#include <gtk/gtkenums.h>
+#include <gtk/gtkstyleprovider.h>
+#include <gtk/gtkcsssection.h>
 
 #define GTK_TYPE_STYLE_CONTEXT         (gtk_style_context_get_type ())
 #define GTK_STYLE_CONTEXT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_STYLE_CONTEXT, GtkStyleContext))
@@ -38,6 +41,45 @@ typedef GtkStyleClass GtkStyleContextClass;
 GType gtk_style_context_get_type (void) G_GNUC_CONST;
 
 GtkStyleContext * gtk_style_context_new (void);
+
+void gtk_style_context_add_provider_for_screen    (GdkScreen        *screen,
+                                                   GtkStyleProvider *provider,
+                                                   guint             priority);
+
+void gtk_style_context_remove_provider_for_screen (GdkScreen        *screen,
+                                                   GtkStyleProvider *provider);
+
+void gtk_style_context_add_provider    (GtkStyleContext  *context,
+                                        GtkStyleProvider *provider,
+                                        guint             priority);
+
+void gtk_style_context_remove_provider (GtkStyleContext  *context,
+                                        GtkStyleProvider *provider);
+
+void gtk_style_context_save    (GtkStyleContext *context);
+
+void gtk_style_context_restore (GtkStyleContext *context);
+
+/* GtkCssSection * gtk_style_context_get_section (GtkStyleContext *context,
+                                               const gchar     *property);
+*/
+void gtk_style_context_get_property (GtkStyleContext *context,
+                                     const gchar     *property,
+                                     GtkStateFlags    state,
+                                     GValue          *value);
+
+void gtk_style_context_get_valist   (GtkStyleContext *context,
+                                     GtkStateFlags    state,
+                                     va_list          args);
+
+void gtk_style_context_get          (GtkStyleContext *context,
+                                     GtkStateFlags    state,
+                                     ...) G_GNUC_NULL_TERMINATED;
+
+void          gtk_style_context_set_state    (GtkStyleContext *context,
+                                              GtkStateFlags    flags);
+
+GtkStateFlags gtk_style_context_get_state    (GtkStyleContext *context);
 
 void gtk_style_context_get_color            (GtkStyleContext *context,
                                              GtkStateFlags    state,

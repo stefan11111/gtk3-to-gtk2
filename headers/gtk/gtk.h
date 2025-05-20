@@ -181,6 +181,8 @@
 #include <gtk/gtkstatusicon.h>
 #include <gtk/gtkstock.h>
 
+#include <gtk/gtkcsssection.h>
+
 #include <gtk/gtkstyle.h>
 #include <gtk/gtkstylecontext.h>
 #include <gtk/gtkstyleprovider.h>

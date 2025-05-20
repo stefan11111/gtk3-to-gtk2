@@ -418,9 +418,12 @@ struct _GtkStyleClass
   /* Api compat */
   void (* changed) (void *context);
 
+  /* used internally */
+  GtkStateFlags flags;
+
   /* Padding for future expansion */
   /* void (*_gtk_reserved1)  (void); */ /* used by the above */
-  void (*_gtk_reserved2)  (void);
+  /* void (*_gtk_reserved2)  (void); */ /* used by the above */
   void (*_gtk_reserved3)  (void);
   void (*_gtk_reserved4)  (void);
   void (*_gtk_reserved5)  (void);

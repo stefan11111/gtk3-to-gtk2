@@ -20,6 +20,11 @@ static const GtkBorder default_option_indicator_spacing = { 7, 5, 2, 2 };
 #define GTK_BLACK		0x0000, 0x0000, 0x0000
 #define GTK_WEAK_GRAY		0x7530, 0x7530, 0x7530
 
+static inline GtkStateType
+gtk_style_context_get_state_type (GtkStyleContext* context)
+{
+  return GtkStateType_from_GtkStateFlags (gtk_style_context_get_state (context));
+}
 static void 
 gtk_default_draw_check (GtkStyle      *style,
 			cairo_t       *cr,
@@ -183,7 +188,10 @@ gtk_render_check (GtkStyleContext *context,
                   gdouble          width,
                   gdouble          height)
 {
-  gtk_cairo_paint_check (context, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, NULL, x, y, width, height);
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+  gtk_cairo_paint_check (context, cr, state_type, GTK_SHADOW_NONE, NULL, NULL, x, y, width, height);
 }
 
 static void 
@@ -342,7 +350,10 @@ gtk_render_option (GtkStyleContext *context,
                    gdouble          width,
                    gdouble          height)
 {
-  gtk_cairo_paint_option (context, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, NULL, x, y, width, height);
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+  gtk_cairo_paint_option (context, cr, state_type, GTK_SHADOW_NONE, NULL, NULL, x, y, width, height);
 }
 
 static void
@@ -550,6 +561,7 @@ gtk_render_arrow (GtkStyleContext *context,
                   gdouble          y,
                   gdouble          size)
 {
+  GtkStateType state_type;
   GtkArrowType arrow_type;
 
   /* map [0, 2 * pi] to [0, 4] */
@@ -572,7 +584,8 @@ gtk_render_arrow (GtkStyleContext *context,
     break;
   }
 
-  gtk_cairo_paint_arrow (context, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, NULL, arrow_type, TRUE, x, y, size, size);
+  state_type = gtk_style_context_get_state_type (context);
+  gtk_cairo_paint_arrow (context, cr, state_type, GTK_SHADOW_NONE, NULL, NULL, arrow_type, TRUE, x, y, size, size);
 }
 
 void
@@ -630,8 +643,12 @@ gtk_render_background (GtkStyleContext *context,
                        gdouble          width,
                        gdouble          height)
 {
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+
   /* already saves/restores cr */
-  _gtk_style_apply_default_background (context, cr, (GdkWindow*)NULL, GTK_STATE_NORMAL, x, y, width, height);
+  _gtk_style_apply_default_background (context, cr, (GdkWindow*)NULL, state_type, x, y, width, height);
 }
 
 /**
@@ -1218,10 +1235,14 @@ gtk_render_frame (GtkStyleContext *context,
                   gdouble          width,
                   gdouble          height)
 {
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+
   /* This hardcodes the type of shadow to draw */
   /* as is, this does nothing */
   /* TODO: parhaps change to GTK_SHADOW_IN */
-  gtk_cairo_paint_shadow (context, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, (GtkWidget*)NULL, NULL, x, y, width, height);
+  gtk_cairo_paint_shadow (context, cr, state_type, GTK_SHADOW_NONE, (GtkWidget*)NULL, NULL, x, y, width, height);
 }
 
 static void
@@ -1403,8 +1424,12 @@ gtk_render_expander (GtkStyleContext *context,
                      gdouble          width,
                      gdouble          height)
 {
-  GtkExpanderStyle expander_style = (width >= 0 || height >= 0) ? GTK_EXPANDER_EXPANDED : GTK_EXPANDER_COLLAPSED;
-  gtk_cairo_paint_expander (context, cr, GTK_STATE_NORMAL, (GtkWidget*)NULL, NULL, x, y, expander_style);
+  GtkExpanderStyle expander_style;
+  GtkStateType state_type;
+
+  expander_style = (width >= 0 || height >= 0) ? GTK_EXPANDER_EXPANDED : GTK_EXPANDER_COLLAPSED;
+  state_type = gtk_style_context_get_state_type (context);
+  gtk_cairo_paint_expander (context, cr, state_type, (GtkWidget*)NULL, NULL, x, y, expander_style);
 }
 
 static void 
@@ -1534,7 +1559,10 @@ gtk_render_focus (GtkStyleContext *context,
                   gdouble          width,
                   gdouble          height)
 {
-  gtk_cairo_paint_focus (context, cr, GTK_STATE_NORMAL, (GtkWidget*)NULL, NULL, x, y, width, height);
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+  gtk_cairo_paint_focus (context, cr, state_type, (GtkWidget*)NULL, NULL, x, y, width, height);
 }
 
 static void
@@ -1634,7 +1662,10 @@ gtk_render_layout (GtkStyleContext *context,
                    gdouble          y,
                    PangoLayout     *layout)
 {
-  gtk_cairo_paint_layout (context, cr, GTK_STATE_NORMAL, FALSE, NULL, NULL, x, y, layout);
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+  gtk_cairo_paint_layout (context, cr, state_type, FALSE, NULL, NULL, x, y, layout);
 }
 
 static void
@@ -1653,7 +1684,7 @@ gtk_default_draw_line (GtkStyle      *style,
   gint thickness_light;
   gint thickness_dark;
   gint i;
-  gdouble hyp;
+  gdouble inv_hyp;
   gdouble cos;
   gdouble sin;
   gint dx;
@@ -1682,9 +1713,9 @@ gtk_default_draw_line (GtkStyle      *style,
     }
     else {
       /* can't avoid sqrt, the loop index can avoid it, but it is needed as an array index */
-      hyp = sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
-      cos = dx / hyp;
-      sin = dy / hyp;
+      inv_hyp = 1/sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
+      cos = dx * inv_hyp;
+      sin = dy * inv_hyp;
     }
   }
 
@@ -1756,7 +1787,10 @@ gtk_render_line (GtkStyleContext *context,
                  gdouble          x1,
                  gdouble          y1)
 {
-  gtk_cairo_paint_line (context, cr, GTK_STATE_NORMAL, NULL, NULL, x0, y0, x1, y1);
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+  gtk_cairo_paint_line (context, cr, state_type, NULL, NULL, x0, y0, x1, y1);
 }
 
 static void
@@ -2153,7 +2187,10 @@ gtk_render_slider (GtkStyleContext *context,
                    gdouble          height,
                    GtkOrientation   orientation)
 {
-  gtk_cairo_paint_slider (context, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, (GtkWidget*)NULL, NULL, x, y, width, height, orientation);
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+  gtk_cairo_paint_slider (context, cr, state_type, GTK_SHADOW_NONE, (GtkWidget*)NULL, NULL, x, y, width, height, orientation);
 }
 
 static void 
@@ -2410,7 +2447,10 @@ gtk_render_frame_gap (GtkStyleContext *context,
                       gdouble          xy0_gap,
                       gdouble          xy1_gap)
 {
-  gtk_cairo_paint_shadow_gap (context, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, NULL, x, y, width, height, gap_side, xy0_gap, abs(xy1_gap - xy0_gap));
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+  gtk_cairo_paint_shadow_gap (context, cr, state_type, GTK_SHADOW_NONE, NULL, NULL, x, y, width, height, gap_side, xy0_gap, abs(xy1_gap - xy0_gap));
 }
 
 static void 
@@ -2623,7 +2663,10 @@ gtk_render_extension (GtkStyleContext *context,
                       gdouble          height,
                       GtkPositionType  gap_side)
 {
-  gtk_cairo_paint_extension (context, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, (GtkWidget*)NULL, NULL, x, y, width, height, gap_side);
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+  gtk_cairo_paint_extension (context, cr, state_type, GTK_SHADOW_NONE, (GtkWidget*)NULL, NULL, x, y, width, height, gap_side);
 }
 
 static void
@@ -2768,7 +2811,10 @@ gtk_render_handle (GtkStyleContext *context,
                    gdouble          width,
                    gdouble          height)
 {
-  gtk_cairo_paint_handle (context, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, (GtkWidget*)NULL, NULL, x, y, width, height, GTK_ORIENTATION_HORIZONTAL);
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+  gtk_cairo_paint_handle (context, cr, state_type, GTK_SHADOW_NONE, (GtkWidget*)NULL, NULL, x, y, width, height, GTK_ORIENTATION_HORIZONTAL);
 }
 
 static void
@@ -2885,7 +2931,10 @@ gtk_render_activity (GtkStyleContext *context,
                      gdouble          width,
                      gdouble          height)
 {
-  gtk_cairo_paint_spinner (context, cr, GTK_STATE_NORMAL, NULL, NULL, 0, x, y, width, height);
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+  gtk_cairo_paint_spinner (context, cr, state_type, NULL, NULL, 0, x, y, width, height);
 }
 
 static GdkPixbuf *
@@ -3025,7 +3074,10 @@ gtk_render_icon_pixbuf (GtkStyleContext     *context,
                         const GtkIconSource *source,
                         GtkIconSize          size)
 {
-  return gtk_default_render_icon_pixbuf (context, source, GTK_TEXT_DIR_LTR, GTK_STATE_NORMAL, size, (GtkWidget*)NULL, NULL);
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+  return gtk_default_render_icon_pixbuf (context, source, GTK_TEXT_DIR_LTR, state_type, size, (GtkWidget*)NULL, NULL);
 }
 
 static void
@@ -3132,5 +3184,8 @@ gtk_render_content_path (GtkStyleContext *context,
                          double           width,
                          double           height)
 {
-  gtk_cairo_paint_box (context, cr, GTK_STATE_NORMAL, GTK_SHADOW_NONE, (GtkWidget*)NULL, NULL, x, y, width, height);
+  GtkStateType state_type;
+
+  state_type = gtk_style_context_get_state_type (context);
+  gtk_cairo_paint_box (context, cr, state_type, GTK_SHADOW_NONE, (GtkWidget*)NULL, NULL, x, y, width, height);
 }

@@ -169,5 +169,10 @@ GtkWidgetPath *
 gtk_container_get_path_for_child (GtkContainer *container,
                                   GtkWidget    *child)
 {
-  return gtk_widget_path_new();
+  /* Not Implemented */
+  static GtkWidgetPath *path;
+  if (!path) {
+    path = gtk_widget_path_new();
+  }
+  return path;
 }

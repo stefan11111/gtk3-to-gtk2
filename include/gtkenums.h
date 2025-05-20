@@ -10,6 +10,7 @@
 G_BEGIN_DECLS
 
 GtkStateType GtkStateType_from_GtkStateFlags (GtkStateFlags flags);
+GtkStateFlags GtkStateFlags_from_GtkStateType (GtkStateType flags);
 
 G_END_DECLS
 
