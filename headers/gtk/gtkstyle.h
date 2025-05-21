@@ -419,7 +419,7 @@ struct _GtkStyleClass
   void (* changed) (void *context);
 
   /* used internally */
-  GtkStateFlags flags;
+  GtkStateFlags flags; /* also stores text direction */
 
   /* Padding for future expansion */
   /* void (*_gtk_reserved1)  (void); */ /* used by the above */
@@ -935,6 +935,7 @@ void gtk_paint_string     (GtkStyle           *style,
 			   const gchar        *string);
 #endif /* GTK_DISABLE_DEPRECATED */
 
+#if 0 /* changed api */
 void   gtk_draw_insertion_cursor    (GtkWidget          *widget,
                                      GdkDrawable        *drawable,
                                      const GdkRectangle *area,
@@ -942,6 +943,15 @@ void   gtk_draw_insertion_cursor    (GtkWidget          *widget,
                                      gboolean            is_primary,
                                      GtkTextDirection    direction,
                                      gboolean            draw_arrow);
+#else
+void   gtk_draw_insertion_cursor    (GtkWidget          *widget,
+                                     cairo_t            *cr,
+                                     const GdkRectangle *location,
+                                     gboolean            is_primary,
+                                     GtkTextDirection    direction,
+                                     gboolean            draw_arrow);
+#endif
+
 GdkGC *_gtk_widget_get_cursor_gc    (GtkWidget          *widget);
 void   _gtk_widget_get_cursor_color (GtkWidget          *widget,
 				     GdkColor           *color);

@@ -7,6 +7,9 @@
 
 /* TODO: maybe remove */
 #define IMPLEMENT_STYLE_CASCADE
+typedef struct _GdkFrameClock GdkFrameClock;
+
+#define GDK_COLORMAP_GET_SCREEN(cmap) ((GdkScreen **) cmap->windowing_data)
 
 static GtkStyleClass saved_state;
 
@@ -807,9 +810,505 @@ gtk_style_context_lookup_icon_set (GtkStyleContext *context,
   return gtk_style_lookup_icon_set (context, stock_id);
 }
 
+/**
+ * gtk_icon_set_render_icon_pixbuf:
+ * @icon_set: a #GtkIconSet
+ * @context: a #GtkStyleContext
+ * @size: (type int): icon size (#GtkIconSize). A size of `(GtkIconSize)-1`
+ *        means render at the size of the source and don’t scale.
+ *
+ * Renders an icon using gtk_render_icon_pixbuf(). In most cases,
+ * gtk_widget_render_icon_pixbuf() is better, since it automatically provides
+ * most of the arguments from the current widget settings.  This
+ * function never returns %NULL; if the icon can’t be rendered
+ * (perhaps because an image file fails to load), a default "missing
+ * image" icon will be returned instead.
+ *
+ * Returns: (transfer full): a #GdkPixbuf to be displayed
+ *
+ * Since: 3.0
+ *
+ * Deprecated: 3.10: Use #GtkIconTheme instead.
+ */
+GdkPixbuf *
+gtk_icon_set_render_icon_pixbuf (GtkIconSet        *icon_set,
+                                 GtkStyleContext   *context,
+                                 GtkIconSize        size)
+{
+  GtkStateType state;
+  GtkTextDirection direction;
 
+  state = gtk_style_context_get_state (context);
+  direction = gtk_style_context_get_direction (context);
+  return gtk_icon_set_render_icon (icon_set, context, direction, state, size, (GtkWidget*)NULL, NULL);
+}
 
-/* later */
+/**
+ * gtk_icon_set_render_icon_surface:
+ * @icon_set: a #GtkIconSet
+ * @context: a #GtkStyleContext
+ * @size: (type int): icon size (#GtkIconSize). A size of `(GtkIconSize)-1`
+ *        means render at the size of the source and don’t scale.
+ * @scale: the window scale to render for
+ * @for_window: (allow-none): #GdkWindow to optimize drawing for, or %NULL
+ *
+ * Renders an icon using gtk_render_icon_pixbuf() and converts it to a
+ * cairo surface.
+ *
+ * This function never returns %NULL; if the icon can’t be rendered
+ * (perhaps because an image file fails to load), a default "missing
+ * image" icon will be returned instead.
+ *
+ * Returns: (transfer full): a #cairo_surface_t to be displayed
+ *
+ * Since: 3.10
+ *
+ * Deprecated: 3.10: Use #GtkIconTheme instead.
+ */
+cairo_surface_t *
+gtk_icon_set_render_icon_surface  (GtkIconSet      *icon_set,
+                                   GtkStyleContext *context,
+                                   GtkIconSize      size,
+                                   gint             scale,
+                                   GdkWindow       *for_window)
+{
+  GdkPixbuf *pixbuf;
+  cairo_surface_t *surface;
+
+  pixbuf = gtk_icon_set_render_icon_pixbuf (icon_set, context, size);
+
+  surface = gdk_cairo_surface_create_from_pixbuf (pixbuf, 1, for_window);
+  g_object_unref (pixbuf);
+
+  return surface;
+}
+
+/**
+ * gtk_style_context_set_screen:
+ * @context: a #GtkStyleContext
+ * @screen: a #GdkScreen
+ *
+ * Attaches @context to the given screen.
+ *
+ * The screen is used to add style information from “global” style
+ * providers, such as the screen’s #GtkSettings instance.
+ *
+ * If you are using a #GtkStyleContext returned from
+ * gtk_widget_get_style_context(), you do not need to
+ * call this yourself.
+ *
+ * Since: 3.0
+ **/
+void
+gtk_style_context_set_screen (GtkStyleContext *context,
+                              GdkScreen       *screen)
+{
+#ifdef X11
+  *GDK_COLORMAP_GET_SCREEN(context->colormap) = screen;
+#endif
+}
+
+/**
+ * gtk_style_context_get_screen:
+ * @context: a #GtkStyleContext
+ *
+ * Returns the #GdkScreen to which @context is attached.
+ *
+ * Returns: (transfer none): a #GdkScreen.
+ **/
+GdkScreen *
+gtk_style_context_get_screen (GtkStyleContext *context)
+{
+  return gdk_colormap_get_screen (context->colormap);
+}
+
+/**
+ * gtk_style_context_set_frame_clock:
+ * @context: a #GdkFrameClock
+ * @frame_clock: a #GdkFrameClock
+ *
+ * Attaches @context to the given frame clock.
+ *
+ * The frame clock is used for the timing of animations.
+ *
+ * If you are using a #GtkStyleContext returned from
+ * gtk_widget_get_style_context(), you do not need to
+ * call this yourself.
+ *
+ * Since: 3.8
+ **/
+void
+gtk_style_context_set_frame_clock (GtkStyleContext *context,
+                                   GdkFrameClock   *frame_clock)
+{
+  /* Not Implemented */
+}
+
+/**
+ * gtk_style_context_get_frame_clock:
+ * @context: a #GtkStyleContext
+ *
+ * Returns the #GdkFrameClock to which @context is attached.
+ *
+ * Returns: (nullable) (transfer none): a #GdkFrameClock, or %NULL
+ *  if @context does not have an attached frame clock.
+ *
+ * Since: 3.8
+ **/
+GdkFrameClock *
+gtk_style_context_get_frame_clock (GtkStyleContext *context)
+{
+  /* Not Implemented */
+  return NULL;
+}
+
+/**
+ * gtk_style_context_set_direction:
+ * @context: a #GtkStyleContext
+ * @direction: the new direction.
+ *
+ * Sets the reading direction for rendering purposes.
+ *
+ * If you are using a #GtkStyleContext returned from
+ * gtk_widget_get_style_context(), you do not need to
+ * call this yourself.
+ *
+ * Since: 3.0
+ *
+ * Deprecated: 3.8: Use gtk_style_context_set_state() with
+ *   #GTK_STATE_FLAG_DIR_LTR and #GTK_STATE_FLAG_DIR_RTL
+ *   instead.
+ **/
+void
+gtk_style_context_set_direction (GtkStyleContext  *context,
+                                 GtkTextDirection  direction)
+{
+  GtkStateFlags state;
+
+  g_return_if_fail (GTK_IS_STYLE_CONTEXT (context));
+
+  state = gtk_style_context_get_state (context);
+  state &= ~(GTK_STATE_FLAG_DIR_LTR | GTK_STATE_FLAG_DIR_RTL);
+
+  switch (direction)
+    {
+    case GTK_TEXT_DIR_LTR:
+      state |= GTK_STATE_FLAG_DIR_LTR;
+      break;
+
+    case GTK_TEXT_DIR_RTL:
+      state |= GTK_STATE_FLAG_DIR_RTL;
+      break;
+
+    case GTK_TEXT_DIR_NONE:
+    default:
+      break;
+    }
+
+  gtk_style_context_set_state (context, state);
+}
+
+/**
+ * gtk_style_context_get_direction:
+ * @context: a #GtkStyleContext
+ *
+ * Returns the widget direction used for rendering.
+ *
+ * Returns: the widget direction
+ *
+ * Since: 3.0
+ *
+ * Deprecated: 3.8: Use gtk_style_context_get_state() and
+ *   check for #GTK_STATE_FLAG_DIR_LTR and
+ *   #GTK_STATE_FLAG_DIR_RTL instead.
+ **/
+GtkTextDirection
+gtk_style_context_get_direction (GtkStyleContext *context)
+{
+  GtkStateFlags state;
+
+  g_return_val_if_fail (GTK_IS_STYLE_CONTEXT (context), GTK_TEXT_DIR_LTR);
+
+  state = gtk_style_context_get_state (context);
+
+  if (state & GTK_STATE_FLAG_DIR_LTR) {
+    return GTK_TEXT_DIR_LTR;
+  }
+  if (state & GTK_STATE_FLAG_DIR_RTL) {
+    return GTK_TEXT_DIR_RTL;
+  }
+  return GTK_TEXT_DIR_NONE;
+}
+
+/**
+ * gtk_style_context_set_junction_sides:
+ * @context: a #GtkStyleContext
+ * @sides: sides where rendered elements are visually connected to
+ *     other elements
+ *
+ * Sets the sides where rendered elements (mostly through
+ * gtk_render_frame()) will visually connect with other visual elements.
+ *
+ * This is merely a hint that may or may not be honored
+ * by themes.
+ *
+ * Container widgets are expected to set junction hints as appropriate
+ * for their children, so it should not normally be necessary to call
+ * this function manually.
+ *
+ * Since: 3.0
+ **/
+void
+gtk_style_context_set_junction_sides (GtkStyleContext  *context,
+                                      GtkJunctionSides  sides)
+{
+  /* Not Implemented */
+}
+
+/**
+ * gtk_style_context_get_junction_sides:
+ * @context: a #GtkStyleContext
+ *
+ * Returns the sides where rendered elements connect visually with others.
+ *
+ * Returns: the junction sides
+ *
+ * Since: 3.0
+ **/
+GtkJunctionSides
+gtk_style_context_get_junction_sides (GtkStyleContext *context)
+{
+  /* Not Implemented */
+  return GTK_JUNCTION_NONE;
+}
+
+/**
+ * gtk_style_context_lookup_color:
+ * @context: a #GtkStyleContext
+ * @color_name: color name to lookup
+ * @color: (out): Return location for the looked up color
+ *
+ * Looks up and resolves a color name in the @context color map.
+ *
+ * Returns: %TRUE if @color_name was found and resolved, %FALSE otherwise
+ **/
+gboolean
+gtk_style_context_lookup_color (GtkStyleContext *context,
+                                const gchar     *color_name,
+                                GdkRGBA         *color)
+{
+  GdkColor c;
+  int ret;
+  ret = gtk_style_lookup_color (context, color_name, &c);
+
+  if (!ret) {
+    return FALSE;
+  }
+
+  *color = GdkRGBA_from_GdkColor (&c);
+  return TRUE;
+}
+
+/**
+ * gtk_style_context_notify_state_change:
+ * @context: a #GtkStyleContext
+ * @window: a #GdkWindow
+ * @region_id: (allow-none): animatable region to notify on, or %NULL.
+ *     See gtk_style_context_push_animatable_region()
+ * @state: state to trigger transition for
+ * @state_value: %TRUE if @state is the state we are changing to,
+ *     %FALSE if we are changing away from it
+ *
+ * Notifies a state change on @context, so if the current style makes use
+ * of transition animations, one will be started so all rendered elements
+ * under @region_id are animated for state @state being set to value
+ * @state_value.
+ *
+ * The @window parameter is used in order to invalidate the rendered area
+ * as the animation runs, so make sure it is the same window that is being
+ * rendered on by the gtk_render_*() functions.
+ *
+ * If @region_id is %NULL, all rendered elements using @context will be
+ * affected by this state transition.
+ *
+ * As a practical example, a #GtkButton notifying a state transition on
+ * the prelight state:
+ * |[ <!-- language="C" -->
+ * gtk_style_context_notify_state_change (context,
+ *                                        gtk_widget_get_window (widget),
+ *                                        NULL,
+ *                                        GTK_STATE_PRELIGHT,
+ *                                        button->in_button);
+ * ]|
+ *
+ * Can be handled in the CSS file like this:
+ * |[ <!-- language="CSS" -->
+ * button {
+ *     background-color: #f00
+ * }
+ *
+ * button:hover {
+ *     background-color: #fff;
+ *     transition: 200ms linear
+ * }
+ * ]|
+ *
+ * This combination will animate the button background from red to white
+ * if a pointer enters the button, and back to red if the pointer leaves
+ * the button.
+ *
+ * Note that @state is used when finding the transition parameters, which
+ * is why the style places the transition under the :hover pseudo-class.
+ *
+ * Since: 3.0
+ *
+ * Deprecated: 3.6: This function does nothing.
+ **/
+void
+gtk_style_context_notify_state_change (GtkStyleContext *context,
+                                       GdkWindow       *window,
+                                       gpointer         region_id,
+                                       GtkStateType     state,
+                                       gboolean         state_value)
+{
+}
+
+/**
+ * gtk_style_context_cancel_animations:
+ * @context: a #GtkStyleContext
+ * @region_id: (allow-none): animatable region to stop, or %NULL.
+ *     See gtk_style_context_push_animatable_region()
+ *
+ * Stops all running animations for @region_id and all animatable
+ * regions underneath.
+ *
+ * A %NULL @region_id will stop all ongoing animations in @context,
+ * when dealing with a #GtkStyleContext obtained through
+ * gtk_widget_get_style_context(), this is normally done for you
+ * in all circumstances you would expect all widget to be stopped,
+ * so this should be only used in complex widgets with different
+ * animatable regions.
+ *
+ * Since: 3.0
+ *
+ * Deprecated: 3.6: This function does nothing.
+ **/
+void
+gtk_style_context_cancel_animations (GtkStyleContext *context,
+                                     gpointer         region_id)
+{
+}
+
+/**
+ * gtk_style_context_scroll_animations:
+ * @context: a #GtkStyleContext
+ * @window: a #GdkWindow used previously in
+ *          gtk_style_context_notify_state_change()
+ * @dx: Amount to scroll in the X axis
+ * @dy: Amount to scroll in the Y axis
+ *
+ * This function is analogous to gdk_window_scroll(), and
+ * should be called together with it so the invalidation
+ * areas for any ongoing animation are scrolled together
+ * with it.
+ *
+ * Since: 3.0
+ *
+ * Deprecated: 3.6: This function does nothing.
+ **/
+void
+gtk_style_context_scroll_animations (GtkStyleContext *context,
+                                     GdkWindow       *window,
+                                     gint             dx,
+                                     gint             dy)
+{
+}
+
+/**
+ * gtk_style_context_push_animatable_region:
+ * @context: a #GtkStyleContext
+ * @region_id: unique identifier for the animatable region
+ *
+ * Pushes an animatable region, so all further gtk_render_*() calls between
+ * this call and the following gtk_style_context_pop_animatable_region()
+ * will potentially show transition animations for this region if
+ * gtk_style_context_notify_state_change() is called for a given state,
+ * and the current theme/style defines transition animations for state
+ * changes.
+ *
+ * The @region_id used must be unique in @context so the themes
+ * can uniquely identify rendered elements subject to a state transition.
+ *
+ * Since: 3.0
+ *
+ * Deprecated: 3.6: This function does nothing.
+ **/
+void
+gtk_style_context_push_animatable_region (GtkStyleContext *context,
+                                          gpointer         region_id)
+{
+}
+
+/**
+ * gtk_style_context_pop_animatable_region:
+ * @context: a #GtkStyleContext
+ *
+ * Pops an animatable region from @context.
+ * See gtk_style_context_push_animatable_region().
+ *
+ * Since: 3.0
+ *
+ * Deprecated: 3.6: This function does nothing.
+ **/
+void
+gtk_style_context_pop_animatable_region (GtkStyleContext *context)
+{
+}
+
+void
+gtk_style_context_get_color (GtkStyleContext *context,
+                             GtkStateFlags    state,
+                             GdkRGBA         *color)
+{
+  g_return_if_fail (color != NULL);
+  g_return_if_fail (GTK_IS_STYLE_CONTEXT (context));
+  *color = GdkRGBA_from_GdkColor(&context->base[GtkStateType_from_GtkStateFlags(state)]);
+}
+
+void
+gtk_style_context_get_background_color (GtkStyleContext *context,
+                             GtkStateFlags    state,
+                             GdkRGBA         *color)
+{
+  g_return_if_fail (color != NULL);
+  g_return_if_fail (GTK_IS_STYLE_CONTEXT (context));
+  *color = GdkRGBA_from_GdkColor(&context->bg[GtkStateType_from_GtkStateFlags(state)]);
+}
+
+/**
+ * gtk_style_context_get_border_color:
+ * @context: a #GtkStyleContext
+ * @state: state to retrieve the color for
+ * @color: (out): return value for the border color
+ *
+ * Gets the border color for a given state.
+ *
+ * Since: 3.0
+ *
+ * Deprecated: 3.16: Use gtk_render_frame() instead.
+ **/
+void
+gtk_style_context_get_border_color (GtkStyleContext *context,
+                                    GtkStateFlags    state,
+                                    GdkRGBA         *color)
+{
+  g_return_if_fail (color != NULL);
+  g_return_if_fail (GTK_IS_STYLE_CONTEXT (context));
+
+  /* Not implemented in gtk2 */
+  /* use the dark color for the border color */
+  *color = GdkRGBA_from_GdkColor(&context->dark[GtkStateType_from_GtkStateFlags(state)]);
+}
 
 const PangoFontDescription *
 gtk_style_context_get_font (GtkStyleContext *context,
@@ -819,9 +1318,174 @@ gtk_style_context_get_font (GtkStyleContext *context,
 }
 
 void
-gtk_style_context_get_color (GtkStyleContext *context,
-                             GtkStateFlags    state,
-                             GdkRGBA         *color)
+gtk_style_context_get_border (GtkStyleContext *context,
+                              GtkStateFlags    state,
+                              GtkBorder       *border)
 {
-  *color = GdkRGBA_from_GdkColor(&context->base[GtkStateType_from_GtkStateFlags(state)]);
+  /* Not Implemented */
+  g_return_if_fail (border != NULL);
+  *border = (GtkBorder){0};
+}
+
+void
+gtk_style_context_get_padding (GtkStyleContext *context,
+                               GtkStateFlags    state,
+                               GtkBorder       *padding)
+{
+  /* Not Implemented */
+  g_return_if_fail (padding != NULL);
+  *padding = (GtkBorder){0};
+}
+
+/**
+ * gtk_style_context_get_margin:
+ * @context: a #GtkStyleContext
+ * @state: state to retrieve the border for
+ * @margin: (out): return value for the margin settings
+ *
+ * Gets the margin for a given state as a #GtkBorder.
+ * See gtk_style_property_get() and #GTK_STYLE_PROPERTY_MARGIN
+ * for details.
+ *
+ * Since: 3.0
+ **/
+void
+gtk_style_context_get_margin (GtkStyleContext *context,
+                              GtkStateFlags    state,
+                              GtkBorder       *margin)
+{
+  /* Not Implemented */
+  g_return_if_fail (margin != NULL);
+  *margin = (GtkBorder){0};
+}
+
+/**
+ * gtk_style_context_invalidate:
+ * @context: a #GtkStyleContext.
+ *
+ * Invalidates @context style information, so it will be reconstructed
+ * again. It is useful if you modify the @context and need the new
+ * information immediately.
+ *
+ * Since: 3.0
+ *
+ * Deprecated: 3.12: Style contexts are invalidated automatically.
+ **/
+void
+gtk_style_context_invalidate (GtkStyleContext *context)
+{
+  /* Not Implemented */
+}
+
+/**
+ * gtk_style_context_reset_widgets:
+ * @screen: a #GdkScreen
+ *
+ * This function recomputes the styles for all widgets under a particular
+ * #GdkScreen. This is useful when some global parameter has changed that
+ * affects the appearance of all widgets, because when a widget gets a new
+ * style, it will both redraw and recompute any cached information about
+ * its appearance. As an example, it is used when the color scheme changes
+ * in the related #GtkSettings object.
+ *
+ * Since: 3.0
+ **/
+void
+gtk_style_context_reset_widgets (GdkScreen *screen)
+{
+  GList *list, *toplevels;
+
+  toplevels = gtk_window_list_toplevels ();
+  g_list_foreach (toplevels, (GFunc) g_object_ref, NULL);
+
+  for (list = toplevels; list; list = list->next)
+    {
+      if (gtk_widget_get_screen (list->data) == screen)
+        gtk_widget_reset_style (list->data);
+
+      g_object_unref (list->data);
+    }
+
+  g_list_free (toplevels);
+}
+
+/**
+ * gtk_style_context_set_background:
+ * @context: a #GtkStyleContext
+ * @window: a #GdkWindow
+ *
+ * Sets the background of @window to the background pattern or
+ * color specified in @context for its current state.
+ *
+ * Since: 3.0
+ *
+ * Deprecated: 3.18: Use gtk_render_background() instead.
+ *   Note that clients still using this function are now responsible
+ *   for calling this function again whenever @context is invalidated.
+ **/
+void
+gtk_style_context_set_background (GtkStyleContext *context,
+                                  GdkWindow       *window)
+{
+  GtkStateType state;
+
+  state = GtkStateType_from_GtkStateFlags(gtk_style_context_get_state(context));
+  gdk_window_set_background (window, &context->bg[state]);
+}
+
+#if 0 /* implemented in gtkrender.c */
+void        gtk_render_insertion_cursor
+                                   (GtkStyleContext     *context,
+                                    cairo_t             *cr,
+                                    gdouble              x,
+                                    gdouble              y,
+                                    PangoLayout         *layout,
+                                    int                  index,
+                                    PangoDirection       direction);
+
+void   gtk_draw_insertion_cursor    (GtkWidget          *widget,
+                                     cairo_t            *cr,
+                                     const GdkRectangle *location,
+                                     gboolean            is_primary,
+                                     GtkTextDirection    direction,
+                                     gboolean            draw_arrow);
+#endif
+
+/**
+ * GtkStyleContextPrintFlags:
+ * @GTK_STYLE_CONTEXT_PRINT_RECURSE: Print the entire tree of
+ *     CSS nodes starting at the style context's node
+ * @GTK_STYLE_CONTEXT_PRINT_SHOW_STYLE: Show the values of the
+ *     CSS properties for each node
+ *
+ * Flags that modify the behavior of gtk_style_context_to_string().
+ * New values may be added to this enumeration.
+ */
+
+/**
+ * gtk_style_context_to_string:
+ * @context: a #GtkStyleContext
+ * @flags: Flags that determine what to print
+ *
+ * Converts the style context into a string representation.
+ *
+ * The string representation always includes information about
+ * the name, state, id, visibility and style classes of the CSS
+ * node that is backing @context. Depending on the flags, more
+ * information may be included.
+ *
+ * This function is intended for testing and debugging of the
+ * CSS implementation in GTK+. There are no guarantees about
+ * the format of the returned string, it may change.
+ *
+ * Returns: a newly allocated string representing @context
+ *
+ * Since: 3.20
+ */
+char *
+gtk_style_context_to_string (GtkStyleContext           *context,
+                             GtkStyleContextPrintFlags  flags)
+{
+  /* Not Implemented */
+  return NULL;
 }

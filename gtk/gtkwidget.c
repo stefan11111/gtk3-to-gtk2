@@ -111,3 +111,20 @@ gtk_widget_get_valign_with_baseline (GtkWidget *widget)
   /* doesn't actually return GTK_ALIGN_BASELINE */
   return GTK_ALIGN_FILL;
 }
+
+/**
+ * gtk_widget_reset_style:
+ * @widget: a #GtkWidget
+ *
+ * Updates the style context of @widget and all descendants
+ * by updating its widget path. #GtkContainers may want
+ * to use this on a child when reordering it in a way that a different
+ * style might apply to it. See also gtk_container_get_path_for_child().
+ *
+ * Since: 3.0
+ */
+void
+gtk_widget_reset_style (GtkWidget *widget)
+{
+  gtk_widget_reset_rc_styles (widget);
+}

@@ -41,6 +41,11 @@ void
 _gtk_pango_fill_layout (cairo_t     *cr,
                         PangoLayout *layout);
 
+GtkTextDirection
+GtkTextDirection_from_PangoDirection (PangoDirection direction);
+
+PangoDirection
+PangoDirection_from_GtkTextDirection (GtkTextDirection direction);
 
 G_END_DECLS
 

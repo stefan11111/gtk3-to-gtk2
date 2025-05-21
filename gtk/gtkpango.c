@@ -24,6 +24,7 @@
  */
 
 #include <pango/pangocairo.h>
+#include <gtk/gtkenums.h>
 
 #define GTK_TYPE_FILL_LAYOUT_RENDERER            (_gtk_fill_layout_renderer_get_type())
 #define GTK_FILL_LAYOUT_RENDERER(object)         (G_TYPE_CHECK_INSTANCE_CAST ((object), GTK_TYPE_FILL_LAYOUT_RENDERER, GtkFillLayoutRenderer))
@@ -227,5 +228,41 @@ _gtk_pango_fill_layout (cairo_t     *cr,
 
   if (has_current_point)
     cairo_move_to (cr, current_x, current_y);
+}
+
+GtkTextDirection
+GtkTextDirection_from_PangoDirection (PangoDirection direction)
+{
+  switch (direction) {
+  case PANGO_DIRECTION_LTR:
+  case PANGO_DIRECTION_TTB_LTR:
+  case PANGO_DIRECTION_WEAK_LTR:
+    return GTK_TEXT_DIR_LTR;
+  case PANGO_DIRECTION_RTL:
+  case PANGO_DIRECTION_TTB_RTL:
+  case PANGO_DIRECTION_WEAK_RTL:
+    return GTK_TEXT_DIR_RTL;
+  case PANGO_DIRECTION_NEUTRAL:
+    return GTK_TEXT_DIR_NONE;
+  }
+
+  /* unreachable */
+  return GTK_TEXT_DIR_LTR;
+}
+
+PangoDirection
+PangoDirection_from_GtkTextDirection (GtkTextDirection direction)
+{
+  switch (direction) {
+  case GTK_TEXT_DIR_LTR:
+    return PANGO_DIRECTION_LTR;
+  case GTK_TEXT_DIR_RTL:
+    return PANGO_DIRECTION_RTL;
+  case GTK_TEXT_DIR_NONE:
+    return PANGO_DIRECTION_NEUTRAL;
+  }
+
+  /* unreachable */
+  return PANGO_DIRECTION_LTR;
 }
 
