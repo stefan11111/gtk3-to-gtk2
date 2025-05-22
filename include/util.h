@@ -5,6 +5,7 @@
 #include "gtkpango.h"
 #include "gtkrenderprivate.h"
 #include "gtkcairo.h"
+#include "gtkcolorchooserprivate.h"
 
 #if 0 /* These include forward declatarions that are not implemented */
 #include "gtksymboliccolorprivate.h"
