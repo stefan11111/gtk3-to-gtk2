@@ -70,8 +70,11 @@
 
 #include <gtk/gtkcolorsel.h>
 #include <gtk/gtkcolorchooser.h>
+#include <gtk/gtkcolorchooserwidget.h>
 
 #include <gtk/gtkcolorseldialog.h>
+#include <gtk/gtkcolorchooserdialog.h>
+
 #include <gtk/gtkcombobox.h>
 #include <gtk/gtkcomboboxentry.h>
 #include <gtk/gtkcomboboxtext.h>
