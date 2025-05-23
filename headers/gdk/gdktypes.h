@@ -171,7 +171,8 @@ typedef enum
   GDK_GRAB_ALREADY_GRABBED = 1,
   GDK_GRAB_INVALID_TIME    = 2,
   GDK_GRAB_NOT_VIEWABLE    = 3,
-  GDK_GRAB_FROZEN          = 4
+  GDK_GRAB_FROZEN          = 4,
+  GDK_GRAB_FAILED          = 5 /* not in gtk2, but handled nicely */
 } GdkGrabStatus;
 
 typedef void (*GdkInputFunction) (gpointer	    data,

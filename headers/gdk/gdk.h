@@ -50,7 +50,10 @@
 #include <gdk/gdkfont.h>
 #include <gdk/gdkgc.h>
 #include <gdk/gdkimage.h>
+
 #include <gdk/gdkinput.h>
+#include <gdk/gdkseat.h>
+
 #include <gdk/gdkkeys.h>
 #include <gdk/gdkpango.h>
 #include <gdk/gdkpixbuf.h>
