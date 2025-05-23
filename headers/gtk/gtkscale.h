@@ -76,6 +76,14 @@ struct _GtkScaleClass
   void (*_gtk_reserved3) (void);
 };
 
+GtkWidget       * gtk_scale_new                (GtkOrientation   orientation,
+                                                GtkAdjustment   *adjustment);
+
+GtkWidget       * gtk_scale_new_with_range     (GtkOrientation   orientation,
+                                                gdouble          min,
+                                                gdouble          max,
+                                                gdouble          step);
+
 GType             gtk_scale_get_type           (void) G_GNUC_CONST;
 void              gtk_scale_set_digits         (GtkScale        *scale,
                                                 gint             digits);
@@ -97,6 +105,13 @@ void              gtk_scale_add_mark           (GtkScale        *scale,
                                                 GtkPositionType  position,
                                                 const gchar     *markup);
 void              gtk_scale_clear_marks        (GtkScale        *scale);
+
+
+
+void              gtk_scale_set_has_origin     (GtkScale        *scale,
+                                                gboolean         has_origin);
+
+gboolean          gtk_scale_get_has_origin     (GtkScale        *scale);
 
 /* internal API */
 void              _gtk_scale_clear_layout      (GtkScale        *scale);
