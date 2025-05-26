@@ -4,6 +4,7 @@
 #include "gtkstyleproviderprivate.h"
 #include "gtkstylecascadeprivate.h"
 #include "gtksettingsprivate.h"
+#include "gtkstylecontextprivate.h"
 
 /* TODO: maybe remove */
 #define IMPLEMENT_STYLE_CASCADE
@@ -1489,3 +1490,234 @@ gtk_style_context_to_string (GtkStyleContext           *context,
   /* Not Implemented */
   return NULL;
 }
+
+/* XXX ^^^ PUBLIC ^^^ XXX */
+
+/* XXX vvv PRIVATE vvv XXX */
+
+GtkStyleContext *
+gtk_style_context_new_for_node (GtkCssNode *node)
+{
+  /* Not Implemented */
+  return gtk_style_context_new ();
+}
+
+GtkCssNode*
+gtk_style_context_get_node (GtkStyleContext *context)
+{
+  /* Not Implemented */
+  return NULL;
+}
+
+/*
+ * gtk_style_context_set_id:
+ * @context: a #GtkStyleContext
+ * @id: (allow-none): the id to use or %NULL for none.
+ *
+ * Sets the CSS ID to be used when obtaining style information.
+ **/
+void
+gtk_style_context_set_id (GtkStyleContext *context,
+                          const char      *id)
+{
+  /* Not Implemented */
+}
+
+/*
+ * gtk_style_context_get_id:
+ * @context: a #GtkStyleContext
+ *
+ * Returns the CSS ID used when obtaining style information.
+ *
+ * Returns: (nullable): the ID or %NULL if no ID is set.
+ **/
+const char *
+gtk_style_context_get_id (GtkStyleContext *context)
+{
+  /* Not Implemented */
+  return NULL;
+}
+
+GtkStyleProviderPrivate *
+gtk_style_context_get_style_provider (GtkStyleContext *context)
+{
+  /* Not Implemented */
+  return NULL;
+}
+
+void
+gtk_style_context_save_named (GtkStyleContext *context,
+                              const char      *name)
+{
+  /* Not Implemented */
+}
+
+/*
+ * gtk_style_context_save_to_node:
+ * @context: a #GtkStyleContext
+ * @node: the node to save to
+ *
+ * Saves the @context state, so temporary modifications done through
+ * gtk_style_context_add_class(), gtk_style_context_remove_class(),
+ * gtk_style_context_set_state(), etc. and rendering using
+ * gtk_render_background() or similar functions are done using the
+ * given @node.
+ *
+ * To undo, call gtk_style_context_restore().
+ *
+ * The matching call to gtk_style_context_restore() must be done
+ * before GTK returns to the main loop.
+ **/
+void
+gtk_style_context_save_to_node (GtkStyleContext *context,
+                                GtkCssNode      *node)
+{
+  /* Not Implemented */
+}
+
+/**
+ * gtk_style_context_get_change:
+ * @context: the context to query
+ *
+ * Queries the context for the changes for the currently executing
+ * GtkStyleContext::invalidate signal. If no signal is currently
+ * emitted or the signal has not been triggered by a CssNode
+ * invalidation, this function returns %NULL.
+ *
+ * FIXME 4.0: Make this part of the signal.
+ *
+ * Returns: %NULL or the currently invalidating changes
+ **/
+
+GtkCssStyleChange *
+gtk_style_context_get_change (GtkStyleContext *context)
+{
+  /* Not Implemented */
+  return NULL;
+}
+
+GtkCssStyle *
+gtk_style_context_lookup_style (GtkStyleContext *context)
+{
+  /* Not Implemented */
+  return NULL;
+}
+
+GtkCssValue *
+_gtk_style_context_peek_property (GtkStyleContext *context,
+                                  guint            property_id)
+{
+  /* Not Implemented */
+  return NULL;
+}
+
+void
+gtk_style_context_validate (GtkStyleContext  *context,
+                            GtkCssStyleChange *change)
+{
+  /* Not Implemented */
+}
+
+typedef struct {
+  GType       widget_type;
+  GParamSpec *pspec;
+  GValue      value;
+} PropertyValue;
+
+void
+gtk_style_context_clear_property_cache (GtkStyleContext *style)
+{
+  if (style->property_cache)
+    {
+      guint i;
+
+      for (i = 0; i < style->property_cache->len; i++)
+        {
+          PropertyValue *node = &g_array_index (style->property_cache, PropertyValue, i);
+
+          g_param_spec_unref (node->pspec);
+          g_value_unset (&node->value);
+        }
+      g_array_free (style->property_cache, TRUE);
+      style->property_cache = NULL;
+    }
+}
+
+gboolean
+_gtk_style_context_check_region_name (const gchar *str)
+{
+  g_return_val_if_fail (str != NULL, FALSE);
+
+  if (!g_ascii_islower (str[0]))
+    return FALSE;
+
+  while (*str)
+    {
+      if (*str != '-' &&
+          !g_ascii_islower (*str))
+        return FALSE;
+
+      str++;
+    }
+
+  return TRUE;
+}
+
+gboolean
+_gtk_style_context_resolve_color (GtkStyleContext    *context,
+                                  GtkCssValue        *color,
+                                  GdkRGBA            *result)
+{
+  /* Not Implemented */
+  /* XXX Maybe actually return a color XXX */
+  return FALSE;
+}
+
+void
+_gtk_style_context_get_cursor_color (GtkStyleContext *context,
+                                     GdkRGBA         *primary_color,
+                                     GdkRGBA         *secondary_color)
+{
+  g_return_if_fail (GTK_IS_STYLE_CONTEXT (context));
+
+  /* XXX Cursor color is hardcoded as black XXX */
+  GdkRGBA color = GdkRGBA_from_GdkColor (&context->black);
+
+  if (primary_color) {
+    *primary_color = color;
+  }
+
+  if (secondary_color) {
+    *secondary_color = color;
+  }
+}
+
+void
+_gtk_style_context_get_icon_extents (GtkStyleContext *context,
+                                     GdkRectangle    *extents,
+                                     gint             x,
+                                     gint             y,
+                                     gint             width,
+                                     gint             height)
+{
+  g_return_if_fail (extents != NULL);
+
+  *extents = (GdkRectangle){ .x = x,
+                             .y = y,
+                             .width = width,
+                             .height = height };
+}
+
+PangoAttrList *
+_gtk_style_context_get_pango_attributes (GtkStyleContext *context)
+{
+  /* Not Implemented */
+  return NULL;
+}
+
+#if 0 /* Not Implemented and not needed */
+const GValue *
+_gtk_style_context_peek_style_property (GtkStyleContext *context,
+                                        GType            widget_type,
+                                        GParamSpec      *pspec);
+#endif

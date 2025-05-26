@@ -22,10 +22,10 @@
 
 #if 0
 #include "gtkmodulesprivate.h"
+#else
 #include "gtkpango.h"
 #include "gtkrenderprivate.h"
 #include "gtkstylecontextprivate.h"
-#else
 #include "gtkthemingengine.h"
 
 #ifndef P_
