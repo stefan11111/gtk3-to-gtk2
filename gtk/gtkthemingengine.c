@@ -20,17 +20,10 @@
 #include <gdk/gdk.h>
 #include <gtk/gtkprivate.h>
 
-#if 0
-#include "gtkmodulesprivate.h"
-#else
-#include "gtkpango.h"
-#include "gtkrenderprivate.h"
-#include "gtkstylecontextprivate.h"
 #include "gtkthemingengine.h"
 
 #ifndef P_
 #define P_(str) str
-#endif
 #endif
 
 /**
