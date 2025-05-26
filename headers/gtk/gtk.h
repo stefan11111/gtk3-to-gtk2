@@ -164,7 +164,9 @@
 #include <gtk/gtkrecentchooserwidget.h>
 #include <gtk/gtkrecentfilter.h>
 #include <gtk/gtkrecentmanager.h>
+
 #include <gtk/gtkrender.h>
+
 #include <gtk/gtkruler.h>
 #include <gtk/gtkscale.h>
 #include <gtk/gtkscalebutton.h>
@@ -192,6 +194,7 @@
 #include <gtk/gtksymboliccolor.h>
 #include <gtk/gtkgradient.h>
 #include <gtk/gtkborder.h>
+#include <gtk/gtkthemingengine.h>
 
 #include <gtk/gtktable.h>
 #include <gtk/gtkgrid.h>

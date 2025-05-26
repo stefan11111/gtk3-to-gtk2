@@ -20,8 +20,6 @@
 #include <gdk/gdk.h>
 #include <gtk/gtkprivate.h>
 
-#include "gtkthemingengine.h"
-
 #ifndef P_
 #define P_(str) str
 #endif
