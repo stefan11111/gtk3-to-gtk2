@@ -869,12 +869,15 @@ gtk_theming_engine_get_font (GtkThemingEngine *engine,
 static gboolean
 gtk_theming_module_load (GTypeModule *type_module)
 {
+  return FALSE;
+#if 0
   GtkThemingModule *theming_module;
   GModule *module;
   gchar *name, *module_path;
 
   theming_module = GTK_THEMING_MODULE (type_module);
   name = theming_module->name;
+
   module_path = _gtk_find_module (name, "theming-engines");
 
   if (!module_path)
@@ -903,6 +906,7 @@ gtk_theming_module_load (GTypeModule *type_module)
   theming_module->init (G_TYPE_MODULE (theming_module));
 
   return TRUE;
+#endif
 }
 
 static void
