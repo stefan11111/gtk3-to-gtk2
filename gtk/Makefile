@@ -15,8 +15,7 @@ gtk: libgtk-3.so.0
 ${OBJ}: ${ALL_HEADERS}
 
 .c.o:
-#	Debug CFLAGS
-	${CC} ${XCFLAGS} -fno-permissive -c -o $@ $<
+	${CC} ${XCFLAGS} -c -o $@ $<
 
 libgtk-3.so.0: ${OBJ}
 	${CC} ${XCFLAGS} ${OBJ} -lgtk-${TARGET}-2.0 -o libgtk-3.so.0 ${XLDFLAGS}

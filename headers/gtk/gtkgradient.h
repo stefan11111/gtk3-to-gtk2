@@ -25,12 +25,7 @@
 #include <gdk/gdk.h>
 #include <gtk/gtkstylecontext.h>
 
-#if 0
-#include <gtk/deprecated/gtkstyleproperties.h>
-#else
-/* TODO: remove when gtkstyleprovider is implemented */
-typedef struct _GtkStyleProperties GtkStyleProperties;
-#endif
+#include <gtk/gtkstyleproperties.h>
 
 #include <gtk/gtksymboliccolor.h>
 

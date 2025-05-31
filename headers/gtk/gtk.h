@@ -195,6 +195,7 @@
 #include <gtk/gtkgradient.h>
 #include <gtk/gtkborder.h>
 #include <gtk/gtkthemingengine.h>
+#include <gtk/gtkstyleproperties.h>
 
 #include <gtk/gtktable.h>
 #include <gtk/gtkgrid.h>

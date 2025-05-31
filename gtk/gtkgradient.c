@@ -18,9 +18,6 @@
 #include <gtk/gtk.h>
 #include "gtkgradientprivate.h"
 
-/* TODO: remove when gtkstyleproperties is implemented */
-#define GTK_IS_STYLE_PROPERTIES(x) 1
-
 /* XXX This depends on gtksymboliccolor, which is implemented an stubs XXX */
 /* XXX Because of that, all of this is more or less a fancy way of doing nothing XXX */
 
@@ -55,7 +52,6 @@ typedef struct ColorStop ColorStop;
 struct ColorStop
 {
   gdouble offset;
-  GtkSymbolicColor *color;
 };
 
 struct _GtkGradient
@@ -177,7 +173,6 @@ gtk_gradient_add_color_stop (GtkGradient      *gradient,
   g_return_if_fail (gradient != NULL);
 
   stop.offset = offset;
-  stop.color = gtk_symbolic_color_ref (color);
 
   g_array_append_val (gradient->stops, stop);
 }
@@ -224,16 +219,6 @@ gtk_gradient_unref (GtkGradient *gradient)
 
   if (gradient->ref_count == 0)
     {
-      guint i;
-
-      for (i = 0; i < gradient->stops->len; i++)
-        {
-          ColorStop *stop;
-
-          stop = &g_array_index (gradient->stops, ColorStop, i);
-          gtk_symbolic_color_unref (stop->color);
-        }
-
       g_array_free (gradient->stops, TRUE);
       g_slice_free (GtkGradient, gradient);
     }
@@ -263,10 +248,8 @@ gtk_gradient_resolve (GtkGradient         *gradient,
                       cairo_pattern_t    **resolved_gradient)
 {
   cairo_pattern_t *pattern;
-  guint i;
 
   g_return_val_if_fail (gradient != NULL, FALSE);
-  g_return_val_if_fail (GTK_IS_STYLE_PROPERTIES (props), FALSE);
   g_return_val_if_fail (resolved_gradient != NULL, FALSE);
 
   if (gradient->radius0 == 0 && gradient->radius1 == 0)
@@ -278,26 +261,8 @@ gtk_gradient_resolve (GtkGradient         *gradient,
                                            gradient->x1, gradient->y1,
                                            gradient->radius1);
 
-  for (i = 0; i < gradient->stops->len; i++)
-    {
-      ColorStop *stop;
-      GdkRGBA color;
-
-      stop = &g_array_index (gradient->stops, ColorStop, i);
-
-      if (!gtk_symbolic_color_resolve (stop->color, props, &color))
-        {
-          cairo_pattern_destroy (pattern);
-          return FALSE;
-        }
-
-      cairo_pattern_add_color_stop_rgba (pattern, stop->offset,
-                                         color.red, color.green,
-                                         color.blue, color.alpha);
-    }
-
   *resolved_gradient = pattern;
-  return TRUE;
+  return FALSE;
 }
 
 cairo_pattern_t *
@@ -409,7 +374,6 @@ gtk_gradient_to_string (GtkGradient *gradient)
   for (i = 0; i < gradient->stops->len; i++)
     {
       ColorStop *stop;
-      char *s;
 
       stop = &g_array_index (gradient->stops, ColorStop, i);
 
@@ -425,10 +389,6 @@ gtk_gradient_to_string (GtkGradient *gradient)
           append_number (str, stop->offset, NULL, NULL, NULL);
           g_string_append (str, ", ");
         }
-
-      s = gtk_symbolic_color_to_string (stop->color);
-      g_string_append (str, s);
-      g_free (s);
 
       g_string_append (str, ")");
     }
@@ -459,13 +419,10 @@ gtk_gradient_fade (GtkGradient *gradient,
 
   for (i = 0; i < gradient->stops->len; i++)
     {
-      GtkSymbolicColor *color;
       ColorStop *stop;
 
       stop = &g_array_index (gradient->stops, ColorStop, i);
-      color = gtk_symbolic_color_new_alpha (stop->color, opacity);
-      gtk_gradient_add_color_stop (faded, stop->offset, color);
-      gtk_symbolic_color_unref (color);
+      gtk_gradient_add_color_stop (faded, stop->offset, NULL);
     }
 
   return faded;
@@ -507,18 +464,13 @@ _gtk_gradient_transition (GtkGradient *start,
   for (i = 0; i < start->stops->len; i++)
     {
       ColorStop *start_stop, *end_stop;
-      GtkSymbolicColor *color;
       double offset;
 
       start_stop = &g_array_index (start->stops, ColorStop, i);
       end_stop = &g_array_index (end->stops, ColorStop, i);
 
       offset = (1 - progress) * start_stop->offset + progress * end_stop->offset;
-      color = gtk_symbolic_color_new_mix (start_stop->color,
-                                          end_stop->color,
-                                          progress);
-      gtk_gradient_add_color_stop (gradient, offset, color);
-      gtk_symbolic_color_unref (color);
+      gtk_gradient_add_color_stop (gradient, offset, NULL);
     }
 
   return gradient;

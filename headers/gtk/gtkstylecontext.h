@@ -1199,6 +1199,7 @@ void        gtk_render_insertion_cursor
                                     int                  index,
                                     PangoDirection       direction);
 
+#ifndef GTK_COMPILATION
 /* implemented in gtkrender.c */
 void   gtk_draw_insertion_cursor    (GtkWidget          *widget,
                                      cairo_t            *cr,
@@ -1206,6 +1207,13 @@ void   gtk_draw_insertion_cursor    (GtkWidget          *widget,
                                      gboolean            is_primary,
                                      GtkTextDirection    direction,
                                      gboolean            draw_arrow);
+#else /* real prototype */
+void   gtk_draw_insertion_cursor    (GtkWidget          *widget,
+                                     cairo_t            *cr,
+                                     const GdkRectangle *location,
+                                     ...);
+#endif
+
 
 typedef enum {
   GTK_STYLE_CONTEXT_PRINT_NONE         = 0,

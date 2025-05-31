@@ -28,12 +28,7 @@
 #include <gtk/gtkstylecontext.h>
 #include <gtk/gtkwidgetpath.h>
 
-#if 0
-#include <gtk/deprecated/gtkstyleproperties.h>
-#else
-/* TODO: remove when gtkstyleproperties is implemented */
-typedef struct _GtkStyleProperties GtkStyleProperties;
-#endif
+#include <gtk/gtkstyleproperties.h>
 
 G_BEGIN_DECLS
 

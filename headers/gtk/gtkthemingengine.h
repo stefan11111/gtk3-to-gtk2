@@ -28,12 +28,7 @@
 #include <gtk/gtkborder.h>
 #include <gtk/gtkenums.h>
 
-#if 0
-#include <gtk/deprecated/gtkstyleproperties.h>
-#else
-/* TODO: remove when gtkstyleproperties is implemented */
-typedef void* GtkStylePropertyParser;
-#endif
+#include <gtk/gtkstyleproperties.h>
 
 G_BEGIN_DECLS
 

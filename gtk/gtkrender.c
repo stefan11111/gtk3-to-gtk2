@@ -2,6 +2,7 @@
 #include <gdk/gdk.h>
 #include "util.h"
 #include <math.h>
+#include <dlfcn.h>
 
 /* XXX The code is this file should be FAST XXX */
 
@@ -3266,7 +3267,7 @@ get_insertion_cursor_color (GtkWidget *widget,
     return &cursor_info->secondary;
 }
 
-static void
+void
 draw_insertion_cursor (GtkWidget          *widget, /* is NULL with gtk3 api */
                        cairo_t            *cr,
 		       const GdkRectangle *location,
@@ -3370,23 +3371,95 @@ draw_insertion_cursor (GtkWidget          *widget, /* is NULL with gtk3 api */
  * Since: 3.0
  * Deprecated: 3.4: Use gtk_render_insertion_cursor() instead.
  */
+
+/* XXX conflicts with gtk2 XXX */
+/* XXX abuses the dynamic linker to make this work XXX */
 void
 gtk_draw_insertion_cursor (GtkWidget          *widget,
 			   cairo_t            *cr,
 			   const GdkRectangle *location,
+                           ...)
+/*
 			   gboolean            is_primary,
 			   GtkTextDirection    direction,
 			   gboolean            draw_arrow)
+*/
 {
+  void *gtk2;
+  static void (*gtk2_gtk_draw_insertion_cursor)(GtkWidget          *widget,
+                                                GdkDrawable        *drawable,
+                                                const GdkRectangle *area,
+                                                const GdkRectangle *location,
+                                                gboolean            is_primary,
+                                                GtkTextDirection    direction,
+                                                gboolean            draw_arrow);
+
+  char *dl_error;
+
+  /* gtk3 args */
+  gboolean            is_primary;
+  GtkTextDirection    direction;
+  gboolean            draw_arrow;
+
+  /* gtk2 extra args */
+  GdkDrawable        *drawable;
+  const GdkRectangle *area;
+
+  va_list list;
+  va_start (list, location);
+
   g_return_if_fail (GTK_IS_WIDGET (widget));
   g_return_if_fail (cr != NULL);
-  g_return_if_fail (location != NULL);
-  g_return_if_fail (direction != GTK_TEXT_DIR_NONE);
 
-  gdk_cairo_set_source_color (cr, get_insertion_cursor_color (widget, is_primary));
-  draw_insertion_cursor (widget, cr, location, 0, direction, draw_arrow, FALSE);
+  if (!GDK_IS_DRAWABLE (cr)) { /* gtk3 call */
+
+    is_primary = va_arg (list, gboolean);
+    direction = va_arg (list, GtkTextDirection);
+    draw_arrow = va_arg (list, gboolean);
+
+    g_return_if_fail (location != NULL);
+    g_return_if_fail (direction != GTK_TEXT_DIR_NONE);
+
+    gdk_cairo_set_source_color (cr, get_insertion_cursor_color (widget, is_primary));
+    draw_insertion_cursor (widget, cr, location, 0, direction, draw_arrow, FALSE);
+
+    va_end (list);
+    return;
+  }
+
+  /* gtk2 call */
+  drawable = (GdkDrawable*)cr;
+  area = location;
+  location = va_arg (list, const GdkRectangle *);
+  is_primary = va_arg (list, gboolean);
+  direction = va_arg (list, GtkTextDirection);
+  draw_arrow = va_arg (list, gboolean);
+
+  if (!gtk2_gtk_draw_insertion_cursor) {
+    gtk2 = dlopen (
+#ifdef X11
+                   "libgtk-x11-2.0.so",
+#else
+                   "libgtk-directfb-2.0.so",
+#endif
+                   RTLD_NOW);
+
+    g_return_if_fail (gtk2 != NULL);
+
+    gtk2_gtk_draw_insertion_cursor = dlsym (gtk2, "gtk_draw_insertion_cursor");
+
+    dl_error = dlerror();
+
+    if (dl_error) {
+      g_warning ("%s\n", dl_error);
+      return;
+    }
+
+    /* dlclose never called */
+  }
+
+  gtk2_gtk_draw_insertion_cursor (widget, drawable, area, location, is_primary, direction, draw_arrow);
 }
-
 /**
  * gtk_render_insertion_cursor:
  * @context: a #GtkStyleContext

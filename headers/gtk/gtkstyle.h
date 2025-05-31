@@ -943,13 +943,20 @@ void   gtk_draw_insertion_cursor    (GtkWidget          *widget,
                                      gboolean            is_primary,
                                      GtkTextDirection    direction,
                                      gboolean            draw_arrow);
-#else
+#endif
+
+#ifndef GTK_COMPILATION
 void   gtk_draw_insertion_cursor    (GtkWidget          *widget,
                                      cairo_t            *cr,
                                      const GdkRectangle *location,
                                      gboolean            is_primary,
                                      GtkTextDirection    direction,
                                      gboolean            draw_arrow);
+#else /* real prototype */
+void   gtk_draw_insertion_cursor    (GtkWidget          *widget,
+                                     cairo_t            *cr,
+                                     const GdkRectangle *location,
+                                     ...);
 #endif
 
 GdkGC *_gtk_widget_get_cursor_gc    (GtkWidget          *widget);
