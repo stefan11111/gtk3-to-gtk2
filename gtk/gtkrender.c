@@ -3385,7 +3385,7 @@ gtk_draw_insertion_cursor (GtkWidget          *widget,
 			   gboolean            draw_arrow)
 */
 {
-  void *gtk2;
+  static void *gtk2;
   static void (*gtk2_gtk_draw_insertion_cursor)(GtkWidget          *widget,
                                                 GdkDrawable        *drawable,
                                                 const GdkRectangle *area,
@@ -3435,7 +3435,7 @@ gtk_draw_insertion_cursor (GtkWidget          *widget,
   direction = va_arg (list, GtkTextDirection);
   draw_arrow = va_arg (list, gboolean);
 
-  if (!gtk2_gtk_draw_insertion_cursor) {
+  if (!gtk2) {
     gtk2 = dlopen (
 #ifdef X11
                    "libgtk-x11-2.0.so",
