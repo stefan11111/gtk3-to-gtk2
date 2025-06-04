@@ -4,10 +4,10 @@
 #define PARAM_SPEC_PARAM_ID(pspec)              ((pspec)->param_id)
 #define PARAM_SPEC_SET_PARAM_ID(pspec, id)      ((pspec)->param_id = (id))
 
-#if 0 /* not exported */
-extern GParamSpecPool       *_gtk_widget_child_property_pool;
-extern GObjectNotifyContext *_gtk_widget_child_property_notify_context;
-#endif
+
+#define _gtk_widget_child_property_pool (*gtk2_gtk_widget_child_property_pool())
+#define _gtk_widget_child_property_notify_context ((GObjectNotifyContext*)*gtk2_gtk_widget_child_property_notify_context())
+
 
 /**
  * gtk_container_class_install_child_properties:
@@ -62,9 +62,6 @@ gtk_container_child_notify (GtkContainer *container,
                             GtkWidget    *child,
                             const gchar  *child_property)
 {
-/* TODO: needs internal symbols from gtk that are not exported */
-/* Can't be implemented in pure gtk code */
-#if 0
   GObject *obj;
   GParamSpec *pspec;
 
@@ -102,7 +99,6 @@ gtk_container_child_notify (GtkContainer *container,
     }
 
   g_object_unref (obj);
-#endif
 }
 
 /**
@@ -125,9 +121,6 @@ gtk_container_child_notify_by_pspec (GtkContainer *container,
                                      GtkWidget    *child,
                                      GParamSpec   *pspec)
 {
-/* TODO: needs internal symbols from gtk that are not exported */
-/* Can't be implemented in pure gtk code */
-#if 0
   GObject *obj = G_OBJECT (child);
   GObjectNotifyQueue *nqueue;
 
@@ -146,7 +139,6 @@ gtk_container_child_notify_by_pspec (GtkContainer *container,
   g_object_notify_queue_thaw (obj, nqueue);
 
   g_object_unref (obj);
-#endif
 }
 
 void

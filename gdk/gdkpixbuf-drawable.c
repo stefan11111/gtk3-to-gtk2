@@ -117,82 +117,6 @@ gdk_cairo_surface_coerce_to_image (cairo_surface_t *surface,
   return copy;
 }
 
-static inline void
-gdk_window_cairo_surface_destroy (void *data)
-{
-#if 0 /* wastes memory and cpu cycles */
-  struct _GdkWindowObjectReal *private = (struct _GdkWindowObjectReal*) data;
-
-  private->cairo_surface = NULL;
-  ((struct _GdkWindowObjectReal*)private->impl_window)->outstanding_surfaces--;
-#endif /* lean, fast, unreadable */
-  ((struct _GdkWindowObjectReal*)data)->cairo_surface = NULL;
-  ((struct _GdkWindowObjectReal*)((struct _GdkWindowObjectReal*)data)->impl_window)->outstanding_surfaces--;
-}
-
-static inline GdkDrawable *
-_gdk_drawable_get_source_drawable (GdkDrawable *drawable)
-{
-  g_return_val_if_fail (GDK_IS_DRAWABLE (drawable), NULL);
-
-  if (GDK_DRAWABLE_GET_CLASS (drawable)->get_source_drawable)
-    return GDK_DRAWABLE_GET_CLASS (drawable)->get_source_drawable (drawable);
-
-  return drawable;
-}
-
-static cairo_surface_t *
-gdk_window_ref_cairo_surface (GdkDrawable *drawable)
-{
-  struct _GdkWindowObjectReal *private = (struct _GdkWindowObjectReal*) drawable;
-  cairo_surface_t *surface;
-
-  if (private->paint_stack)
-    {
-      GdkWindowPaint *paint = private->paint_stack->data;
-
-      surface = paint->surface;
-      cairo_surface_reference (surface);
-    }
-  else
-    {
-
-      /* This will be drawing directly to the window, so flush implicit paint */
-      gdk_window_flush ((GdkWindow *)drawable);
-
-      if (!private->cairo_surface)
-        {
-          int width, height;
-
-          gdk_drawable_get_size ((GdkWindow *) private->impl_window,
-                                 &width, &height);
-
-          GdkDrawable *source = _gdk_drawable_get_source_drawable(drawable);
-
-          private->cairo_surface = GDK_DRAWABLE_GET_CLASS (source)->create_cairo_surface (source, width, height);
-          if (private->cairo_surface)
-            {
-              ((struct _GdkWindowObjectReal*)private->impl_window)->outstanding_surfaces++;
-
-              cairo_surface_set_device_offset (private->cairo_surface,
-                                               private->abs_x,
-                                               private->abs_y);
-
-              static const cairo_user_data_key_t gdk_window_cairo_key;
-
-              cairo_surface_set_user_data (private->cairo_surface, &gdk_window_cairo_key,
-                                           drawable, gdk_window_cairo_surface_destroy);
-            }
-        }
-      else
-        cairo_surface_reference (private->cairo_surface);
-
-      surface = private->cairo_surface;
-    }
-
-  return surface;
-}
-
 /**
  * gdk_pixbuf_get_from_surface:
  * @surface: surface to copy from
@@ -327,7 +251,7 @@ gdk_pixbuf_get_from_window (GdkWindow *src,
   g_return_val_if_fail (GDK_IS_WINDOW (src), NULL);
   g_return_val_if_fail (gdk_window_is_viewable (src), NULL);
 
-  cairo_surface_t *surface = gdk_window_ref_cairo_surface (src);
+  cairo_surface_t *surface = gtk2_gdk_window_ref_cairo_surface (src);
   int scale = gdk_window_get_scale_factor (src);
 
   /* We do not know what happened to this surface outside of GDK.

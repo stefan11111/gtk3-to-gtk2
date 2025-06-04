@@ -3,6 +3,7 @@
 #include "util.h"
 
 #include "gtkapplication.h"
+#include "gtkapplicationimpl.h"
 
 /* XXX Only half-implemented  XXX */
 /* XXX This deals with things like dbus, which I don't want to implement XXX */
@@ -31,7 +32,6 @@ enum {
 static GParamSpec *gtk_application_props[NUM_PROPERTIES];
 
 /* XXX Opaque typedefs XXX */
-typedef struct _GtkApplicationImpl GtkApplicationImpl;
 typedef struct _GtkApplicationAccels GtkApplicationAccels;
 typedef struct _GtkActionMuxer GtkActionMuxer;
 
@@ -80,6 +80,7 @@ gtk_application_get_property (GObject    *object,
                               GValue     *value,
                               GParamSpec *pspec)
 {
+#if 0 /* TODO: fix soon */
   GtkApplication *application = GTK_APPLICATION (object);
 
   switch (prop_id)
@@ -108,6 +109,7 @@ gtk_application_get_property (GObject    *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+#endif
 }
 
 static void
@@ -116,6 +118,8 @@ gtk_application_set_property (GObject      *object,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
+/* TODO: fix soon */
+#if 0
   GtkApplication *application = GTK_APPLICATION (object);
 
   switch (prop_id)
@@ -136,6 +140,7 @@ gtk_application_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+#endif
 }
 
 static void
@@ -182,6 +187,25 @@ gtk_application_add_platform_data (GApplication    *application,
 }
 
 static void
+gtk_application_before_emit (GApplication *g_application,
+                             GVariant     *platform_data)
+{
+  GtkApplication *application = GTK_APPLICATION (g_application);
+
+  gdk_threads_enter ();
+
+  gtk_application_impl_before_emit (application->priv->impl, platform_data);
+}
+
+static void
+gtk_application_after_emit (GApplication *application,
+                            GVariant     *platform_data)
+{
+  gdk_threads_leave ();
+}
+
+
+static void
 gtk_application_class_init (GtkApplicationClass *class)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (class);
@@ -193,6 +217,8 @@ gtk_application_class_init (GtkApplicationClass *class)
 
   application_class->local_command_line = gtk_application_local_command_line;
   application_class->add_platform_data = gtk_application_add_platform_data;
+  application_class->before_emit = gtk_application_before_emit;
+  application_class->after_emit = gtk_application_after_emit;
 }
 
 /**

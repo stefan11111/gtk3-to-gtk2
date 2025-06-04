@@ -4,11 +4,7 @@
 
 #include "util.h"
 
-/* Private variable declarations
- */
-static int gdk_initialized = 0;                     /* 1 if the library is initialized,
-                                                     * 0 otherwise.
-                                                     */
+#define gdk_initialized (*gtk2_gdk_initialized())
 
 /**
  * gdk_disable_multidevice:
