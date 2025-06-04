@@ -37,9 +37,16 @@
 
 G_BEGIN_DECLS
 
+#if 0 /* under another name */
 void
 _gtk_pango_fill_layout (cairo_t     *cr,
                         PangoLayout *layout);
+#else
+/* expose gtk2 internals */
+void
+gtk2_gtk_pango_fill_layout (cairo_t     *cr,
+                            PangoLayout *layout);
+#endif
 
 GtkTextDirection
 GtkTextDirection_from_PangoDirection (PangoDirection direction);

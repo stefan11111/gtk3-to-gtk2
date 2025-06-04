@@ -1622,7 +1622,7 @@ gtk_default_draw_layout (GtkStyle        *style,
     {
       gdk_cairo_set_source_color (cr, &style->white);
       cairo_move_to (cr, 1, 1);
-      _gtk_pango_fill_layout (cr, layout);
+      gtk2_gtk_pango_fill_layout (cr, layout);
       cairo_new_path (cr);
     }
 
