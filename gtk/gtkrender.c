@@ -2736,7 +2736,7 @@ gtk_default_draw_handle (GtkStyle      *style,
       ythick = 0;
 
       if (state_type == GTK_STATE_SELECTED && widget && !gtk_widget_has_focus (widget))
-	  _gtk_style_shade (&style->base[GTK_STATE_ACTIVE], &light,
+	  gtk2_gtk_style_shade (&style->base[GTK_STATE_ACTIVE], &light,
                             LIGHTNESS_MULT);
       else
 	light = style->light[state_type];
