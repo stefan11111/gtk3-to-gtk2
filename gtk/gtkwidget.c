@@ -1,6 +1,14 @@
 #include <gtk/gtk.h>
 
 int
+gtk_widget_get_allocated_width (GtkWidget *widget)
+{
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
+
+  return widget->allocation.width;
+}
+
+int
 gtk_widget_get_allocated_height (GtkWidget *widget)
 {
   g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);

@@ -1021,6 +1021,8 @@ void                  gtk_widget_get_requisition        (GtkWidget     *widget,
                                                          GtkRequisition *requisition);
 
 
+int                   gtk_widget_get_allocated_width    (GtkWidget *widget);
+
 int                   gtk_widget_get_allocated_height   (GtkWidget *widget);
 
 
