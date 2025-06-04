@@ -154,6 +154,11 @@ void gdk_beep (void);
 
 void gdk_flush (void);
 
+/* from gtk3 */
+void gdk_disable_multidevice (void);
+
+
+
 #ifndef GDK_MULTIHEAD_SAFE
 void gdk_set_double_click_time             (guint       msec);
 #endif

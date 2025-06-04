@@ -1,7 +1,11 @@
 #include "gdkrgba.h"
-#include "gtkenums.h"
 #include "gdkwindowinternal.h"
 #include "gdkdrawingcontextprivate.h"
+#include "gdkinternals.h"
+#include "gdk-private.h"
+
+
+#include "gtkenums.h"
 #include "gtkpango.h"
 #include "gtkrenderprivate.h"
 #include "gtkcairo.h"
