@@ -24,6 +24,9 @@ endif
 
 TOP_SRCDIR = $(shell pwd)
 
+# For gdkconfig.h
+XCFLAGS += -I${XLIBDIR}/gtk-2.0/include
+
 # Private headers
 XCFLAGS += -I${TOP_SRCDIR}/include
 
