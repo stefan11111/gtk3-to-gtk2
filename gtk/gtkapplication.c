@@ -1043,7 +1043,7 @@ gtk_application_startup (GApplication *g_application)
 
   G_APPLICATION_CLASS (gtk_application_parent_class)->startup (g_application);
 
-#if 0 /* TODO: remove after gtkactionmuxer in implemented */
+#if 0 /* TODO: remove after gtkactionmuxer is implemented */
   gtk_action_muxer_insert (application->priv->muxer, "app", G_ACTION_GROUP (application));
 #endif
 
@@ -1054,6 +1054,51 @@ gtk_application_startup (GApplication *g_application)
 
   gtk_application_load_resources (application);
 }
+
+static void
+gtk_application_shutdown (GApplication *g_application)
+{
+  GtkApplication *application = GTK_APPLICATION (g_application);
+
+  if (application->priv->impl == NULL)
+    return;
+
+  gtk_application_impl_shutdown (application->priv->impl);
+  g_clear_object (&application->priv->impl);
+
+#if 0 /* TODO: remove after gtkactionmuxer is implemented */
+  gtk_action_muxer_remove (application->priv->muxer, "app");
+#endif
+
+  /* Keep this section in sync with gtk_main() */
+
+  /* Try storing all clipboard data we have */
+  gtk2_gtk_clipboard_store_all ();
+
+  /* Synchronize the recent manager singleton */
+  gtk2_gtk_recent_manager_sync ();
+
+  G_APPLICATION_CLASS (gtk_application_parent_class)->shutdown (g_application);
+}
+
+static gboolean
+gtk_application_dbus_register (GApplication     *application,
+                               GDBusConnection  *connection,
+                               const char       *obect_path,
+                               GError          **error)
+{
+  /* Not Implemented */
+  return TRUE;
+}
+
+static void
+gtk_application_dbus_unregister (GApplication     *application,
+                                 GDBusConnection  *connection,
+                                 const char       *obect_path)
+{
+  /* Not Implemented */
+}
+
 
 
 static void
@@ -1071,6 +1116,13 @@ gtk_application_class_init (GtkApplicationClass *class)
   application_class->before_emit = gtk_application_before_emit;
   application_class->after_emit = gtk_application_after_emit;
   application_class->startup = gtk_application_startup;
+  application_class->shutdown = gtk_application_shutdown;
+
+  /* Not Implemented */
+  application_class->dbus_register = gtk_application_dbus_register;
+  application_class->dbus_unregister = gtk_application_dbus_unregister;
+
+
 }
 
 /**
