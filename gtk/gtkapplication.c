@@ -2,6 +2,8 @@
 
 #include "util.h"
 
+#include "gtkactionmuxer.h"
+
 /* XXX Only half-implemented  XXX */
 /* XXX This deals with things like dbus, which I don't want to implement XXX */
 /* XXX This also has some other things I might want to implement eventually XXX */
@@ -717,11 +719,11 @@ gtk_application_set_accels_for_action (GtkApplication      *application,
                                                 detailed_action_name,
                                                 accels);
 
-#if 0 /* TODO: remove after gtkactionmuxer is implemented */
   action_and_target = gtk_normalise_detailed_action_name (detailed_action_name);
+#if 0 /* TODO: remove after gtkactionmuxer is implemented */
   gtk_action_muxer_set_primary_accel (application->priv->muxer, action_and_target, accels[0]);
-  g_free (action_and_target);
 #endif
+  g_free (action_and_target);
 
   gtk_application_update_accels (application);
 }
