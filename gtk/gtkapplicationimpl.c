@@ -22,9 +22,9 @@
 #include "gtkapplication.h"
 #include "gtkapplicationimpl.h"
 
-#ifdef GDK_WINDOWING_X11
-#include <gdk/x11/gdkx.h>
-#endif
+/* XXX Not Implemented XXX */
+/* XXX For X11, this only deals with dbus, which I don't want XXX */
+/* XXX for DirectFB, this isn't implemented anyway XXX */
 
 G_DEFINE_TYPE (GtkApplicationImpl, gtk_application_impl, G_TYPE_OBJECT)
 
@@ -161,12 +161,7 @@ gtk_application_impl_new (GtkApplication *application,
   GtkApplicationImpl *impl;
   GType impl_type;
 
-#ifdef X11
-  if (GDK_IS_X11_DISPLAY (display))
-    impl_type = gtk_application_impl_x11_get_type ();
-  else
-#endif
-    impl_type = gtk_application_impl_get_type ();
+  impl_type = gtk_application_impl_get_type ();
 
   impl = g_object_new (impl_type, NULL);
   impl->application = application;
