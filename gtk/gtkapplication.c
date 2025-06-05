@@ -4,6 +4,7 @@
 
 #include "gtkapplication.h"
 #include "gtkapplicationimpl.h"
+#include "gtkapplicationaccelsprivate.h"
 
 /* XXX Only half-implemented  XXX */
 /* XXX This deals with things like dbus, which I don't want to implement XXX */
@@ -95,12 +96,12 @@ gtk_application_init (GtkApplication *application)
 
 #if 0 /* TODO: fix later */
   application->priv->muxer = gtk_action_muxer_new ();
-
-  application->priv->accels = gtk_application_accels_new ();
 #else
   application->priv->muxer = NULL;
-  application->priv->accels = NULL;
 #endif
+
+  application->priv->accels = gtk_application_accels_new ();
+
   /* getenv now at the latest */
   gdk_get_desktop_startup_id ();
 }
@@ -311,9 +312,9 @@ extract_accel_from_menu_item (GMenuModel     *model,
       gchar *detailed_action_name;
 
       detailed_action_name = g_action_print_detailed_name (action, target);
-#if 0 /* TODO: fix soon */
+
       gtk_application_set_accels_for_action (app, detailed_action_name, accels);
-#endif
+
       g_free (detailed_action_name);
     }
 
@@ -497,9 +498,9 @@ gtk_application_add_accelerator (GtkApplication *application,
   g_return_if_fail (action_name != NULL);
 
   detailed_action_name = g_action_print_detailed_name (action_name, parameter);
-#if 0 /* TODO: fix soon */
+
   gtk_application_set_accels_for_action (application, detailed_action_name, accelerators);
-#endif
+
   g_free (detailed_action_name);
 }
 
@@ -529,9 +530,9 @@ gtk_application_remove_accelerator (GtkApplication *application,
   g_return_if_fail (action_name != NULL);
 
   detailed_action_name = g_action_print_detailed_name (action_name, parameter);
-#if 0 /* TODO: fix soon */
+
   gtk_application_set_accels_for_action (application, detailed_action_name, accelerators);
-#endif
+
   g_free (detailed_action_name);
 }
 
@@ -631,7 +632,6 @@ gtk_application_is_inhibited (GtkApplication             *application,
   return gtk_application_impl_is_inhibited (application->priv->impl, flags);
 }
 
-#if 0 /* TODO: fix soon */
 /**
  * gtk_application_list_action_descriptions:
  * @application: a #GtkApplication
@@ -651,9 +651,7 @@ gtk_application_list_action_descriptions (GtkApplication *application)
 
   return gtk_application_accels_list_action_descriptions (application->priv->accels);
 }
-#endif
 
-#if 0 /* TODO: fix soon */
 /**
  * gtk_application_get_accels_for_action:
  * @application: a #GtkApplication
@@ -678,9 +676,16 @@ gtk_application_get_accels_for_action (GtkApplication *application,
   return gtk_application_accels_get_accels_for_action (application->priv->accels,
                                                        detailed_action_name);
 }
-#endif
 
-#if 0 /* TODO: fix soon */
+static void
+gtk_application_update_accels (GtkApplication *application)
+{
+  GList *l;
+
+  for (l = application->priv->windows; l != NULL; l = l->next)
+    gtk2_gtk_window_notify_keys_changed (l->data);
+}
+
 /**
  * gtk_application_set_accels_for_action:
  * @application: a #GtkApplication
@@ -717,14 +722,14 @@ gtk_application_set_accels_for_action (GtkApplication      *application,
                                                 accels);
 
   action_and_target = gtk_normalise_detailed_action_name (detailed_action_name);
+#if 0 /* TODO: remove after gtkactionmuxer is implemented */
   gtk_action_muxer_set_primary_accel (application->priv->muxer, action_and_target, accels[0]);
+#endif
   g_free (action_and_target);
 
   gtk_application_update_accels (application);
 }
-#endif
 
-#if 0 /* TODO: fix soon */
 /**
  * gtk_application_get_actions_for_accel:
  * @application: a #GtkApplication
@@ -759,7 +764,6 @@ gtk_application_get_actions_for_accel (GtkApplication *application,
 
   return gtk_application_accels_get_actions_for_accel (application->priv->accels, accel);
 }
-#endif
 
 /**
  * gtk_application_prefers_app_menu:
@@ -1055,9 +1059,8 @@ gtk_application_load_resources (GtkApplication *application)
         const gchar * const accels[] = { "<Primary>F1", "<Primary>question", NULL };
 
         application->priv->help_overlay_path = path;
-#if 0 /* TODO: fix soon */
+
         gtk_application_set_accels_for_action (application, "win.show-help-overlay", accels);
-#endif
       }
     else
       {
