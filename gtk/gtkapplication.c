@@ -941,6 +941,120 @@ gtk_application_after_emit (GApplication *application,
   gdk_threads_leave ();
 }
 
+static void
+gtk_application_load_resources (GtkApplication *application)
+{
+  const gchar *base_path;
+
+  base_path = g_application_get_resource_base_path (G_APPLICATION (application));
+
+  if (base_path == NULL)
+    return;
+
+  /* Expand the icon search path */
+  {
+    GtkIconTheme *default_theme;
+    gchar *iconspath;
+
+    default_theme = gtk_icon_theme_get_default ();
+    iconspath = g_strconcat (base_path, "/icons/", NULL);
+    gtk_icon_theme_add_resource_path (default_theme, iconspath);
+    g_free (iconspath);
+  }
+
+  /* Load the menus */
+  {
+    gchar *menuspath;
+
+    /* If the user has given a specific file for the variant of menu
+     * that we are looking for, use it with preference.
+     */
+    if (gtk_application_prefers_app_menu (application))
+      menuspath = g_strconcat (base_path, "/gtk/menus-appmenu.ui", NULL);
+    else
+      menuspath = g_strconcat (base_path, "/gtk/menus-traditional.ui", NULL);
+
+    if (g_resources_get_info (menuspath, G_RESOURCE_LOOKUP_FLAGS_NONE, NULL, NULL, NULL))
+      application->priv->menus_builder = gtk_builder_new_from_resource (menuspath);
+    g_free (menuspath);
+
+    /* If we didn't get the specific file, fall back. */
+    if (application->priv->menus_builder == NULL)
+      {
+        menuspath = g_strconcat (base_path, "/gtk/menus.ui", NULL);
+        if (g_resources_get_info (menuspath, G_RESOURCE_LOOKUP_FLAGS_NONE, NULL, NULL, NULL))
+          application->priv->menus_builder = gtk_builder_new_from_resource (menuspath);
+        g_free (menuspath);
+      }
+
+    /* Always load from -common as well, if we have it */
+    menuspath = g_strconcat (base_path, "/gtk/menus-common.ui", NULL);
+    if (g_resources_get_info (menuspath, G_RESOURCE_LOOKUP_FLAGS_NONE, NULL, NULL, NULL))
+      {
+        GError *error = NULL;
+
+        if (application->priv->menus_builder == NULL)
+          application->priv->menus_builder = gtk_builder_new ();
+
+        if (!gtk_builder_add_from_resource (application->priv->menus_builder, menuspath, &error))
+          g_error ("failed to load menus-common.ui: %s", error->message);
+      }
+    g_free (menuspath);
+
+    if (application->priv->menus_builder)
+      {
+        GObject *menu;
+
+        menu = gtk_builder_get_object (application->priv->menus_builder, "app-menu");
+        if (menu != NULL && G_IS_MENU_MODEL (menu))
+          gtk_application_set_app_menu (application, G_MENU_MODEL (menu));
+        menu = gtk_builder_get_object (application->priv->menus_builder, "menubar");
+        if (menu != NULL && G_IS_MENU_MODEL (menu))
+          gtk_application_set_menubar (application, G_MENU_MODEL (menu));
+      }
+  }
+
+  /* Help overlay */
+  {
+    gchar *path;
+
+    path = g_strconcat (base_path, "/gtk/help-overlay.ui", NULL);
+    if (g_resources_get_info (path, G_RESOURCE_LOOKUP_FLAGS_NONE, NULL, NULL, NULL))
+      {
+        const gchar * const accels[] = { "<Primary>F1", "<Primary>question", NULL };
+
+        application->priv->help_overlay_path = path;
+#if 0 /* TODO: fix soon */
+        gtk_application_set_accels_for_action (application, "win.show-help-overlay", accels);
+#endif
+      }
+    else
+      {
+        g_free (path);
+      }
+  }
+}
+
+
+static void
+gtk_application_startup (GApplication *g_application)
+{
+  GtkApplication *application = GTK_APPLICATION (g_application);
+
+  G_APPLICATION_CLASS (gtk_application_parent_class)->startup (g_application);
+
+#if 0 /* TODO: remove after gtkactionmuxer in implemented */
+  gtk_action_muxer_insert (application->priv->muxer, "app", G_ACTION_GROUP (application));
+#endif
+
+  gtk_init (NULL, NULL);
+
+  application->priv->impl = gtk_application_impl_new (application, gdk_display_get_default ());
+  gtk_application_impl_startup (application->priv->impl, application->priv->register_session);
+
+  gtk_application_load_resources (application);
+}
+
 
 static void
 gtk_application_class_init (GtkApplicationClass *class)
@@ -956,6 +1070,7 @@ gtk_application_class_init (GtkApplicationClass *class)
   application_class->add_platform_data = gtk_application_add_platform_data;
   application_class->before_emit = gtk_application_before_emit;
   application_class->after_emit = gtk_application_after_emit;
+  application_class->startup = gtk_application_startup;
 }
 
 /**

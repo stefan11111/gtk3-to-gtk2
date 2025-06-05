@@ -121,6 +121,11 @@ void          gtk_icon_theme_append_search_path    (GtkIconTheme                
 void          gtk_icon_theme_prepend_search_path   (GtkIconTheme                *icon_theme,
 						    const gchar                 *path);
 
+
+void          gtk_icon_theme_add_resource_path     (GtkIconTheme                *icon_theme,
+                                                    const gchar                 *path);
+
+
 void          gtk_icon_theme_set_custom_theme      (GtkIconTheme                *icon_theme,
 						    const gchar                 *theme_name);
 
@@ -183,6 +188,9 @@ const gchar *         gtk_icon_info_get_display_name  (GtkIconInfo    *icon_info
 /* Non-public methods */
 void _gtk_icon_theme_check_reload                     (GdkDisplay *display);
 void _gtk_icon_theme_ensure_builtin_cache             (void);
+
+/* expose gtk2 internals */
+void gtk2_do_theme_change (GtkIconTheme *icon_theme);
 
 G_END_DECLS
 
