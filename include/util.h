@@ -10,7 +10,8 @@
 #include "gtkrenderprivate.h"
 #include "gtkcairo.h"
 #include "gtkcolorchooserprivate.h"
-/* #include "gtkapplicationimpl.h" */ /* TODO: remove after I finish with gtkapplication */
+#include "gtkapplicationimpl.h"
+#include "gtkapplicationaccelsprivate.h"
 
 #if 0 /* These include forward declatarions that are not implemented */
 #include "gtksymboliccolorprivate.h"

@@ -1,3 +1,6 @@
+#ifndef __INTERNAL_GTK_APPLICATION_IMPL_H__
+#define __INTERNAL_GTK_APPLICATION_IMPL_H__
+
 #include <gtk/gtk.h>
 
 #define GTK_TYPE_APPLICATION_IMPL                           (gtk_application_impl_get_type ())
@@ -88,3 +91,5 @@ void                    gtk_application_impl_uninhibit                  (GtkAppl
 gboolean                gtk_application_impl_is_inhibited               (GtkApplicationImpl          *impl,
                                                                          GtkApplicationInhibitFlags   flags);
 gboolean                gtk_application_impl_prefers_app_menu           (GtkApplicationImpl          *impl);
+
+#endif /* __INTERNAL_GTK_APPLICATION_IMPL_H__ */

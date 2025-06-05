@@ -19,12 +19,12 @@
  *          Sébastien Wilmet <swilmet@gnome.org>
  */
 
-#ifndef __GTK_APPLICATION_ACCELS_H__
-#define __GTK_APPLICATION_ACCELS_H__
+#ifndef __INTERNAL_GTK_APPLICATION_ACCELS_H__
+#define __INTERNAL_GTK_APPLICATION_ACCELS_H__
 
 #include <gio/gio.h>
 #include <gtk/gtkwindow.h>
-#include "gtkapplication.h"
+#include <gtk/gtkapplication.h>
 
 G_BEGIN_DECLS
 
@@ -60,4 +60,4 @@ gboolean        gtk_application_accels_activate                     (GtkApplicat
 
 G_END_DECLS
 
-#endif /* __GTK_APPLICATION_ACCELS_H__ */
+#endif /* __INTERNAL_GTK_APPLICATION_ACCELS_H__ */

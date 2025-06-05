@@ -40,6 +40,9 @@
 #include <gtk/gtkactivatable.h>
 #include <gtk/gtkadjustment.h>
 #include <gtk/gtkalignment.h>
+
+#include <gtk/gtkapplication.h>
+
 #include <gtk/gtkarrow.h>
 #include <gtk/gtkaspectframe.h>
 #include <gtk/gtkassistant.h>

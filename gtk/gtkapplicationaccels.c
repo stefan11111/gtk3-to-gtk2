@@ -19,7 +19,9 @@
  *          Sébastien Wilmet <swilmet@gnome.org>
  */
 
-#include "gtkapplicationaccelsprivate.h"
+#include <gtk/gtk.h>
+
+#include "util.h"
 #include <string.h>
 
 #if 0 /* TODO: fix later */

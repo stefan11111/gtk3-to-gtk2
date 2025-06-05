@@ -15,8 +15,8 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GTK_STYLE_PROPERTIES_PRIVATE_H__
-#define __GTK_STYLE_PROPERTIES_PRIVATE_H__
+#ifndef __INTERNAL_GTK_STYLE_PROPERTIES_PRIVATE_H__
+#define __INTERNAL_GTK_STYLE_PROPERTIES_PRIVATE_H__
 
 #include "gtkstyleproperties.h"
 #include "gtkstylecontextprivate.h"
@@ -32,4 +32,4 @@ void           _gtk_style_properties_set_property_by_property (GtkStylePropertie
 
 G_END_DECLS
 
-#endif /* __GTK_STYLE_PROPERTIES_PRIVATE_H__ */
+#endif /* __INTERNAL_GTK_STYLE_PROPERTIES_PRIVATE_H__ */

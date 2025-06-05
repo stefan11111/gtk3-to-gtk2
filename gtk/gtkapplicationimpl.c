@@ -19,8 +19,7 @@
 
 #include <gtk/gtk.h>
 
-#include "gtkapplication.h"
-#include "gtkapplicationimpl.h"
+#include "util.h"
 
 /* XXX Not Implemented XXX */
 /* XXX For X11, this only deals with dbus, which I don't want XXX */
