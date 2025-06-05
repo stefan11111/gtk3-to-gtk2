@@ -9,6 +9,13 @@
 /* XXX This deals with things like dbus, which I don't want to implement XXX */
 /* XXX This also has some other things I might want to implement eventually XXX */
 
+#ifndef P_
+#define P_(x) x
+#endif
+
+#ifndef I_
+#define I_(x) x
+#endif
 
 enum {
   WINDOW_ADDED,
@@ -56,6 +63,30 @@ struct _GtkApplicationPrivate
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (GtkApplication, gtk_application, G_TYPE_APPLICATION)
+
+static gboolean
+gtk_application_focus_in_event_cb (GtkWindow      *window,
+                                   GdkEventFocus  *event,
+                                   GtkApplication *application)
+{
+  GtkApplicationPrivate *priv = application->priv;
+  GList *link;
+
+  /* Keep the window list sorted by most-recently-focused. */
+  link = g_list_find (priv->windows, window);
+  if (link != NULL && link != priv->windows)
+    {
+      priv->windows = g_list_remove_link (priv->windows, link);
+      priv->windows = g_list_concat (link, priv->windows);
+    }
+
+  if (application->priv->impl)
+    gtk_application_impl_active_window_changed (application->priv->impl, window);
+
+  g_object_notify_by_pspec (G_OBJECT (application), gtk_application_props[PROP_ACTIVE_WINDOW]);
+
+  return GDK_EVENT_PROPAGATE;
+}
 
 static void
 gtk_application_init (GtkApplication *application)
@@ -1099,7 +1130,76 @@ gtk_application_dbus_unregister (GApplication     *application,
   /* Not Implemented */
 }
 
+static void
+gtk_application_window_added (GtkApplication *application,
+                              GtkWindow      *window)
+{
+  GtkApplicationPrivate *priv = application->priv;
+#if 0 /* TODO: fix after gtkapplicationwindow is implemented */
+  if (GTK_IS_APPLICATION_WINDOW (window))
+    {
+      gtk_application_window_set_id (GTK_APPLICATION_WINDOW (window), ++priv->last_window_id);
+      if (priv->help_overlay_path)
+        {
+          GtkBuilder *builder;
+          GtkWidget *help_overlay;
 
+          builder = gtk_builder_new_from_resource (priv->help_overlay_path);
+          help_overlay = GTK_WIDGET (gtk_builder_get_object (builder, "help_overlay"));
+          if (GTK_IS_SHORTCUTS_WINDOW (help_overlay))
+            gtk_application_window_set_help_overlay (GTK_APPLICATION_WINDOW (window),
+                                                     GTK_SHORTCUTS_WINDOW (help_overlay));
+          g_object_unref (builder);
+        }
+    }
+#endif
+  priv->windows = g_list_prepend (priv->windows, window);
+
+#if 0 /* TODO: fix after gtkapplicationwindow is implemented */
+  gtk_window_set_application (window, application);
+#endif
+
+  g_application_hold (G_APPLICATION (application));
+
+  g_signal_connect (window, "focus-in-event",
+                    G_CALLBACK (gtk_application_focus_in_event_cb),
+                    application);
+
+  gtk_application_impl_window_added (priv->impl, window);
+
+  gtk_application_impl_active_window_changed (priv->impl, window);
+
+  g_object_notify_by_pspec (G_OBJECT (application), gtk_application_props[PROP_ACTIVE_WINDOW]);
+}
+
+static void
+gtk_application_window_removed (GtkApplication *application,
+                                GtkWindow      *window)
+{
+  GtkApplicationPrivate *priv = application->priv;
+  gpointer old_active;
+
+  old_active = priv->windows;
+
+  if (priv->impl)
+    gtk_application_impl_window_removed (priv->impl, window);
+
+  g_signal_handlers_disconnect_by_func (window,
+                                        gtk_application_focus_in_event_cb,
+                                        application);
+
+  g_application_release (G_APPLICATION (application));
+  priv->windows = g_list_remove (priv->windows, window);
+#if 0 /* TODO: fix after gtkapplicationwindow is implemented */
+  gtk_window_set_application (window, NULL);
+#endif
+
+  if (priv->windows != old_active && priv->impl)
+    {
+      gtk_application_impl_active_window_changed (priv->impl, priv->windows ? priv->windows->data : NULL);
+      g_object_notify_by_pspec (G_OBJECT (application), gtk_application_props[PROP_ACTIVE_WINDOW]);
+    }
+}
 
 static void
 gtk_application_class_init (GtkApplicationClass *class)
@@ -1122,6 +1222,117 @@ gtk_application_class_init (GtkApplicationClass *class)
   application_class->dbus_register = gtk_application_dbus_register;
   application_class->dbus_unregister = gtk_application_dbus_unregister;
 
+  class->window_added = gtk_application_window_added;
+  class->window_removed = gtk_application_window_removed;
+
+  /**
+   * GtkApplication::window-added:
+   * @application: the #GtkApplication which emitted the signal
+   * @window: the newly-added #GtkWindow
+   *
+   * Emitted when a #GtkWindow is added to @application through
+   * gtk_application_add_window().
+   *
+   * Since: 3.2
+   */
+  gtk_application_signals[WINDOW_ADDED] =
+    g_signal_new (I_("window-added"), GTK_TYPE_APPLICATION, G_SIGNAL_RUN_FIRST,
+                  G_STRUCT_OFFSET (GtkApplicationClass, window_added),
+                  NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE, 1, GTK_TYPE_WINDOW);
+
+  /**
+   * GtkApplication::window-removed:
+   * @application: the #GtkApplication which emitted the signal
+   * @window: the #GtkWindow that is being removed
+   *
+   * Emitted when a #GtkWindow is removed from @application,
+   * either as a side-effect of being destroyed or explicitly
+   * through gtk_application_remove_window().
+   *
+   * Since: 3.2
+   */
+  gtk_application_signals[WINDOW_REMOVED] =
+    g_signal_new (I_("window-removed"), GTK_TYPE_APPLICATION, G_SIGNAL_RUN_FIRST,
+                  G_STRUCT_OFFSET (GtkApplicationClass, window_removed),
+                  NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE, 1, GTK_TYPE_WINDOW);
+
+  /**
+   * GtkApplication::query-end:
+   * @application: the #GtkApplication which emitted the signal
+   *
+   * Emitted when the session manager is about to end the session, only
+   * if #GtkApplication::register-session is %TRUE. Applications can
+   * connect to this signal and call gtk_application_inhibit() with
+   * %GTK_APPLICATION_INHIBIT_LOGOUT to delay the end of the session
+   * until state has been saved.
+   *
+   * Since: 3.24.8
+   */
+  gtk_application_signals[QUERY_END] =
+    g_signal_new (I_("query-end"), GTK_TYPE_APPLICATION, G_SIGNAL_RUN_FIRST,
+                  0,
+                  NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE, 0);
+
+  /**
+   * GtkApplication:register-session:
+   *
+   * Set this property to %TRUE to register with the session manager.
+   *
+   * Since: 3.4
+   */
+  gtk_application_props[PROP_REGISTER_SESSION] =
+    g_param_spec_boolean ("register-session",
+                          P_("Register session"),
+                          P_("Register with the session manager"),
+                          FALSE,
+                          G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS);
+
+  /**
+   * GtkApplication:screensaver-active:
+   *
+   * This property is %TRUE if GTK+ believes that the screensaver is
+   * currently active. GTK+ only tracks session state (including this)
+   * when #GtkApplication::register-session is set to %TRUE.
+   *
+   * Tracking the screensaver state is supported on Linux.
+   *
+   * Since: 3.24
+   */
+  gtk_application_props[PROP_SCREENSAVER_ACTIVE] =
+    g_param_spec_boolean ("screensaver-active",
+                          P_("Screensaver Active"),
+                          P_("Whether the screensaver is active"),
+                          FALSE,
+                          G_PARAM_READABLE|G_PARAM_STATIC_STRINGS);
+
+  gtk_application_props[PROP_APP_MENU] =
+    g_param_spec_object ("app-menu",
+                         P_("Application menu"),
+                         P_("The GMenuModel for the application menu"),
+                         G_TYPE_MENU_MODEL,
+                         G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS);
+
+  gtk_application_props[PROP_MENUBAR] =
+    g_param_spec_object ("menubar",
+                         P_("Menubar"),
+                         P_("The GMenuModel for the menubar"),
+                         G_TYPE_MENU_MODEL,
+                         G_PARAM_READWRITE|G_PARAM_STATIC_STRINGS);
+
+  gtk_application_props[PROP_ACTIVE_WINDOW] =
+    g_param_spec_object ("active-window",
+                         P_("Active window"),
+                         P_("The window which most recently had focus"),
+                         GTK_TYPE_WINDOW,
+                         G_PARAM_READABLE|G_PARAM_STATIC_STRINGS);
+
+  g_object_class_install_properties (object_class, NUM_PROPERTIES, gtk_application_props);
 
 }
 
