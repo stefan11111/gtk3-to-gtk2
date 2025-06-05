@@ -18,7 +18,7 @@
 #include <gtk/gtk.h>
 #include "gtkgradientprivate.h"
 
-/* XXX This depends on gtksymboliccolor, which is implemented an stubs XXX */
+/* XXX This depends on gtksymboliccolor, which is implemented as stubs XXX */
 /* XXX Because of that, all of this is more or less a fancy way of doing nothing XXX */
 
 /**

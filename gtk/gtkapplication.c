@@ -74,13 +74,754 @@ gtk_application_init (GtkApplication *application)
   gdk_get_desktop_startup_id ();
 }
 
+/**
+ * gtk_application_add_window:
+ * @application: a #GtkApplication
+ * @window: a #GtkWindow
+ *
+ * Adds a window to @application.
+ *
+ * This call can only happen after the @application has started;
+ * typically, you should add new application windows in response
+ * to the emission of the #GApplication::activate signal.
+ *
+ * This call is equivalent to setting the #GtkWindow:application
+ * property of @window to @application.
+ *
+ * Normally, the connection between the application and the window
+ * will remain until the window is destroyed, but you can explicitly
+ * remove it with gtk_application_remove_window().
+ *
+ * GTK+ will keep the @application running as long as it has
+ * any windows.
+ *
+ * Since: 3.0
+ **/
+void
+gtk_application_add_window (GtkApplication *application,
+                            GtkWindow      *window)
+{
+  g_return_if_fail (GTK_IS_APPLICATION (application));
+  g_return_if_fail (GTK_IS_WINDOW (window));
+
+  if (!g_application_get_is_registered (G_APPLICATION (application)))
+    {
+      g_critical ("New application windows must be added after the "
+                  "GApplication::startup signal has been emitted.");
+      return;
+    }
+
+  if (!g_list_find (application->priv->windows, window))
+    g_signal_emit (application,
+                   gtk_application_signals[WINDOW_ADDED], 0, window);
+}
+
+/**
+ * gtk_application_remove_window:
+ * @application: a #GtkApplication
+ * @window: a #GtkWindow
+ *
+ * Remove a window from @application.
+ *
+ * If @window belongs to @application then this call is equivalent to
+ * setting the #GtkWindow:application property of @window to
+ * %NULL.
+ *
+ * The application may stop running as a result of a call to this
+ * function.
+ *
+ * Since: 3.0
+ **/
+void
+gtk_application_remove_window (GtkApplication *application,
+                               GtkWindow      *window)
+{
+  g_return_if_fail (GTK_IS_APPLICATION (application));
+  g_return_if_fail (GTK_IS_WINDOW (window));
+
+  if (g_list_find (application->priv->windows, window))
+    g_signal_emit (application,
+                   gtk_application_signals[WINDOW_REMOVED], 0, window);
+}
+
+/**
+ * gtk_application_get_windows:
+ * @application: a #GtkApplication
+ *
+ * Gets a list of the #GtkWindows associated with @application.
+ *
+ * The list is sorted by most recently focused window, such that the first
+ * element is the currently focused window. (Useful for choosing a parent
+ * for a transient window.)
+ *
+ * The list that is returned should not be modified in any way. It will
+ * only remain valid until the next focus change or window creation or
+ * deletion.
+ *
+ * Returns: (element-type GtkWindow) (transfer none): a #GList of #GtkWindow
+ *
+ * Since: 3.0
+ **/
+GList *
+gtk_application_get_windows (GtkApplication *application)
+{
+  g_return_val_if_fail (GTK_IS_APPLICATION (application), NULL);
+
+  return application->priv->windows;
+}
+
+#if 0 /* TODO: fix after gtkapplicationwindow is implemented */
+/**
+ * gtk_application_get_window_by_id:
+ * @application: a #GtkApplication
+ * @id: an identifier number
+ *
+ * Returns the #GtkApplicationWindow with the given ID.
+ *
+ * The ID of a #GtkApplicationWindow can be retrieved with
+ * gtk_application_window_get_id().
+ *
+ * Returns: (nullable) (transfer none): the window with ID @id, or
+ *   %NULL if there is no window with this ID
+ *
+ * Since: 3.6
+ */
+GtkWindow *
+gtk_application_get_window_by_id (GtkApplication *application,
+                                  guint           id)
+{
+  GList *l;
+
+  g_return_val_if_fail (GTK_IS_APPLICATION (application), NULL);
+
+  for (l = application->priv->windows; l != NULL; l = l->next)
+    {
+      if (GTK_IS_APPLICATION_WINDOW (l->data) &&
+          gtk_application_window_get_id (GTK_APPLICATION_WINDOW (l->data)) == id)
+        return l->data;
+    }
+
+  return NULL;
+}
+#endif
+
+/**
+ * gtk_application_get_active_window:
+ * @application: a #GtkApplication
+ *
+ * Gets the “active” window for the application.
+ *
+ * The active window is the one that was most recently focused (within
+ * the application).  This window may not have the focus at the moment
+ * if another application has it — this is just the most
+ * recently-focused window within this application.
+ *
+ * Returns: (transfer none) (nullable): the active window, or %NULL if
+ *   there isn't one.
+ *
+ * Since: 3.6
+ **/
+GtkWindow *
+gtk_application_get_active_window (GtkApplication *application)
+{
+  g_return_val_if_fail (GTK_IS_APPLICATION (application), NULL);
+
+  return application->priv->windows ? application->priv->windows->data : NULL;
+}
+
+/**
+ * gtk_application_get_app_menu:
+ * @application: a #GtkApplication
+ *
+ * Returns the menu model that has been set with
+ * gtk_application_set_app_menu().
+ *
+ * Returns: (transfer none) (nullable): the application menu of @application
+ *   or %NULL if no application menu has been set.
+ *
+ * Since: 3.4
+ */
+GMenuModel *
+gtk_application_get_app_menu (GtkApplication *application)
+{
+  g_return_val_if_fail (GTK_IS_APPLICATION (application), NULL);
+
+  return application->priv->app_menu;
+}
+
+static void
+extract_accel_from_menu_item (GMenuModel     *model,
+                              gint            item,
+                              GtkApplication *app)
+{
+  GMenuAttributeIter *iter;
+  const gchar *key;
+  GVariant *value;
+  const gchar *accel = NULL;
+  const gchar *action = NULL;
+  GVariant *target = NULL;
+
+  iter = g_menu_model_iterate_item_attributes (model, item);
+  while (g_menu_attribute_iter_get_next (iter, &key, &value))
+    {
+      if (g_str_equal (key, "action") && g_variant_is_of_type (value, G_VARIANT_TYPE_STRING))
+        action = g_variant_get_string (value, NULL);
+      else if (g_str_equal (key, "accel") && g_variant_is_of_type (value, G_VARIANT_TYPE_STRING))
+        accel = g_variant_get_string (value, NULL);
+      else if (g_str_equal (key, "target"))
+        target = g_variant_ref (value);
+      g_variant_unref (value);
+    }
+  g_object_unref (iter);
+
+  if (accel && action)
+    {
+      const gchar *accels[2] = { accel, NULL };
+      gchar *detailed_action_name;
+
+      detailed_action_name = g_action_print_detailed_name (action, target);
+#if 0 /* TODO: fix soon */
+      gtk_application_set_accels_for_action (app, detailed_action_name, accels);
+#endif
+      g_free (detailed_action_name);
+    }
+
+  if (target)
+    g_variant_unref (target);
+}
+
+static void
+extract_accels_from_menu (GMenuModel     *model,
+                          GtkApplication *app)
+{
+  gint i;
+
+  for (i = 0; i < g_menu_model_get_n_items (model); i++)
+    {
+      GMenuLinkIter *iter;
+      GMenuModel *sub_model;
+
+      extract_accel_from_menu_item (model, i, app);
+
+      iter = g_menu_model_iterate_item_links (model, i);
+      while (g_menu_link_iter_get_next (iter, NULL, &sub_model))
+        {
+          extract_accels_from_menu (sub_model, app);
+          g_object_unref (sub_model);
+        }
+      g_object_unref (iter);
+    }
+}
+
+/**
+ * gtk_application_set_app_menu:
+ * @application: a #GtkApplication
+ * @app_menu: (allow-none): a #GMenuModel, or %NULL
+ *
+ * Sets or unsets the application menu for @application.
+ *
+ * This can only be done in the primary instance of the application,
+ * after it has been registered.  #GApplication::startup is a good place
+ * to call this.
+ *
+ * The application menu is a single menu containing items that typically
+ * impact the application as a whole, rather than acting on a specific
+ * window or document.  For example, you would expect to see
+ * “Preferences” or “Quit” in an application menu, but not “Save” or
+ * “Print”.
+ *
+ * If supported, the application menu will be rendered by the desktop
+ * environment.
+ *
+ * Use the base #GActionMap interface to add actions, to respond to the user
+ * selecting these menu items.
+ *
+ * Since: 3.4
+ */
+void
+gtk_application_set_app_menu (GtkApplication *application,
+                              GMenuModel     *app_menu)
+{
+  g_return_if_fail (GTK_IS_APPLICATION (application));
+  g_return_if_fail (g_application_get_is_registered (G_APPLICATION (application)));
+  g_return_if_fail (!g_application_get_is_remote (G_APPLICATION (application)));
+  g_return_if_fail (app_menu == NULL || G_IS_MENU_MODEL (app_menu));
+
+  if (g_set_object (&application->priv->app_menu, app_menu))
+    {
+      if (app_menu)
+        extract_accels_from_menu (app_menu, application);
+
+      gtk_application_impl_set_app_menu (application->priv->impl, app_menu);
+
+      g_object_notify_by_pspec (G_OBJECT (application), gtk_application_props[PROP_APP_MENU]);
+    }
+}
+
+/**
+ * gtk_application_set_menubar:
+ * @application: a #GtkApplication
+ * @menubar: (allow-none): a #GMenuModel, or %NULL
+ *
+ * Sets or unsets the menubar for windows of @application.
+ *
+ * This is a menubar in the traditional sense.
+ *
+ * This can only be done in the primary instance of the application,
+ * after it has been registered.  #GApplication::startup is a good place
+ * to call this.
+ *
+ * Depending on the desktop environment, this may appear at the top of
+ * each window, or at the top of the screen.  In some environments, if
+ * both the application menu and the menubar are set, the application
+ * menu will be presented as if it were the first item of the menubar.
+ * Other environments treat the two as completely separate — for example,
+ * the application menu may be rendered by the desktop shell while the
+ * menubar (if set) remains in each individual window.
+ *
+ * Use the base #GActionMap interface to add actions, to respond to the
+ * user selecting these menu items.
+ *
+ * Since: 3.4
+ */
+void
+gtk_application_set_menubar (GtkApplication *application,
+                             GMenuModel     *menubar)
+{
+  g_return_if_fail (GTK_IS_APPLICATION (application));
+  g_return_if_fail (g_application_get_is_registered (G_APPLICATION (application)));
+  g_return_if_fail (!g_application_get_is_remote (G_APPLICATION (application)));
+  g_return_if_fail (menubar == NULL || G_IS_MENU_MODEL (menubar));
+
+  if (g_set_object (&application->priv->menubar, menubar))
+    {
+      if (menubar)
+        extract_accels_from_menu (menubar, application);
+
+      gtk_application_impl_set_menubar (application->priv->impl, menubar);
+
+      g_object_notify_by_pspec (G_OBJECT (application), gtk_application_props[PROP_MENUBAR]);
+    }
+}
+
+/**
+ * gtk_application_get_menubar:
+ * @application: a #GtkApplication
+ *
+ * Returns the menu model that has been set with
+ * gtk_application_set_menubar().
+ *
+ * Returns: (transfer none): the menubar for windows of @application
+ *
+ * Since: 3.4
+ */
+GMenuModel *
+gtk_application_get_menubar (GtkApplication *application)
+{
+  g_return_val_if_fail (GTK_IS_APPLICATION (application), NULL);
+
+  return application->priv->menubar;
+}
+
+/**
+ * gtk_application_add_accelerator:
+ * @application: a #GtkApplication
+ * @accelerator: accelerator string
+ * @action_name: the name of the action to activate
+ * @parameter: (allow-none): parameter to pass when activating the action,
+ *   or %NULL if the action does not accept an activation parameter
+ *
+ * Installs an accelerator that will cause the named action
+ * to be activated when the key combination specificed by @accelerator
+ * is pressed.
+ *
+ * @accelerator must be a string that can be parsed by gtk_accelerator_parse(),
+ * e.g. "<Primary>q" or “<Control><Alt>p”.
+ *
+ * @action_name must be the name of an action as it would be used
+ * in the app menu, i.e. actions that have been added to the application
+ * are referred to with an “app.” prefix, and window-specific actions
+ * with a “win.” prefix.
+ *
+ * GtkApplication also extracts accelerators out of “accel” attributes
+ * in the #GMenuModels passed to gtk_application_set_app_menu() and
+ * gtk_application_set_menubar(), which is usually more convenient
+ * than calling this function for each accelerator.
+ *
+ * Since: 3.4
+ *
+ * Deprecated: 3.14: Use gtk_application_set_accels_for_action() instead
+ */
+void
+gtk_application_add_accelerator (GtkApplication *application,
+                                 const gchar    *accelerator,
+                                 const gchar    *action_name,
+                                 GVariant       *parameter)
+{
+  const gchar *accelerators[2] = { accelerator, NULL };
+  gchar *detailed_action_name;
+
+  g_return_if_fail (GTK_IS_APPLICATION (application));
+  g_return_if_fail (accelerator != NULL);
+  g_return_if_fail (action_name != NULL);
+
+  detailed_action_name = g_action_print_detailed_name (action_name, parameter);
+#if 0 /* TODO: fix soon */
+  gtk_application_set_accels_for_action (application, detailed_action_name, accelerators);
+#endif
+  g_free (detailed_action_name);
+}
+
+/**
+ * gtk_application_remove_accelerator:
+ * @application: a #GtkApplication
+ * @action_name: the name of the action to activate
+ * @parameter: (allow-none): parameter to pass when activating the action,
+ *   or %NULL if the action does not accept an activation parameter
+ *
+ * Removes an accelerator that has been previously added
+ * with gtk_application_add_accelerator().
+ *
+ * Since: 3.4
+ *
+ * Deprecated: 3.14: Use gtk_application_set_accels_for_action() instead
+ */
+void
+gtk_application_remove_accelerator (GtkApplication *application,
+                                    const gchar    *action_name,
+                                    GVariant       *parameter)
+{
+  const gchar *accelerators[1] = { NULL };
+  gchar *detailed_action_name;
+
+  g_return_if_fail (GTK_IS_APPLICATION (application));
+  g_return_if_fail (action_name != NULL);
+
+  detailed_action_name = g_action_print_detailed_name (action_name, parameter);
+#if 0 /* TODO: fix soon */
+  gtk_application_set_accels_for_action (application, detailed_action_name, accelerators);
+#endif
+  g_free (detailed_action_name);
+}
+
+/**
+ * gtk_application_inhibit:
+ * @application: the #GtkApplication
+ * @window: (allow-none): a #GtkWindow, or %NULL
+ * @flags: what types of actions should be inhibited
+ * @reason: (allow-none): a short, human-readable string that explains
+ *     why these operations are inhibited
+ *
+ * Inform the session manager that certain types of actions should be
+ * inhibited. This is not guaranteed to work on all platforms and for
+ * all types of actions.
+ *
+ * Applications should invoke this method when they begin an operation
+ * that should not be interrupted, such as creating a CD or DVD. The
+ * types of actions that may be blocked are specified by the @flags
+ * parameter. When the application completes the operation it should
+ * call gtk_application_uninhibit() to remove the inhibitor. Note that
+ * an application can have multiple inhibitors, and all of them must
+ * be individually removed. Inhibitors are also cleared when the
+ * application exits.
+ *
+ * Applications should not expect that they will always be able to block
+ * the action. In most cases, users will be given the option to force
+ * the action to take place.
+ *
+ * Reasons should be short and to the point.
+ *
+ * If @window is given, the session manager may point the user to
+ * this window to find out more about why the action is inhibited.
+ *
+ * Returns: A non-zero cookie that is used to uniquely identify this
+ *     request. It should be used as an argument to gtk_application_uninhibit()
+ *     in order to remove the request. If the platform does not support
+ *     inhibiting or the request failed for some reason, 0 is returned.
+ *
+ * Since: 3.4
+ */
+guint
+gtk_application_inhibit (GtkApplication             *application,
+                         GtkWindow                  *window,
+                         GtkApplicationInhibitFlags  flags,
+                         const gchar                *reason)
+{
+  g_return_val_if_fail (GTK_IS_APPLICATION (application), 0);
+  g_return_val_if_fail (!g_application_get_is_remote (G_APPLICATION (application)), 0);
+  g_return_val_if_fail (window == NULL || GTK_IS_WINDOW (window), 0);
+
+  return gtk_application_impl_inhibit (application->priv->impl, window, flags, reason);
+}
+
+/**
+ * gtk_application_uninhibit:
+ * @application: the #GtkApplication
+ * @cookie: a cookie that was returned by gtk_application_inhibit()
+ *
+ * Removes an inhibitor that has been established with gtk_application_inhibit().
+ * Inhibitors are also cleared when the application exits.
+ *
+ * Since: 3.4
+ */
+void
+gtk_application_uninhibit (GtkApplication *application,
+                           guint           cookie)
+{
+  g_return_if_fail (GTK_IS_APPLICATION (application));
+  g_return_if_fail (!g_application_get_is_remote (G_APPLICATION (application)));
+  g_return_if_fail (cookie > 0);
+
+  gtk_application_impl_uninhibit (application->priv->impl, cookie);
+}
+
+/**
+ * gtk_application_is_inhibited:
+ * @application: the #GtkApplication
+ * @flags: what types of actions should be queried
+ *
+ * Determines if any of the actions specified in @flags are
+ * currently inhibited (possibly by another application).
+ *
+ * Note that this information may not be available (for example
+ * when the application is running in a sandbox).
+ *
+ * Returns: %TRUE if any of the actions specified in @flags are inhibited
+ *
+ * Since: 3.4
+ */
+gboolean
+gtk_application_is_inhibited (GtkApplication             *application,
+                              GtkApplicationInhibitFlags  flags)
+{
+  g_return_val_if_fail (GTK_IS_APPLICATION (application), FALSE);
+  g_return_val_if_fail (!g_application_get_is_remote (G_APPLICATION (application)), FALSE);
+
+  return gtk_application_impl_is_inhibited (application->priv->impl, flags);
+}
+
+#if 0 /* TODO: fix soon */
+/**
+ * gtk_application_list_action_descriptions:
+ * @application: a #GtkApplication
+ *
+ * Lists the detailed action names which have associated accelerators.
+ * See gtk_application_set_accels_for_action().
+ *
+ * Returns: (transfer full): a %NULL-terminated array of strings,
+ *     free with g_strfreev() when done
+ *
+ * Since: 3.12
+ */
+gchar **
+gtk_application_list_action_descriptions (GtkApplication *application)
+{
+  g_return_val_if_fail (GTK_IS_APPLICATION (application), NULL);
+
+  return gtk_application_accels_list_action_descriptions (application->priv->accels);
+}
+#endif
+
+#if 0 /* TODO: fix soon */
+/**
+ * gtk_application_get_accels_for_action:
+ * @application: a #GtkApplication
+ * @detailed_action_name: a detailed action name, specifying an action
+ *     and target to obtain accelerators for
+ *
+ * Gets the accelerators that are currently associated with
+ * the given action.
+ *
+ * Returns: (transfer full): accelerators for @detailed_action_name, as
+ *     a %NULL-terminated array. Free with g_strfreev() when no longer needed
+ *
+ * Since: 3.12
+ */
+gchar **
+gtk_application_get_accels_for_action (GtkApplication *application,
+                                       const gchar    *detailed_action_name)
+{
+  g_return_val_if_fail (GTK_IS_APPLICATION (application), NULL);
+  g_return_val_if_fail (detailed_action_name != NULL, NULL);
+
+  return gtk_application_accels_get_accels_for_action (application->priv->accels,
+                                                       detailed_action_name);
+}
+#endif
+
+#if 0 /* TODO: fix soon */
+/**
+ * gtk_application_set_accels_for_action:
+ * @application: a #GtkApplication
+ * @detailed_action_name: a detailed action name, specifying an action
+ *     and target to associate accelerators with
+ * @accels: (array zero-terminated=1): a list of accelerators in the format
+ *     understood by gtk_accelerator_parse()
+ *
+ * Sets zero or more keyboard accelerators that will trigger the
+ * given action. The first item in @accels will be the primary
+ * accelerator, which may be displayed in the UI.
+ *
+ * To remove all accelerators for an action, use an empty, zero-terminated
+ * array for @accels.
+ *
+ * For the @detailed_action_name, see g_action_parse_detailed_name() and
+ * g_action_print_detailed_name().
+ *
+ * Since: 3.12
+ */
+void
+gtk_application_set_accels_for_action (GtkApplication      *application,
+                                       const gchar         *detailed_action_name,
+                                       const gchar * const *accels)
+{
+  gchar *action_and_target;
+
+  g_return_if_fail (GTK_IS_APPLICATION (application));
+  g_return_if_fail (detailed_action_name != NULL);
+  g_return_if_fail (accels != NULL);
+
+  gtk_application_accels_set_accels_for_action (application->priv->accels,
+                                                detailed_action_name,
+                                                accels);
+
+  action_and_target = gtk_normalise_detailed_action_name (detailed_action_name);
+  gtk_action_muxer_set_primary_accel (application->priv->muxer, action_and_target, accels[0]);
+  g_free (action_and_target);
+
+  gtk_application_update_accels (application);
+}
+#endif
+
+#if 0 /* TODO: fix soon */
+/**
+ * gtk_application_get_actions_for_accel:
+ * @application: a #GtkApplication
+ * @accel: an accelerator that can be parsed by gtk_accelerator_parse()
+ *
+ * Returns the list of actions (possibly empty) that @accel maps to.
+ * Each item in the list is a detailed action name in the usual form.
+ *
+ * This might be useful to discover if an accel already exists in
+ * order to prevent installation of a conflicting accelerator (from
+ * an accelerator editor or a plugin system, for example). Note that
+ * having more than one action per accelerator may not be a bad thing
+ * and might make sense in cases where the actions never appear in the
+ * same context.
+ *
+ * In case there are no actions for a given accelerator, an empty array
+ * is returned.  %NULL is never returned.
+ *
+ * It is a programmer error to pass an invalid accelerator string.
+ * If you are unsure, check it with gtk_accelerator_parse() first.
+ *
+ * Returns: (transfer full): a %NULL-terminated array of actions for @accel
+ *
+ * Since: 3.14
+ */
+gchar **
+gtk_application_get_actions_for_accel (GtkApplication *application,
+                                       const gchar    *accel)
+{
+  g_return_val_if_fail (GTK_IS_APPLICATION (application), NULL);
+  g_return_val_if_fail (accel != NULL, NULL);
+
+  return gtk_application_accels_get_actions_for_accel (application->priv->accels, accel);
+}
+#endif
+
+/**
+ * gtk_application_prefers_app_menu:
+ * @application: a #GtkApplication
+ *
+ * Determines if the desktop environment in which the application is
+ * running would prefer an application menu be shown.
+ *
+ * If this function returns %TRUE then the application should call
+ * gtk_application_set_app_menu() with the contents of an application
+ * menu, which will be shown by the desktop environment.  If it returns
+ * %FALSE then you should consider using an alternate approach, such as
+ * a menubar.
+ *
+ * The value returned by this function is purely advisory and you are
+ * free to ignore it.  If you call gtk_application_set_app_menu() even
+ * if the desktop environment doesn't support app menus, then a fallback
+ * will be provided.
+ *
+ * Applications are similarly free not to set an app menu even if the
+ * desktop environment wants to show one.  In that case, a fallback will
+ * also be created by the desktop environment (GNOME, for example, uses
+ * a menu with only a "Quit" item in it).
+ *
+ * The value returned by this function never changes.  Once it returns a
+ * particular value, it is guaranteed to always return the same value.
+ *
+ * You may only call this function after the application has been
+ * registered and after the base startup handler has run.  You're most
+ * likely to want to use this from your own startup handler.  It may
+ * also make sense to consult this function while constructing UI (in
+ * activate, open or an action activation handler) in order to determine
+ * if you should show a gear menu or not.
+ *
+ * This function will return %FALSE on Mac OS and a default app menu
+ * will be created automatically with the "usual" contents of that menu
+ * typical to most Mac OS applications.  If you call
+ * gtk_application_set_app_menu() anyway, then this menu will be
+ * replaced with your own.
+ *
+ * Returns: %TRUE if you should set an app menu
+ *
+ * Since: 3.14
+ **/
+gboolean
+gtk_application_prefers_app_menu (GtkApplication *application)
+{
+  g_return_val_if_fail (GTK_IS_APPLICATION (application), FALSE);
+  g_return_val_if_fail (application->priv->impl != NULL, FALSE);
+
+  return gtk_application_impl_prefers_app_menu (application->priv->impl);
+}
+
+/**
+ * gtk_application_get_menu_by_id:
+ * @application: a #GtkApplication
+ * @id: the id of the menu to look up
+ *
+ * Gets a menu from automatically loaded resources.
+ * See [Automatic resources][automatic-resources]
+ * for more information.
+ *
+ * Returns: (transfer none): Gets the menu with the
+ *     given id from the automatically loaded resources
+ *
+ * Since: 3.14
+ */
+GMenu *
+gtk_application_get_menu_by_id (GtkApplication *application,
+                                const gchar    *id)
+{
+  GObject *object;
+
+  g_return_val_if_fail (GTK_IS_APPLICATION (application), NULL);
+  g_return_val_if_fail (id != NULL, NULL);
+
+  if (!application->priv->menus_builder)
+    return NULL;
+
+  object = gtk_builder_get_object (application->priv->menus_builder, id);
+
+  if (!object || !G_IS_MENU (object))
+    return NULL;
+
+  return G_MENU (object);
+}
+
 static void
 gtk_application_get_property (GObject    *object,
                               guint       prop_id,
                               GValue     *value,
                               GParamSpec *pspec)
 {
-#if 0 /* TODO: fix soon */
   GtkApplication *application = GTK_APPLICATION (object);
 
   switch (prop_id)
@@ -109,7 +850,6 @@ gtk_application_get_property (GObject    *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
-#endif
 }
 
 static void
@@ -118,8 +858,6 @@ gtk_application_set_property (GObject      *object,
                               const GValue *value,
                               GParamSpec   *pspec)
 {
-/* TODO: fix soon */
-#if 0
   GtkApplication *application = GTK_APPLICATION (object);
 
   switch (prop_id)
@@ -140,7 +878,6 @@ gtk_application_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
-#endif
 }
 
 static void
