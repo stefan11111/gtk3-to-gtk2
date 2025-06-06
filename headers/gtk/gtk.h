@@ -41,6 +41,10 @@
 #include <gtk/gtkadjustment.h>
 #include <gtk/gtkalignment.h>
 
+#include <gtk/gtkactionobservable.h>
+#include <gtk/gtkactionobserver.h>
+#include <gtk/gtkactionmuxer.h>
+
 #include <gtk/gtkapplication.h>
 
 #include <gtk/gtkarrow.h>

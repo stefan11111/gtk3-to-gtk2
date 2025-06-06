@@ -24,7 +24,6 @@
 #include "util.h"
 #include <string.h>
 
-#include "gtkactionmuxer.h"
 
 typedef struct
 {

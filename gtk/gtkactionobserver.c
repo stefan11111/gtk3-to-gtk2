@@ -18,7 +18,7 @@
  */
 
 
-#include "gtkactionobserver.h"
+#include <gtk/gtkactionobserver.h>
 
 G_DEFINE_INTERFACE (GtkActionObserver, gtk_action_observer, G_TYPE_OBJECT)
 

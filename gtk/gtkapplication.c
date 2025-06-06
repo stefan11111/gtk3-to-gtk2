@@ -2,8 +2,6 @@
 
 #include "util.h"
 
-#include "gtkactionmuxer.h"
-
 /* XXX Only half-implemented  XXX */
 /* XXX This deals with things like dbus, which I don't want to implement XXX */
 /* XXX This also has some other things I might want to implement eventually XXX */

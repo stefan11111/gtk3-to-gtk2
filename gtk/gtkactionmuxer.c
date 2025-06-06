@@ -17,10 +17,10 @@
  * Author: Ryan Lortie <desrt@desrt.ca>
  */
 
-#include "gtkactionmuxer.h"
+#include <gtk/gtkactionmuxer.h>
 
-#include "gtkactionobservable.h"
-#include "gtkactionobserver.h"
+#include <gtk/gtkactionobservable.h>
+#include <gtk/gtkactionobserver.h>
 
 #include <string.h>
 
