@@ -35,6 +35,8 @@
 #include <gtk/gtkaccelgroup.h>
 #include <gtk/gtkbin.h>
 
+#include <gtk/gtkapplication.h>
+
 
 G_BEGIN_DECLS
 
@@ -137,8 +139,12 @@ struct _GtkWindowClass
   
   void	   (*keys_changed)	       (GtkWindow	*window);
   
+
+  /* used internally */
+  GtkApplication *application;
+
   /* Padding for future expansion */
-  void (*_gtk_reserved1) (void);
+  /* void (*_gtk_reserved1) (void); */ /* used by the above */
   void (*_gtk_reserved2) (void);
   void (*_gtk_reserved3) (void);
   void (*_gtk_reserved4) (void);
@@ -386,6 +392,14 @@ gboolean gtk_window_has_group        (GtkWindow   *window);
 void     gtk_window_reshow_with_initial_size (GtkWindow *window);
 
 GtkWindowType gtk_window_get_window_type     (GtkWindow     *window);
+
+
+
+GtkApplication *gtk_window_get_application      (GtkWindow          *window);
+
+void            gtk_window_set_application      (GtkWindow          *window,
+                                                 GtkApplication     *application);
+
 
 /* Window groups
  */

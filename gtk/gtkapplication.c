@@ -1372,3 +1372,71 @@ gtk_application_new (const gchar       *application_id,
                        "flags", flags,
                        NULL);
 }
+
+/* XXX ^^^ public ^^^ XXX */
+
+/* XXX vvv private vvv XXX */
+
+void
+gtk_application_handle_window_realize (GtkApplication *application,
+                                       GtkWindow      *window)
+{
+  if (application->priv->impl)
+    gtk_application_impl_handle_window_realize (application->priv->impl, window);
+}
+
+void
+gtk_application_handle_window_map (GtkApplication *application,
+                                   GtkWindow      *window)
+{
+  if (application->priv->impl)
+    gtk_application_impl_handle_window_map (application->priv->impl, window);
+}
+
+GtkActionMuxer *
+gtk_application_get_parent_muxer_for_window (GtkWindow *window)
+{
+  GtkApplication *application;
+
+  application = gtk_window_get_application (window);
+
+  if (!application)
+    return NULL;
+
+  return application->priv->muxer;
+}
+
+GtkActionMuxer *
+gtk_application_get_action_muxer (GtkApplication *application)
+{
+  g_assert (application->priv->muxer);
+
+  return application->priv->muxer;
+}
+
+void
+gtk_application_insert_action_group (GtkApplication *application,
+                                     const gchar    *name,
+                                     GActionGroup   *action_group)
+{
+  gtk_action_muxer_insert (application->priv->muxer, name, action_group);
+}
+
+GtkApplicationAccels *
+gtk_application_get_application_accels (GtkApplication *application)
+{
+  return application->priv->accels;
+}
+
+void
+gtk_application_set_screensaver_active (GtkApplication *application,
+                                        gboolean        active)
+{
+  GtkApplicationPrivate *priv = gtk_application_get_instance_private (application);
+
+  if (priv->screensaver_active != active)
+    {
+      priv->screensaver_active = active;
+      g_object_notify (G_OBJECT (application), "screensaver-active");
+    }
+}
