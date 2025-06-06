@@ -90,11 +90,7 @@ gtk_application_init (GtkApplication *application)
 {
   application->priv = gtk_application_get_instance_private (application);
 
-#if 0 /* TODO: fix later */
   application->priv->muxer = gtk_action_muxer_new ();
-#else
-  application->priv->muxer = NULL;
-#endif
 
   application->priv->accels = gtk_application_accels_new ();
 
@@ -718,9 +714,9 @@ gtk_application_set_accels_for_action (GtkApplication      *application,
                                                 accels);
 
   action_and_target = gtk_normalise_detailed_action_name (detailed_action_name);
-#if 0 /* TODO: remove after gtkactionmuxer is implemented */
+
   gtk_action_muxer_set_primary_accel (application->priv->muxer, action_and_target, accels[0]);
-#endif
+
   g_free (action_and_target);
 
   gtk_application_update_accels (application);
@@ -1073,9 +1069,7 @@ gtk_application_startup (GApplication *g_application)
 
   G_APPLICATION_CLASS (gtk_application_parent_class)->startup (g_application);
 
-#if 0 /* TODO: remove after gtkactionmuxer is implemented */
   gtk_action_muxer_insert (application->priv->muxer, "app", G_ACTION_GROUP (application));
-#endif
 
   gtk_init (NULL, NULL);
 
@@ -1096,9 +1090,7 @@ gtk_application_shutdown (GApplication *g_application)
   gtk_application_impl_shutdown (application->priv->impl);
   g_clear_object (&application->priv->impl);
 
-#if 0 /* TODO: remove after gtkactionmuxer is implemented */
   gtk_action_muxer_remove (application->priv->muxer, "app");
-#endif
 
   /* Keep this section in sync with gtk_main() */
 
