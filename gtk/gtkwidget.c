@@ -207,3 +207,13 @@ _gtk_widget_update_parent_muxer (GtkWidget *widget)
   gtk_action_muxer_set_parent (muxer,
                                _gtk_widget_get_parent_muxer (widget, TRUE));
 }
+
+gboolean
+gtk_widget_needs_allocate (GtkWidget *widget)
+{
+  /* don't touch if the widget isn't visible */
+  if (!gtk_widget_get_visible (widget) || !gtk_widget_get_child_visible (widget))
+    return FALSE;
+
+  return GTK_WIDGET_ALLOC_NEEDED (widget);
+}

@@ -6,7 +6,7 @@
 #include "gtksettingsprivate.h"
 #include "gtkstylecontextprivate.h"
 
-/* TODO: maybe when gdkframeclock is implemented */
+/* TODO: maybe remove when gdkframeclock is implemented */
 #define IMPLEMENT_STYLE_CASCADE
 typedef struct _GdkFrameClock GdkFrameClock;
 

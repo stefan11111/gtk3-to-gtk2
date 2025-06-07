@@ -1,4 +1,7 @@
 #include <gtk/gtk.h>
+#include <gdk/gdk.h>
+
+#include "util.h"
 
 guint
 gtk_get_major_version (void)

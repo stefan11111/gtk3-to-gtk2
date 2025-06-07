@@ -1,6 +1,8 @@
 #include <gtk/gtk.h>
 #include <gobject/gobjectnotifyqueue.c>
 
+#include "util.h"
+
 #define PARAM_SPEC_PARAM_ID(pspec)              ((pspec)->param_id)
 #define PARAM_SPEC_SET_PARAM_ID(pspec, id)      ((pspec)->param_id = (id))
 
@@ -168,3 +170,58 @@ gtk_container_get_path_for_child (GtkContainer *container,
   }
   return path;
 }
+
+/* ^^^ public ^^^ */
+
+/* vvv private vvv */
+
+void
+gtk_container_queue_resize_handler (GtkContainer *container)
+{
+  GtkWidget *widget;
+
+  G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+  g_return_if_fail (GTK_IS_RESIZE_CONTAINER (container));
+  G_GNUC_END_IGNORE_DEPRECATIONS;
+
+  widget = GTK_WIDGET (container);
+
+  if (gtk_widget_get_visible (widget) &&
+      (gtk_widget_is_toplevel (widget) ||
+       gtk_widget_get_realized (widget)))
+    {
+      switch (container->resize_mode)
+        {
+        case GTK_RESIZE_QUEUE:
+#if 0 /* XXX needs gdkframeclock XXX */
+          if (gtk_widget_needs_allocate (widget))
+            gtk_container_start_idle_sizer (container);
+#endif
+          break;
+
+        case GTK_RESIZE_IMMEDIATE:
+          gtk_container_check_resize (container);
+          break;
+
+        case GTK_RESIZE_PARENT:
+        default:
+          g_assert_not_reached ();
+          break;
+        }
+    }
+}
+
+void
+_gtk_container_queue_restyle (GtkContainer *container)
+{
+  g_return_if_fail (GTK_IS_CONTAINER (container));
+
+#if 0 /* XXX needs gdkframeclock XXX */
+  if (container->need_resize)
+    return;
+
+  gtk_container_start_idle_sizer (container);
+#endif
+  container->need_resize = TRUE;
+}
+

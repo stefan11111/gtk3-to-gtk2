@@ -4,6 +4,9 @@
 G_BEGIN_DECLS
 
 #include <gtk/gtkwidget.h>
+#include <gtk/gtkactionmuxer.h>
+
+gboolean     gtk_widget_needs_allocate      (GtkWidget *widget);
 
 void              _gtk_widget_update_parent_muxer          (GtkWidget    *widget);
 GtkActionMuxer *  _gtk_widget_get_action_muxer             (GtkWidget    *widget,
