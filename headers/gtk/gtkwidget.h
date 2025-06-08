@@ -1126,6 +1126,40 @@ void     gtk_widget_set_valign        (GtkWidget *widget,
                                        GtkAlign   align);
 
 
+/* XXX margin in gtk3 doesn't mean widget allocation XXX */
+/* It's more akin to margins in a word ducument */
+/* Not Implemented, no equivalent in gtk2 */
+gint     gtk_widget_get_margin_left   (GtkWidget *widget);
+
+void     gtk_widget_set_margin_left   (GtkWidget *widget,
+                                       gint       margin);
+
+gint     gtk_widget_get_margin_right  (GtkWidget *widget);
+
+void     gtk_widget_set_margin_right  (GtkWidget *widget,
+                                       gint       margin);
+
+gint     gtk_widget_get_margin_start  (GtkWidget *widget);
+
+void     gtk_widget_set_margin_start  (GtkWidget *widget,
+                                       gint       margin);
+
+gint     gtk_widget_get_margin_end    (GtkWidget *widget);
+
+void     gtk_widget_set_margin_end    (GtkWidget *widget,
+                                       gint       margin);
+
+gint     gtk_widget_get_margin_top    (GtkWidget *widget);
+
+void     gtk_widget_set_margin_top    (GtkWidget *widget,
+                                       gint       margin);
+
+gint     gtk_widget_get_margin_bottom (GtkWidget *widget);
+
+void     gtk_widget_set_margin_bottom (GtkWidget *widget,
+                                       gint       margin);
+
+
 #ifndef GTK_DISABLE_DEPRECATED
 
 /**

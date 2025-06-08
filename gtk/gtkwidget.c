@@ -125,6 +125,389 @@ gtk_widget_get_valign_with_baseline (GtkWidget *widget)
 }
 
 /**
+ * gtk_widget_get_margin_left:
+ * @widget: a #GtkWidget
+ *
+ * Gets the value of the #GtkWidget:margin-left property.
+ *
+ * Returns: The left margin of @widget
+ *
+ * Deprecated: 3.12: Use gtk_widget_get_margin_start() instead.
+ *
+ * Since: 3.0
+ */
+gint
+gtk_widget_get_margin_left (GtkWidget *widget)
+{
+#if 0 /* Not Implemented */
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
+
+  GtkAllocation allocation;
+  gtk_widget_get_allocation (widget, &allocation);
+
+  return allocation.x;
+#else
+  /* Not Implemented */
+  return 0;
+#endif
+}
+
+/**
+ * gtk_widget_set_margin_left:
+ * @widget: a #GtkWidget
+ * @margin: the left margin
+ *
+ * Sets the left margin of @widget.
+ * See the #GtkWidget:margin-left property.
+ *
+ * Deprecated: 3.12: Use gtk_widget_set_margin_start() instead.
+ *
+ * Since: 3.0
+ */
+void
+gtk_widget_set_margin_left (GtkWidget *widget,
+                            gint       margin)
+{
+#if 0 /* Not Implemented */
+  GtkAllocation allocation;
+#if 0
+  GtkRequsition requisition;
+  GtkWindow *window;
+#endif
+
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (margin <= G_MAXINT16);
+
+  gtk_widget_get_allocation (widget, &allocation);
+#if 0
+  gtk_widget_size_request (widget, &requisition);
+#endif
+
+  if (allocation.x != -1) {
+    allocation.width += allocation.x - margin;
+#if 0
+    requisition.width += allocation.x - margin;
+#endif
+  }
+  allocation.x = margin;
+
+  gtk_widget_size_allocate (widget, &allocation);
+
+#if 0
+  window = gtk_widget_get_window (widget);
+  if (window) {
+    gtk_window_set_default_size(window, requisition.width, requisition.height);
+  }
+#endif
+#endif /* Not Implemented */
+}
+
+/**
+ * gtk_widget_get_margin_right:
+ * @widget: a #GtkWidget
+ *
+ * Gets the value of the #GtkWidget:margin-right property.
+ *
+ * Returns: The right margin of @widget
+ *
+ * Deprecated: 3.12: Use gtk_widget_get_margin_end() instead.
+ *
+ * Since: 3.0
+ */
+gint
+gtk_widget_get_margin_right (GtkWidget *widget)
+{
+#if 0 /* Not Implemented */
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
+
+  GtkAllocation allocation;
+  gtk_widget_get_allocation (widget, &allocation);
+
+  return allocation.x + allocation.width;
+#else
+  /* Not Implemented */
+  return 0;
+#endif
+}
+
+/**
+ * gtk_widget_set_margin_right:
+ * @widget: a #GtkWidget
+ * @margin: the right margin
+ *
+ * Sets the right margin of @widget.
+ * See the #GtkWidget:margin-right property.
+ *
+ * Deprecated: 3.12: Use gtk_widget_set_margin_end() instead.
+ *
+ * Since: 3.0
+ */
+void
+gtk_widget_set_margin_right (GtkWidget *widget,
+                             gint       margin)
+{
+#if 0 /* Not Implemented */
+  GtkAllocation allocation;
+#if 0
+  GtkRequsition requisition;
+  GtkWindow *window;
+#endif
+
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (margin <= G_MAXINT16);
+
+  gtk_widget_get_allocation (widget, &allocation);
+#if 0
+  gtk_widget_size_request (widget, &requisition);
+#endif
+
+#if 0
+  requisition.width += (margin - (allocation.x == -1 ? 0 : allocation.x)) - allocation.width;
+#endif
+  allocation.width = margin - (allocation.x == -1 ? 0 : allocation.x);
+
+  gtk_widget_size_allocate (widget, &allocation);
+
+#if 0
+  window = gtk_widget_get_window (widget);
+  if (window) {
+    gtk_window_set_default_size(window, requisition.width, requisition.height);
+  }
+#endif
+#endif /* Not Implemented */
+}
+
+/**
+ * gtk_widget_get_margin_start:
+ * @widget: a #GtkWidget
+ *
+ * Gets the value of the #GtkWidget:margin-start property.
+ *
+ * Returns: The start margin of @widget
+ *
+ * Since: 3.12
+ */
+gint
+gtk_widget_get_margin_start (GtkWidget *widget)
+{
+#if 0 /* Not Implemented */
+  return (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? gtk_widget_get_margin_right (widget) :
+                                                                   gtk_widget_get_margin_left (widget);
+#else
+  /* Not Implemented */
+  return 0;
+#endif
+}
+
+/**
+ * gtk_widget_set_margin_start:
+ * @widget: a #GtkWidget
+ * @margin: the start margin
+ *
+ * Sets the start margin of @widget.
+ * See the #GtkWidget:margin-start property.
+ *
+ * Since: 3.12
+ */
+void
+gtk_widget_set_margin_start (GtkWidget *widget,
+                             gint       margin)
+{
+#if 0 /* Not Implemented */
+  (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? gtk_widget_set_margin_right (widget, margin) :
+                                                            gtk_widget_set_margin_left (widget, margin);
+#endif /* Not Implemented */
+}
+
+/**
+ * gtk_widget_get_margin_end:
+ * @widget: a #GtkWidget
+ *
+ * Gets the value of the #GtkWidget:margin-end property.
+ *
+ * Returns: The end margin of @widget
+ *
+ * Since: 3.12
+ */
+gint
+gtk_widget_get_margin_end (GtkWidget *widget)
+{
+#if 0 /* Not Implemented */
+  return (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? gtk_widget_get_margin_left (widget) :
+                                                                   gtk_widget_get_margin_right (widget);
+#else
+  /* Not Implemented */
+  return 0;
+#endif
+}
+
+/**
+ * gtk_widget_set_margin_end:
+ * @widget: a #GtkWidget
+ * @margin: the end margin
+ *
+ * Sets the end margin of @widget.
+ * See the #GtkWidget:margin-end property.
+ *
+ * Since: 3.12
+ */
+void
+gtk_widget_set_margin_end (GtkWidget *widget,
+                           gint       margin)
+{
+#if 0 /* Not Implemented */
+  (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? gtk_widget_set_margin_left (widget, margin) :
+                                                            gtk_widget_set_margin_right (widget, margin);
+#endif /* Not Implemented */
+}
+
+/**
+ * gtk_widget_get_margin_top:
+ * @widget: a #GtkWidget
+ *
+ * Gets the value of the #GtkWidget:margin-top property.
+ *
+ * Returns: The top margin of @widget
+ *
+ * Since: 3.0
+ */
+gint
+gtk_widget_get_margin_top (GtkWidget *widget)
+{
+#if 0 /* Not Implemented */
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
+
+  GtkAllocation allocation;
+  gtk_widget_get_allocation (widget, &allocation);
+
+  return allocation.y;
+#else
+  /* Not Implemented */
+  return 0;
+#endif
+}
+
+/**
+ * gtk_widget_set_margin_top:
+ * @widget: a #GtkWidget
+ * @margin: the top margin
+ *
+ * Sets the top margin of @widget.
+ * See the #GtkWidget:margin-top property.
+ *
+ * Since: 3.0
+ */
+void
+gtk_widget_set_margin_top (GtkWidget *widget,
+                           gint       margin)
+{
+#if 0 /* Not Implemented */
+  GtkAllocation allocation;
+#if 0
+  GtkRequsition requisition;
+  GtkWindow *window;
+#endif
+
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (margin <= G_MAXINT16);
+
+  gtk_widget_get_allocation (widget, &allocation);
+#if 0
+  gtk_widget_size_request (widget, &requisition);
+#endif
+
+  if (allocation.y != -1) {
+    allocation.height += allocation.y - margin;
+#if 0
+    requisition.height += allocation.y - margin;
+#endif
+  }
+  allocation.y = margin;
+
+  gtk_widget_size_allocate (widget, &allocation);
+
+#if 0
+  window = gtk_widget_get_window (widget);
+  if (window) {
+    gtk_window_set_default_size(window, requisition.width, requisition.height);
+  }
+#endif
+#endif /* Not Implemented */
+}
+
+/**
+ * gtk_widget_get_margin_bottom:
+ * @widget: a #GtkWidget
+ *
+ * Gets the value of the #GtkWidget:margin-bottom property.
+ *
+ * Returns: The bottom margin of @widget
+ *
+ * Since: 3.0
+ */
+gint
+gtk_widget_get_margin_bottom (GtkWidget *widget)
+{
+#if 0 /* Not Implemented */
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
+
+  GtkAllocation allocation;
+  gtk_widget_get_allocation (widget, &allocation);
+
+  return allocation.y + allocation.height;
+#else
+  /* Not Implemented */
+  return 0;
+#endif
+}
+
+/**
+ * gtk_widget_set_margin_bottom:
+ * @widget: a #GtkWidget
+ * @margin: the bottom margin
+ *
+ * Sets the bottom margin of @widget.
+ * See the #GtkWidget:margin-bottom property.
+ *
+ * Since: 3.0
+ */
+void
+gtk_widget_set_margin_bottom (GtkWidget *widget,
+                              gint       margin)
+{
+#if 0 /* Not Implemented */
+  GtkAllocation allocation;
+#if 0
+  GtkRequsition requisition;
+  GtkWindow *window;
+#endif
+
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (margin <= G_MAXINT16);
+
+  gtk_widget_get_allocation (widget, &allocation);
+#if 0
+  gtk_widget_size_request (widget, &requisition);
+#endif
+
+#if 0
+  requisition.height += (margin - (allocation.y == -1 ? 0 : allocation.y)) - allocation.height;
+#endif
+  allocation.height = margin - (allocation.y == -1 ? 0 : allocation.y);
+
+  gtk_widget_size_allocate (widget, &allocation);
+
+#if 0
+  window = gtk_widget_get_window (widget);
+  if (window) {
+    gtk_window_set_default_size(window, requisition.width, requisition.height);
+  }
+#endif
+#endif /* Not Implemented */
+}
+
+
+/**
  * gtk_widget_reset_style:
  * @widget: a #GtkWidget
  *
