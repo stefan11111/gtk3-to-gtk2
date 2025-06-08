@@ -1,7 +1,7 @@
 #ifndef __GDK_RGBA_H__
 #define __GDK_RGBA_H__
 
-#if !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
+#if !defined (__GDK_H_INSIDE__) && !defined (GDK_COMPILATION)
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 

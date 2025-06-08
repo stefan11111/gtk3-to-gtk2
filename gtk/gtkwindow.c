@@ -8,6 +8,9 @@
 #define P_(x) x
 #endif
 
+#define default_icon_list (*gtk2_default_icon_list ())
+#define default_icon_name (*gtk2_default_icon_name ())
+
 enum {
   PROP_0,
 
@@ -59,6 +62,65 @@ enum {
 };
 
 static GParamSpec* prop_application = 0;
+
+typedef struct
+{
+  GList     *icon_list;
+  GdkPixmap *icon_pixmap;
+  GdkPixmap *icon_mask;
+  gchar     *icon_name;
+  guint      realized : 1;
+  guint      using_default_icon : 1;
+  guint      using_parent_icon : 1;
+  guint      using_themed_icon : 1;
+} GtkWindowIconInfo;
+
+typedef struct {
+  GdkGeometry    geometry; /* Last set of geometry hints we set */
+  GdkWindowHints flags;
+  GdkRectangle   configure_request;
+} GtkWindowLastGeometryInfo;
+
+struct _GtkWindowGeometryInfo
+{
+  /* Properties that the app has set on the window
+   */
+  GdkGeometry    geometry;      /* Geometry hints */
+  GdkWindowHints mask;
+  GtkWidget     *widget;        /* subwidget to which hints apply */
+  /* from last gtk_window_resize () - if > 0, indicates that
+   * we should resize to this size.
+   */
+  gint           resize_width;
+  gint           resize_height;
+
+  /* From last gtk_window_move () prior to mapping -
+   * only used if initial_pos_set
+   */
+  gint           initial_x;
+  gint           initial_y;
+
+  /* Default size - used only the FIRST time we map a window,
+   * only if > 0.
+   */
+  gint           default_width;
+  gint           default_height;
+  /* whether to use initial_x, initial_y */
+  guint          initial_pos_set : 1;
+  /* CENTER_ALWAYS or other position constraint changed since
+   * we sent the last configure request.
+   */
+  guint          position_constraints_changed : 1;
+
+  /* if true, default_width, height come from gtk_window_parse_geometry,
+   * and thus should be multiplied by the increments and affect the
+   * geometry widget only
+   */
+  guint          default_is_geometry : 1;
+
+  GtkWindowLastGeometryInfo last;
+};
+
 
 /**
  * gtk_window_get_application:
@@ -145,3 +207,71 @@ gtk_window_set_application (GtkWindow      *window,
       g_object_notify_by_pspec (G_OBJECT (window), prop_application);
     }
 }
+
+static GdkPixbuf *
+icon_from_list (GList *list,
+                gint   size)
+{
+  GdkPixbuf *best;
+  GdkPixbuf *pixbuf;
+  GList *l;
+
+  best = NULL;
+  for (l = list; l; l = l->next)
+    {
+      pixbuf = list->data;
+      if (gdk_pixbuf_get_width (pixbuf) <= size &&
+          gdk_pixbuf_get_height (pixbuf) <= size)
+        {
+          best = g_object_ref (pixbuf);
+          break;
+        }
+    }
+
+  if (best == NULL)
+    best = gdk_pixbuf_scale_simple (GDK_PIXBUF (list->data), size, size, GDK_INTERP_BILINEAR);
+
+  return best;
+}
+
+static GdkPixbuf *
+icon_from_name (const gchar *name,
+                gint         size)
+{
+  return gtk_icon_theme_load_icon (gtk_icon_theme_get_default (),
+                                   name, size,
+                                   GTK_ICON_LOOKUP_FORCE_SIZE, NULL);
+}
+
+GdkPixbuf *
+gtk_window_get_icon_for_size (GtkWindow *window,
+                              gint       size)
+{
+  GtkWindowIconInfo *info;
+  const gchar *name;
+
+  info = gtk2_ensure_icon_info (window);
+
+  if (info->icon_list != NULL)
+    return icon_from_list (info->icon_list, size);
+
+  name = gtk_window_get_icon_name (window);
+  if (name != NULL)
+    return icon_from_name (name, size);
+
+  if (window->transient_parent != NULL)
+    {
+      info = gtk2_ensure_icon_info (window->transient_parent);
+      if (info->icon_list)
+        return icon_from_list (info->icon_list, size);
+    }
+
+  if (default_icon_list != NULL)
+    return icon_from_list (default_icon_list, size);
+
+  if (default_icon_name != NULL)
+    return icon_from_name (default_icon_name, size);
+
+  return NULL;
+}
+

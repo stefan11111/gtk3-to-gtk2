@@ -809,10 +809,23 @@ struct _GtkWidgetClass
    *                             GdkEventExpose *event);
    */
 
+  /* gtk3 api compat */
+
+  gboolean (* draw)            (GtkWidget        *widget,
+                                cairo_t          *cr);
+
+  void               (* get_preferred_width)            (GtkWidget       *widget,
+                                                         gint            *minimum_width,
+                                                         gint            *natural_width);
+
+  void               (* get_preferred_height)           (GtkWidget       *widget,
+                                                         gint            *minimum_height,
+                                                         gint            *natural_height);
+
   /* Padding for future expansion */
-  void (*_gtk_reserved5) (void);
-  void (*_gtk_reserved6) (void);
-  void (*_gtk_reserved7) (void);
+/*  void (*_gtk_reserved5) (void); */ /* used by the above */
+/*  void (*_gtk_reserved6) (void); */ /* used by the above */
+/*  void (*_gtk_reserved7) (void); */ /* used by the above */
 };
 
 struct _GtkWidgetAuxInfo
@@ -1070,6 +1083,8 @@ GtkClipboard *gtk_widget_get_clipboard   (GtkWidget *widget,
 					  GdkAtom    selection);
 GdkPixmap *   gtk_widget_get_snapshot    (GtkWidget    *widget,
                                           GdkRectangle *clip_rect);
+
+gint          gtk_widget_get_scale_factor (GtkWidget *widget);
 
 /* Expand flags and related support */
 gboolean gtk_widget_get_hexpand          (GtkWidget      *widget);

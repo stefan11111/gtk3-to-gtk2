@@ -217,3 +217,23 @@ gtk_widget_needs_allocate (GtkWidget *widget)
 
   return GTK_WIDGET_ALLOC_NEEDED (widget);
 }
+
+/**
+ * gtk_widget_get_scale_factor:
+ * @widget: a #GtkWidget
+ *
+ * Retrieves the internal scale factor that maps from window coordinates
+ * to the actual device pixels. On traditional systems this is 1, on
+ * high density outputs, it can be a higher value (typically 2).
+ *
+ * See gdk_window_get_scale_factor().
+ *
+ * Returns: the scale factor for @widget
+ *
+ * Since: 3.10
+ */
+gint
+gtk_widget_get_scale_factor (GtkWidget *widget)
+{
+  return 1;
+}

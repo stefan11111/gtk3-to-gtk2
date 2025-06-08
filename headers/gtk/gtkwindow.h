@@ -452,8 +452,20 @@ void _gtk_window_keys_foreach (GtkWindow               *window,
 			       gpointer                 func_data);
 
 /* expose gtk2 internals */
-void
-gtk2_gtk_window_notify_keys_changed (GtkWindow *window);
+void gtk2_gtk_window_notify_keys_changed (GtkWindow *window);
+
+/* expose gtk2 internals */
+typedef struct _GtkWindowPrivate GtkWindowPrivate;
+GtkWindowPrivate *gtk2_gtk_window_get_private (GtkWindow *window);
+
+/* expose gtk2 internals */
+/* GtkWindowIconInfo* */ void * gtk2_ensure_icon_info (GtkWindow *window);
+
+/* expose gtk2 internals */
+GList ** gtk2_default_icon_list (void);
+
+/* expose gtk2 internals */
+gchar ** gtk2_default_icon_name (void);
 
 /* --- internal (GtkAcceleratable) --- */
 gboolean	_gtk_window_query_nonaccels	(GtkWindow	*window,
