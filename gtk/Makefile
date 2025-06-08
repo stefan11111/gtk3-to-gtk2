@@ -10,6 +10,9 @@ ALL_HEADERS = ${INCS} ${HEADERS}
 all:
 	cd .. && make
 
+install:
+	cd .. && make install
+
 gtk: libgtk-3.so.0
 
 ${OBJ}: ${ALL_HEADERS}
@@ -24,4 +27,4 @@ clean:
 	rm -f ${OBJ}
 	rm -f libgtk-3.so.0
 
-.PHONY: all clean gtk
+.PHONY: all clean install gtk

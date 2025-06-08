@@ -9,6 +9,9 @@ ALL_HEADERS = ${INCS} ${HEADERS}
 all:
 	cd .. && make
 
+install:
+	cd .. && make install
+
 gdk: libgdk-3.so.0
 
 ${OBJ}: ${ALL_HEADERS}
@@ -23,4 +26,4 @@ clean:
 	rm -f ${OBJ}
 	rm -f libgdk-3.so.0
 
-.PHONY: all clean gdk
+.PHONY: all clean install gdk
