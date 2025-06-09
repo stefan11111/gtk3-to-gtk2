@@ -1,0 +1,14 @@
+--- a/hardinfo/util.c.bak	2025-06-09 00:13:02.504823538 +0300
++++ b/hardinfo/util.c	2025-06-09 00:13:17.077951036 +0300
+@@ -178,11 +178,7 @@
+     if (cursor) {
+         gdk_window_set_cursor(gdk_window, cursor);
+         gdk_display_flush(display);
+-#if GTK_CHECK_VERSION(3, 0, 0)
+-        g_object_unref(cursor);
+-#else
+         gdk_cursor_unref(cursor);
+-#endif
+     }
+ 
+     while (gtk_events_pending())

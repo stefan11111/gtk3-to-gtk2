@@ -1,0 +1,3 @@
+Some patches that may or may not be needed with this library
+
+gtk3 hardinfo: not needed

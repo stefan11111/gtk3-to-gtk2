@@ -6,8 +6,8 @@ INCS = $(shell find ../include -name '*.h')
 HEADERS = $(shell find ../headers -name '*.h')
 ALL_HEADERS = ${INCS} ${HEADERS}
 
-TARGET = x11
-OBJ += $(shell ls ${TARGET}/*.c | sed --expression='s/\.c/.o/g')
+#TARGET = x11
+#OBJ += $(shell ls ${TARGET}/*.c | sed --expression='s/\.c/.o/g')
 
 all:
 	cd .. && make
