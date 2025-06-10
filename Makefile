@@ -5,10 +5,10 @@
 
 #INCLUDES = -I. -I.. $(shell pkg-config --cflags gtk+-2.0)
 
-INCLUDES = -I. -I.. $(shell pkg-config --cflags pango gdk-pixbuf-2.0)
+INCLUDES = -I. -I.. $(shell pkg-config --cflags pango gdk-pixbuf-2.0 cairo-gobject)
 
 XCFLAGS = ${CPPFLAGS} ${CFLAGS} -DGTK_COMPILATION=1 -DGDK_COMPILATION=1 -lm -std=c99 -fPIC -Wall -Wno-pedantic ${INCLUDES}
-XLDFLAGS = ${LDFLAGS} -shared -Wl
+XLDFLAGS = ${LDFLAGS} $(shell pkg-config --libs cairo-gobject) -shared -Wl
 
 LIBDIR = /lib64
 

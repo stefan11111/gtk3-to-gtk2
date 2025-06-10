@@ -57,6 +57,7 @@ typedef struct _GtkImageIconSetData GtkImageIconSetData;
 typedef struct _GtkImageAnimationData GtkImageAnimationData;
 typedef struct _GtkImageIconNameData  GtkImageIconNameData;
 typedef struct _GtkImageGIconData     GtkImageGIconData;
+typedef struct _GtkImageSurfaceData GtkImageSurfaceData;
 
 struct _GtkImagePixmapData
 {
@@ -104,6 +105,10 @@ struct _GtkImageGIconData
   guint theme_change_id;
 };
 
+struct _GtkImageSurfaceData {
+  cairo_surface_t *surface;
+};
+
 /**
  * GtkImageType:
  * @GTK_IMAGE_EMPTY: there is no image displayed by the widget
@@ -136,7 +141,8 @@ typedef enum
   GTK_IMAGE_ICON_SET,
   GTK_IMAGE_ANIMATION,
   GTK_IMAGE_ICON_NAME,
-  GTK_IMAGE_GICON
+  GTK_IMAGE_GICON,
+  GTK_IMAGE_SURFACE /* from gtk3 */
 } GtkImageType;
 
 /**
@@ -161,6 +167,7 @@ struct _GtkImage
     GtkImageAnimationData anim;
     GtkImageIconNameData name;
     GtkImageGIconData gicon;
+    GtkImageSurfaceData surface;
   } GSEAL (data);
 
   /* Only used with GTK_IMAGE_PIXMAP, GTK_IMAGE_IMAGE */
@@ -200,6 +207,9 @@ GtkWidget* gtk_image_new_from_icon_name (const gchar     *icon_name,
 GtkWidget* gtk_image_new_from_gicon     (GIcon           *icon,
 					 GtkIconSize      size);
 
+GtkWidget* gtk_image_new_from_surface   (cairo_surface_t *surface);
+
+
 void gtk_image_clear              (GtkImage        *image);
 void gtk_image_set_from_pixmap    (GtkImage        *image,
                                    GdkPixmap       *pixmap,
@@ -225,6 +235,10 @@ void gtk_image_set_from_icon_name (GtkImage        *image,
 void gtk_image_set_from_gicon     (GtkImage        *image,
 				   GIcon           *icon,
 				   GtkIconSize      size);
+
+void gtk_image_set_from_surface   (GtkImage        *image,
+                                   cairo_surface_t *surface);
+
 void gtk_image_set_pixel_size     (GtkImage        *image,
 				   gint             pixel_size);
 
