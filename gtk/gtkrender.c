@@ -1962,6 +1962,13 @@ option_menu_get_props (GtkWidget      *widget,
   GtkRequisition *tmp_size = NULL;
   GtkBorder *tmp_spacing = NULL;
 
+  if (widget) {
+    gtk_widget_style_get (widget,
+                          "indicator_size", &tmp_size,
+                          "indicator_spacing", &tmp_spacing,
+                          NULL);
+  }
+
   if (tmp_size)
     {
       *indicator_size = *tmp_size;

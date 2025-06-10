@@ -15,27 +15,33 @@ static void* glib_gobject = NULL;
 static gpointer (*glib_g_object_ref) (gpointer object) = NULL;
 static void (*glib_g_object_unref) (gpointer object) = NULL;
 
+static gsize glib_loaded = 0;
+
 static void glib_g_object_init (void)
 {
-  char *dl_error;
-  glib_gobject = dlopen ("libgobject-2.0.so", RTLD_NOW);
+  if (g_once_init_enter (&glib_loaded)) {
+    char *dl_error;
 
-  g_return_if_fail (glib_gobject != NULL);
+    glib_gobject = dlopen ("libgobject-2.0.so", RTLD_NOW);
 
-  glib_g_object_ref = dlsym (glib_gobject, "g_object_ref");
+    g_return_if_fail (glib_gobject != NULL);
 
-  dl_error = dlerror();
+    glib_g_object_ref = dlsym (glib_gobject, "g_object_ref");
 
-  if (dl_error) {
-    g_warning ("%s\n", dl_error);
-  }
+    dl_error = dlerror();
 
-  glib_g_object_unref = dlsym (glib_gobject, "g_object_unref");
+    if (dl_error) {
+      g_warning ("%s\n", dl_error);
+    }
 
-  dl_error = dlerror();
+    glib_g_object_unref = dlsym (glib_gobject, "g_object_unref");
 
-  if (dl_error) {
-    g_warning ("%s\n", dl_error);
+    dl_error = dlerror();
+
+    if (dl_error) {
+      g_warning ("%s\n", dl_error);
+    }
+    g_once_init_leave (&glib_loaded, 1);
   }
 }
 
@@ -47,15 +53,15 @@ g_object_ref (gpointer object)
 {
   GdkCursor *cursor = object;
 
-  if (!glib_gobject) {
+  if (!glib_loaded) {
     glib_g_object_init ();
   }
 
   /* check for something that doesn't 'look' like a pointer to a pointer and instead looks like a cursor */
   if (cursor->type >= GDK_BLANK_CURSOR && cursor->type <= GDK_LAST_CURSOR
-                                       && ((sizeof(void*) < 2 * sizeof(int)) /* only do this if pointers are at least a big as 2 ints */
+                                       && ((sizeof(void*) < 2 * sizeof(int)) /* only do this if pointers are at least as big as 2 ints */
                                            || cursor->ref_count < CURSOR_REF_COUNT_TRESH)) {
-    return gdk_cursor_ref ((GdkCursor*)object);
+    return gdk_cursor_ref (object);
   }
 
   return glib_g_object_ref (object);
@@ -66,13 +72,13 @@ g_object_unref (gpointer object)
 {
   GdkCursor *cursor = object;
 
-  if (!glib_gobject) {
+  if (!glib_loaded) {
     glib_g_object_init ();
   }
 
   /* check for something that doesn't 'look' like a pointer to a pointer and instead looks like a cursor */
   if (cursor->type >= GDK_BLANK_CURSOR && cursor->type <= GDK_LAST_CURSOR
-                                       && ((sizeof(void*) < 2 * sizeof(int)) /* only do this if pointers are at least a big as 2 ints */
+                                       && ((sizeof(void*) < 2 * sizeof(int)) /* only do this if pointers are at least as big as 2 ints */
                                            || cursor->ref_count < CURSOR_REF_COUNT_TRESH)) {
     return gdk_cursor_unref (object);
   }
