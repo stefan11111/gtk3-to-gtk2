@@ -17,6 +17,7 @@
 #include "gtkwidgetprivate.h"
 #include "gtkprivate.h"
 #include "gtkcontainerprivate.h"
+#include "gtkwindowprivate.h"
 
 #if 0 /* These include forward declatarions that are not implemented */
 #include "gtksymboliccolorprivate.h"
