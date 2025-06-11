@@ -1030,6 +1030,14 @@ void                  gtk_widget_get_allocation         (GtkWidget     *widget,
 void                  gtk_widget_set_allocation         (GtkWidget     *widget,
                                                          const GtkAllocation *allocation);
 
+
+void                  gtk_widget_set_clip               (GtkWidget     *widget,
+                                                         const GtkAllocation *clip);
+
+void                  gtk_widget_get_clip               (GtkWidget     *widget,
+                                                         GtkAllocation *clip);
+
+
 void                  gtk_widget_get_requisition        (GtkWidget     *widget,
                                                          GtkRequisition *requisition);
 

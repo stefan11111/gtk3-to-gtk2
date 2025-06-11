@@ -20,6 +20,53 @@ gtk_widget_get_allocated_height (GtkWidget *widget)
   return widget->allocation.height;
 }
 
+/**
+ * gtk_widget_get_clip:
+ * @widget: a #GtkWidget
+ * @clip: (out): a pointer to a #GtkAllocation to copy to
+ *
+ * Retrieves the widget’s clip area.
+ *
+ * The clip area is the area in which all of @widget's drawing will
+ * happen. Other toolkits call it the bounding box.
+ *
+ * Historically, in GTK+ the clip area has been equal to the allocation
+ * retrieved via gtk_widget_get_allocation().
+ *
+ * Since: 3.14
+ */
+void
+gtk_widget_get_clip (GtkWidget     *widget,
+                     GtkAllocation *clip)
+{
+  gtk_widget_get_allocation (widget, clip);
+}
+
+/**
+ * gtk_widget_set_clip:
+ * @widget: a #GtkWidget
+ * @clip: a pointer to a #GtkAllocation to copy from
+ *
+ * Sets the widget’s clip.  This must not be used directly,
+ * but from within a widget’s size_allocate method.
+ * It must be called after gtk_widget_set_allocation() (or after chaining up
+ * to the parent class), because that function resets the clip.
+ *
+ * The clip set should be the area that @widget draws on. If @widget is a
+ * #GtkContainer, the area must contain all children's clips.
+ *
+ * If this function is not called by @widget during a ::size-allocate handler,
+ * the clip will be set to @widget's allocation.
+ *
+ * Since: 3.14
+ */
+void
+gtk_widget_set_clip (GtkWidget           *widget,
+                     const GtkAllocation *clip)
+{
+  gtk_widget_set_allocation (widget, clip);
+}
+
 void
 gtk_widget_override_font (GtkWidget                  *widget,
                           const PangoFontDescription *font_desc)

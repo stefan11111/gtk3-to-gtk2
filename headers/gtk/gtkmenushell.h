@@ -135,6 +135,16 @@ void     _gtk_menu_shell_set_keyboard_mode (GtkMenuShell *menu_shell,
                                             gboolean      keyboard_mode);
 gboolean _gtk_menu_shell_get_keyboard_mode (GtkMenuShell *menu_shell);
 
+
+GtkWidget *gtk_menu_shell_get_selected_item (GtkMenuShell *menu_shell);
+
+GtkWidget *gtk_menu_shell_get_parent_shell  (GtkMenuShell *menu_shell);
+
+void       gtk_menu_shell_bind_model   (GtkMenuShell *menu_shell,
+                                        GMenuModel   *model,
+                                        const gchar  *action_namespace,
+                                        gboolean      with_separators);
+
 G_END_DECLS
 
 #endif /* __GTK_MENU_SHELL_H__ */
