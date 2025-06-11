@@ -339,6 +339,11 @@ void     gtk_window_maximize      (GtkWindow *window);
 void     gtk_window_unmaximize    (GtkWindow *window);
 void     gtk_window_fullscreen    (GtkWindow *window);
 void     gtk_window_unfullscreen  (GtkWindow *window);
+
+
+void     gtk_window_close         (GtkWindow *window);
+
+
 void     gtk_window_set_keep_above    (GtkWindow *window, gboolean setting);
 void     gtk_window_set_keep_below    (GtkWindow *window, gboolean setting);
 
@@ -411,6 +416,10 @@ void             gtk_window_group_add_window    (GtkWindowGroup     *window_grou
 void             gtk_window_group_remove_window (GtkWindowGroup     *window_group,
 					         GtkWindow          *window);
 GList *          gtk_window_group_list_windows  (GtkWindowGroup     *window_group);
+
+
+
+gboolean gtk_window_is_maximized           (GtkWindow    *window);
 
 
 /* --- internal functions --- */

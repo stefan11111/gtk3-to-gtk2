@@ -3,6 +3,9 @@
 #include <gtk/gtkactionmuxer.h>
 #include <gtk/gtkicontheme.h>
 #include <gtk/gtkprivate.h>
+#include <gtk/gtkmain.h>
+
+#include <gdk/gdk.h> /* gdk_threads_add_idle_full */ 
 
 #include "gtkwidgetprivate.h"
 
@@ -64,6 +67,8 @@ enum {
 };
 
 static GParamSpec* prop_application = 0;
+
+static guint delete_event_handler = 0;
 
 typedef struct
 {
@@ -285,4 +290,75 @@ _gtk_window_toggle_maximized (GtkWindow *window)
     gtk_window_unmaximize (window);
   else
     gtk_window_maximize (window);
+}
+
+/**
+ * gtk_window_is_maximized:
+ * @window: a #GtkWindow
+ *
+ * Retrieves the current maximized state of @window.
+ *
+ * Note that since maximization is ultimately handled by the window
+ * manager and happens asynchronously to an application request, you
+ * shouldn’t assume the return value of this function changing
+ * immediately (or at all), as an effect of calling
+ * gtk_window_maximize() or gtk_window_unmaximize().
+ *
+ * Returns: whether the window has a maximized state.
+ *
+ * Since: 3.12
+ */
+gboolean
+gtk_window_is_maximized (GtkWindow *window)
+{
+  g_return_val_if_fail (GTK_IS_WINDOW (window), FALSE);
+
+  return window->maximize_initially;
+}
+
+static gboolean
+send_delete_event (gpointer data)
+{
+  GtkWidget *window = data;
+  GdkWindow *gdk_window;
+
+  delete_event_handler = 0;
+
+  gdk_window = gtk_widget_get_window (window);
+  if (gdk_window)
+    {
+      GdkEvent *event;
+
+      event = gdk_event_new (GDK_DELETE);
+      event->any.window = g_object_ref (gdk_window);
+      event->any.send_event = TRUE;
+
+      gtk_main_do_event (event);
+
+      gdk_event_free (event);
+    }
+
+  return G_SOURCE_REMOVE;
+}
+
+/**
+ * gtk_window_close:
+ * @window: a #GtkWindow
+ *
+ * Requests that the window is closed, similar to what happens
+ * when a window manager close button is clicked.
+ *
+ * This function can be used with close buttons in custom
+ * titlebars.
+ *
+ * Since: 3.10
+ */
+void
+gtk_window_close (GtkWindow *window)
+{
+  if (!gtk_widget_get_realized (GTK_WIDGET (window)))
+    return;
+
+  delete_event_handler = gdk_threads_add_idle_full (G_PRIORITY_DEFAULT, send_delete_event, window, NULL);
+  g_source_set_name_by_id (delete_event_handler, "[gtk+] send_delete_event");
 }

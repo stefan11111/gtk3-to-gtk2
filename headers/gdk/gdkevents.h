@@ -295,7 +295,20 @@ typedef enum
   GDK_WINDOW_STATE_STICKY     = 1 << 3,
   GDK_WINDOW_STATE_FULLSCREEN = 1 << 4,
   GDK_WINDOW_STATE_ABOVE      = 1 << 5,
-  GDK_WINDOW_STATE_BELOW      = 1 << 6
+  GDK_WINDOW_STATE_BELOW      = 1 << 6,
+
+  /* from gtk3, not in gtk2 */
+  /* since this is a bitmask, it gets handled nicely */
+  GDK_WINDOW_STATE_FOCUSED          = 1 << 7,
+  GDK_WINDOW_STATE_TILED            = 1 << 8,
+  GDK_WINDOW_STATE_TOP_TILED        = 1 << 9,
+  GDK_WINDOW_STATE_TOP_RESIZABLE    = 1 << 10,
+  GDK_WINDOW_STATE_RIGHT_TILED      = 1 << 11,
+  GDK_WINDOW_STATE_RIGHT_RESIZABLE  = 1 << 12,
+  GDK_WINDOW_STATE_BOTTOM_TILED     = 1 << 13,
+  GDK_WINDOW_STATE_BOTTOM_RESIZABLE = 1 << 14,
+  GDK_WINDOW_STATE_LEFT_TILED       = 1 << 15,
+  GDK_WINDOW_STATE_LEFT_RESIZABLE   = 1 << 16
 } GdkWindowState;
 
 typedef enum

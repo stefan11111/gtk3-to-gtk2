@@ -17,6 +17,7 @@
 #include "gtkapplicationprivate.h"
 #include "gtkmarshalers.h"
 #include "gtkwidgetprivate.h"
+#include "gtkheaderbarprivate.h"
 
 #if 0 /* include <gtk/gtkprivate.h> instead */
 #include "gtkprivate.h"
