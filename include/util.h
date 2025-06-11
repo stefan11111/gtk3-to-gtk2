@@ -1,3 +1,5 @@
+#warning include separate headers instead of util.h, helps with the build time
+
 #include "gdkrgba.h"
 #include "gdkwindowinternal.h"
 #include "gdkdrawingcontextprivate.h"
@@ -15,7 +17,11 @@
 #include "gtkapplicationprivate.h"
 #include "gtkmarshalers.h"
 #include "gtkwidgetprivate.h"
+
+#if 0 /* include <gtk/gtkprivate.h> instead */
 #include "gtkprivate.h"
+#endif
+
 #include "gtkcontainerprivate.h"
 #include "gtkwindowprivate.h"
 

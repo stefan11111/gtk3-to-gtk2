@@ -1,3 +1,5 @@
+#error there should be to reason to include this, include <gtk/gtkprivate.h> instead
+
 #ifndef __INTERNAL_GTK_PRIVATE_H__
 #define __INTERNAL_GTK_PRIVATE_H__
 
