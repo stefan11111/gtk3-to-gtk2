@@ -20,7 +20,8 @@
 
 #include <cairo.h>
 #include <pango/pango.h>
-#include <gtk/gtk.h>
+#include <gtk/gtkrender.h>
+#include <gtk/gtkstylecontext.h>
 
 void        gtk_render_content_path             (GtkStyleContext        *context,
                                                  cairo_t                *cr,

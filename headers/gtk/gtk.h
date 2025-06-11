@@ -177,6 +177,9 @@
 #include <gtk/gtkruler.h>
 #include <gtk/gtkscale.h>
 #include <gtk/gtkscalebutton.h>
+
+#include <gtk/gtkscrollable.h>
+
 #include <gtk/gtkscrollbar.h>
 #include <gtk/gtkscrolledwindow.h>
 #include <gtk/gtkselection.h>
@@ -236,7 +239,11 @@
 #include <gtk/gtktreestore.h>
 #include <gtk/gtktreeview.h>
 #include <gtk/gtktreeviewcolumn.h>
+
+#include <gtk/gtktypes.h>
+
 #include <gtk/gtktypeutils.h>
+
 #include <gtk/gtkuimanager.h>
 #include <gtk/gtkvbbox.h>
 #include <gtk/gtkvbox.h>

@@ -18,7 +18,6 @@
 #ifndef __INTERNAL_GTK_STYLECASCADE_PRIVATE_H__
 #define __INTERNAL_GTK_STYLECASCADE_PRIVATE_H__
 
-#include <gdk/gdk.h>
 #include "gtkstyleproviderprivate.h"
 
 G_BEGIN_DECLS

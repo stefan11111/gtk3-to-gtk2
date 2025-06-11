@@ -18,7 +18,7 @@
 #ifndef __INTERNAL_GTK_STYLE_CONTEXT_PRIVATE_H__
 #define __INTERNAL_GTK_STYLE_CONTEXT_PRIVATE_H__
 
-#include <gtk/gtk.h>
+#include <gtk/gtkstylecontext.h>
 
 #include "gtkstyleproviderprivate.h"
 

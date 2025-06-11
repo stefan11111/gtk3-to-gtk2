@@ -703,6 +703,38 @@ typedef enum
   GTK_DRAG_RESULT_ERROR
 } GtkDragResult;
 
+/**
+ * GtkScrollablePolicy:
+ * @GTK_SCROLL_MINIMUM: Scrollable adjustments are based on the minimum size
+ * @GTK_SCROLL_NATURAL: Scrollable adjustments are based on the natural size
+ *
+ * Defines the policy to be used in a scrollable widget when updating
+ * the scrolled window adjustments in a given orientation.
+ */
+typedef enum
+{
+  GTK_SCROLL_MINIMUM = 0,
+  GTK_SCROLL_NATURAL
+} GtkScrollablePolicy;
+
+/**
+ * GtkPopoverConstraint:
+ * @GTK_POPOVER_CONSTRAINT_NONE: Don't constrain the popover position
+ *   beyond what is imposed by the implementation
+ * @GTK_POPOVER_CONSTRAINT_WINDOW: Constrain the popover to the boundaries
+ *   of the window that it is attached to
+ *
+ * Describes constraints to positioning of popovers. More values
+ * may be added to this enumeration in the future.
+ *
+ * Since: 3.20
+ */
+typedef enum
+{
+  GTK_POPOVER_CONSTRAINT_NONE,
+  GTK_POPOVER_CONSTRAINT_WINDOW
+} GtkPopoverConstraint;
+
 G_END_DECLS
 
 #endif /* __GTK_ENUMS_H__ */

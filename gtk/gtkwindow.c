@@ -1,6 +1,7 @@
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkactionmuxer.h>
+#include <gtk/gtkicontheme.h>
 
 #include "util.h"
 

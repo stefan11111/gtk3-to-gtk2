@@ -1,8 +1,7 @@
 #ifndef __INTERNAL_GTK_CAIRO_H__
 #define __INTERNAL_GTK_CAIRO_H__
 
-#include <gtk/gtk.h>
-#include <gdk/gdk.h>
+#include <gtk/gtkstyle.h>
 
 void
 gtk_cairo_paint_check (GtkStyle           *style,

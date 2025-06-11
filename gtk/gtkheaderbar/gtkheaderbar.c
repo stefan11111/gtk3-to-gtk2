@@ -20,6 +20,8 @@
 #include "gtkheaderbar.h"
 #include "gtkheaderbarprivate.h"
 
+#include <gtk/gtkmenubar.h>
+
 #include "util.h"
 
 #include <string.h>

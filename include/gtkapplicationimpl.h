@@ -1,7 +1,8 @@
 #ifndef __INTERNAL_GTK_APPLICATION_IMPL_H__
 #define __INTERNAL_GTK_APPLICATION_IMPL_H__
 
-#include <gtk/gtk.h>
+#include <gtk/gtkapplication.h>
+#include <gtk/gtkactionmuxer.h>
 
 #define GTK_TYPE_APPLICATION_IMPL                           (gtk_application_impl_get_type ())
 #define GTK_APPLICATION_IMPL_CLASS(class)                   (G_TYPE_CHECK_CLASS_CAST ((class),                     \

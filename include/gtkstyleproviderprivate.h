@@ -19,7 +19,8 @@
 #define __INTERNAL_GTK_STYLE_PROVIDER_PRIVATE_H__
 
 #include <glib-object.h>
-#include <gtk/gtk.h>
+#include <gtk/gtkstylecontext.h>
+#include <gtk/gtktypes.h>
 
 G_BEGIN_DECLS
 

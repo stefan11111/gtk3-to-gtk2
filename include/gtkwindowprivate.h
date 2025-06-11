@@ -1,7 +1,7 @@
 #ifndef __INTERNAL_GTK_WINDOW_PRIVATE_H__
 #define __INTERNAL_GTK_WINDOW_PRIVATE_H__
 
-#include <gdk/gdk.h>
+#include <gdk/gdkpixbuf.h>
 
 #include <gtk/gtkwindow.h>
 
