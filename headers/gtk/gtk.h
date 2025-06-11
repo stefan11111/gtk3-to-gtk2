@@ -251,6 +251,7 @@
 
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkwidgetpath.h>
+#include <gtk/gtksizerequest.h>
 
 #include <gtk/gtkwindow.h>
 
