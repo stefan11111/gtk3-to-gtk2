@@ -139,6 +139,8 @@
 #include <gtk/gtkmenu.h>
 #include <gtk/gtkmenubar.h>
 
+#include <gtk/gtkmenutrackeritem.h>
+#include <gtk/gtkmenutracker.h>
 #include <gtk/gtkmenubutton.h>
 #include <gtk/gtkheaderbar.h>
 
