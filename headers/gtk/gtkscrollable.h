@@ -22,7 +22,6 @@
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
-#include <gdk/gdk.h>
 #include <gtk/gtkenums.h>
 #include <gtk/gtktypes.h>
 #include <gtk/gtkborder.h>
@@ -50,30 +49,30 @@ struct _GtkScrollableInterface
 GType gtk_scrollable_policy_get_type (void) G_GNUC_CONST;
 
 /* Public API */
-GDK_AVAILABLE_IN_ALL
+
 GType                gtk_scrollable_get_type               (void) G_GNUC_CONST;
-GDK_AVAILABLE_IN_ALL
+
 GtkAdjustment       *gtk_scrollable_get_hadjustment        (GtkScrollable       *scrollable);
-GDK_AVAILABLE_IN_ALL
+
 void                 gtk_scrollable_set_hadjustment        (GtkScrollable       *scrollable,
 							    GtkAdjustment       *hadjustment);
-GDK_AVAILABLE_IN_ALL
+
 GtkAdjustment       *gtk_scrollable_get_vadjustment        (GtkScrollable       *scrollable);
-GDK_AVAILABLE_IN_ALL
+
 void                 gtk_scrollable_set_vadjustment        (GtkScrollable       *scrollable,
 							    GtkAdjustment       *vadjustment);
-GDK_AVAILABLE_IN_ALL
+
 GtkScrollablePolicy  gtk_scrollable_get_hscroll_policy     (GtkScrollable       *scrollable);
-GDK_AVAILABLE_IN_ALL
+
 void                 gtk_scrollable_set_hscroll_policy     (GtkScrollable       *scrollable,
 							    GtkScrollablePolicy  policy);
-GDK_AVAILABLE_IN_ALL
+
 GtkScrollablePolicy  gtk_scrollable_get_vscroll_policy     (GtkScrollable       *scrollable);
-GDK_AVAILABLE_IN_ALL
+
 void                 gtk_scrollable_set_vscroll_policy     (GtkScrollable       *scrollable,
 							    GtkScrollablePolicy  policy);
 
-GDK_AVAILABLE_IN_3_16
+
 gboolean             gtk_scrollable_get_border             (GtkScrollable       *scrollable,
                                                             GtkBorder           *border);
 

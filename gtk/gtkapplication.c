@@ -4,6 +4,8 @@
 #include <gtk/gtkrecentmanager.h>
 #include <gtk/gtkbuilder.h>
 #include <gtk/gtkicontheme.h>
+#include <gdk/gdk.h> /* gdk_threads_{enter,leave} */
+
 
 #include "gtkapplicationprivate.h"
 #include "gdk-private.h"

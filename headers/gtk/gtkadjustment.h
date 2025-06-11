@@ -32,7 +32,6 @@
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
-#include <gdk/gdk.h>
 #include <gtk/gtkobject.h>
 
 G_BEGIN_DECLS

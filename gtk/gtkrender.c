@@ -3,6 +3,8 @@
 #include <gtk/gtkspinner.h>
 #include <gtk/gtkspinbutton.h>
 #include <gdk/gdkcairo.h>
+#include <gdk/gdkscreen.h>
+#include <gdk/gdkkeys.h>
 
 #include "gtkpango.h"
 #include "gtkenums.h"

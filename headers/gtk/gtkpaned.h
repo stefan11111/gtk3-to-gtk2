@@ -32,6 +32,7 @@
 #endif
 
 #include <gtk/gtkcontainer.h>
+#include <gdk/gdkcursor.h>
 
 G_BEGIN_DECLS
 

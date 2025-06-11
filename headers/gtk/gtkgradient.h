@@ -22,7 +22,6 @@
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
-#include <gdk/gdk.h>
 #include <gtk/gtkstylecontext.h>
 
 #include <gtk/gtkstyleproperties.h>

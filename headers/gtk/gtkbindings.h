@@ -35,7 +35,7 @@
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
-#include <gdk/gdk.h>
+#include <gdk/gdkevents.h>
 #include <gtk/gtkobject.h>
 
 

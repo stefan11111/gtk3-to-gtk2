@@ -1,5 +1,8 @@
 #include <string.h>
 #include <gtk/gtkwindow.h>
+#include <gdk/gdkscreen.h>
+#include <gdk/gdkcairo.h>
+
 #include "gdkrgba.h"
 #include "gtkenums.h"
 #include "gtkstyleproviderprivate.h"
@@ -8,7 +11,7 @@
 #include "gtkstylecontextprivate.h"
 
 /* TODO: maybe remove when gdkframeclock is implemented */
-#define IMPLEMENT_STYLE_CASCADE
+/* #define IMPLEMENT_STYLE_CASCADE */
 typedef struct _GdkFrameClock GdkFrameClock;
 
 #define GDK_COLORMAP_GET_SCREEN(cmap) ((GdkScreen **) cmap->windowing_data)

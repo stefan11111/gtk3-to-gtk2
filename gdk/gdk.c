@@ -1,10 +1,7 @@
 #include <fribidi.h>
+#include <gdk/gdk.h> /* gtk2_gdk_initialized */
 
 #include "gdkinternals.h"
-
-/* from gdk/gdk.h */
-/* expose gtk2 internals */
-extern int* gtk2_gdk_initialized (void);
 
 #define gdk_initialized (*gtk2_gdk_initialized())
 

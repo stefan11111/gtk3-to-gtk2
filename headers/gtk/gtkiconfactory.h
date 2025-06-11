@@ -31,7 +31,7 @@
 #error "Only <gtk/gtk.h> can be included directly."
 #endif
 
-#include <gdk/gdk.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gtk/gtkrc.h>
 
 G_BEGIN_DECLS

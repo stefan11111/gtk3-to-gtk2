@@ -24,7 +24,7 @@
 
 #include <cairo.h>
 #include <pango/pango.h>
-#include <gdk/gdk.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 
 #include <gtk/gtkenums.h>
 #include <gtk/gtkstylecontext.h>

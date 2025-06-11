@@ -28,6 +28,7 @@
 #define __GTK_PRIVATE_H__
 
 #include <gtk/gtkwidget.h>
+#include <gdk/gdkkeys.h>
 
 G_BEGIN_DECLS
 

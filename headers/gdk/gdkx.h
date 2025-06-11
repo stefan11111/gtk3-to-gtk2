@@ -27,6 +27,7 @@
 #ifndef __GDK_X_H__
 #define __GDK_X_H__
 
+#include <gdk/gdk.h>
 #include <gdk/gdkprivate.h>
 
 #include <X11/Xlib.h>
