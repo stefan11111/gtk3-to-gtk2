@@ -17,7 +17,8 @@
 
 #include <math.h>
 #include <gtk/gtk.h>
-#include <gdk/gdk.h>
+#include <gdk/gdkpixbuf.h>
+#include <gdk/gdkrgba.h>
 #include <gtk/gtkprivate.h>
 
 #ifndef P_

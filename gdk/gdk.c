@@ -1,5 +1,3 @@
-#include <gdk/gdk.h>
-
 #include <fribidi.h>
 
 #include "util.h"

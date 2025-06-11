@@ -1,5 +1,8 @@
-#include <gtk/gtk.h>
-#include <gdk/gdk.h>
+#include <gtk/gtkstyle.h>
+#include <gtk/gtkstylecontext.h>
+#include <gtk/gtkspinner.h>
+#include <gtk/gtkspinbutton.h>
+#include <gdk/gdkcairo.h>
 #include "util.h"
 #include <math.h>
 #include <dlfcn.h>

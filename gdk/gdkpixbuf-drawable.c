@@ -1,5 +1,5 @@
-#include <gdk/gdk.h>
-#include <gtk/gtk.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
+
 #include "util.h"
 
 gint

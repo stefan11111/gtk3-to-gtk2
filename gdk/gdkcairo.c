@@ -1,4 +1,9 @@
-#include <gdk/gdk.h>
+#include <gdk/gdkcairo.h>
+#include <gdk/gdkwindow.h>
+#include <gdk/gdkdrawingcontext.h>
+#include <gdk/gdkrgba.h>
+#include <gdk/gdkdisplay.h>
+#include <gdk/gdkscreen.h>
 #include <math.h>
 
 /**

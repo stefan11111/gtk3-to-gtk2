@@ -1,5 +1,5 @@
 #include <gtk/gtk.h>
-#include <gdk/gdk.h>
+#include <gdk/gdkscreen.h>
 #include "gtkstylecascadeprivate.h"
 
 GdkScreen *

@@ -1,5 +1,5 @@
 #include <glib-object.h>
-#include <gdk/gdk.h>
+#include <gdk/gdkseat.h>
 
 /* XXX Not Implemented XXX */
 
