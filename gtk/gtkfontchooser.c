@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <gtk/gtkfontchooser.h>
 
 #define DEFAULT_FONT_NAME "Sans 10"
 

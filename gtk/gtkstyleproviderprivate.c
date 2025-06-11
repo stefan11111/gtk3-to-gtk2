@@ -17,8 +17,6 @@
 
 #include "gtkstyleproviderprivate.h"
 
-#include <gtk/gtk.h>
-
 #ifndef I_
 #define I_(x) x
 #endif

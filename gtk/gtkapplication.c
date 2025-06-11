@@ -1,6 +1,12 @@
-#include <gtk/gtk.h>
+#include <gtk/gtkapplication.h>
+#include <gtk/gtkmain.h>
+#include <gtk/gtkclipboard.h>
+#include <gtk/gtkrecentmanager.h>
+#include <gtk/gtkbuilder.h>
+#include <gtk/gtkicontheme.h>
 
-#include "util.h"
+#include "gtkapplicationprivate.h"
+#include "gdk-private.h"
 
 /* XXX Only half-implemented  XXX */
 /* XXX This deals with things like dbus, which I don't want to implement XXX */

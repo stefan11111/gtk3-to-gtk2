@@ -1,4 +1,3 @@
-#include <gtk/gtk.h>
 #include "gtksymboliccolorprivate.h"
 
 /* XXX Not Implemented XXX*/

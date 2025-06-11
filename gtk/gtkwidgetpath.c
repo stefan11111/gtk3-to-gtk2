@@ -15,7 +15,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#include <gtk/gtkwidgetpath.h>
 #include <string.h>
 
 /* Almost everything is not implemented here */

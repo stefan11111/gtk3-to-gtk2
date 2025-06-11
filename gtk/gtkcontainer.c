@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <gtk/gtkcontainer.h>
 #include <gobject/gobjectnotifyqueue.c>
 
 #include "util.h"

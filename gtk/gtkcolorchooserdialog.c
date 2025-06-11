@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <gtk/gtkcolorseldialog.h>
 
 GType
 gtk_color_chooser_dialog_get_type (void)

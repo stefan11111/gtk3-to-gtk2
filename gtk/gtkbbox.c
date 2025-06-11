@@ -1,4 +1,5 @@
-#include <gtk/gtk.h>
+#include <gtk/gtkhbbox.h>
+#include <gtk/gtkvbbox.h>
 
 GtkWidget *
 gtk_button_box_new (GtkOrientation orientation)

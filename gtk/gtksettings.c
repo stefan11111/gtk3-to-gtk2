@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <gtk/gtksettings.h>
 #include <gdk/gdkscreen.h>
 #include "gtkstylecascadeprivate.h"
 

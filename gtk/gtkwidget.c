@@ -1,6 +1,14 @@
-#include <gtk/gtk.h>
+#include <gtk/gtkwidget.h>
+#include <gtk/gtkmenu.h>
+#include <gtk/gtkactionmuxer.h>
+#include <gtk/gtkwindow.h>
+#include <gtk/gtkapplication.h>
+#include <gtk/gtkprivate.h>
 
-#include "util.h"
+#include "gtkapplicationprivate.h"
+#include "gtkwidgetprivate.h"
+
+//#include "util.h"
 
 static GQuark           quark_action_muxer = 0;
 

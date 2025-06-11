@@ -29,6 +29,7 @@
 #include <gtk/gtkenums.h>
 
 #include <gtk/gtkstyleproperties.h>
+#include <gtk/gtkwidgetpath.h>
 
 G_BEGIN_DECLS
 

@@ -16,7 +16,8 @@
  */
 
 #include <math.h>
-#include <gtk/gtk.h>
+#include <gtk/gtkthemingengine.h>
+#include <gtk/gtkrender.h>
 #include <gdk/gdkpixbuf.h>
 #include <gdk/gdkrgba.h>
 #include <gtk/gtkprivate.h>

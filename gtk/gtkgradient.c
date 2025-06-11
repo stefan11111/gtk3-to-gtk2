@@ -15,7 +15,6 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
 #include "gtkgradientprivate.h"
 
 /* XXX This depends on gtksymboliccolor, which is implemented as stubs XXX */

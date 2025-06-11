@@ -17,10 +17,6 @@
 
 #include "gtkstylecascadeprivate.h"
 
-#include "gtkstyleproviderprivate.h"
-
-#include <gtk/gtk.h>
-
 typedef struct _GtkStyleCascadeIter GtkStyleCascadeIter;
 typedef struct _GtkStyleProviderData GtkStyleProviderData;
 

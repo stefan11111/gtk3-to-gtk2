@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <gtk/gtkcsssection.h>
 
 /* XXX Not Implemented XXX*/
 

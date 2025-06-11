@@ -1,6 +1,7 @@
-#include <gtk/gtk.h>
 #include <string.h>
-#include "util.h"
+#include <gtk/gtkwindow.h>
+#include "gdkrgba.h"
+#include "gtkenums.h"
 #include "gtkstyleproviderprivate.h"
 #include "gtkstylecascadeprivate.h"
 #include "gtksettingsprivate.h"

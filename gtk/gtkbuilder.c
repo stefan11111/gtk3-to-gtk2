@@ -1,4 +1,5 @@
-#include <gtk/gtk.h>
+#include <gtk/gtkbuilder.h>
+#include <gio/gio.h>
 
 struct _GtkBuilderPrivate
 {

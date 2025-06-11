@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <gtk/gtkicontheme.h>
 
 struct _GtkIconThemePrivate
 {

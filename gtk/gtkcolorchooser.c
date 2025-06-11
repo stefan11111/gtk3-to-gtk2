@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <gtk/gtkcolorsel.h>
 #include "util.h"
 
 GType

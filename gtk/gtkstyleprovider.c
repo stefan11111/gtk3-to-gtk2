@@ -15,7 +15,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#include "gtkstyleproviderprivate.h"
 
 #ifndef I_
 #define I_(str) str

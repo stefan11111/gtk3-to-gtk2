@@ -19,9 +19,10 @@
  *          Sébastien Wilmet <swilmet@gnome.org>
  */
 
-#include <gtk/gtk.h>
+#include <gtk/gtkactionmuxer.h>
 
-#include "util.h"
+#include "gtkapplicationaccelsprivate.h"
+
 #include <string.h>
 
 

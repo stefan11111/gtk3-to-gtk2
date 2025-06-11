@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <gtk/gtkenums.h>
 
 GtkStateType
 GtkStateType_from_GtkStateFlags (GtkStateFlags flags)

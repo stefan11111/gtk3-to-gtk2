@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <gtk/gtkgrid.h>
 #include <string.h>
 
 GType

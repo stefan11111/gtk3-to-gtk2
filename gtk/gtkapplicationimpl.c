@@ -17,9 +17,7 @@
  * Author: Ryan Lortie <desrt@desrt.ca>
  */
 
-#include <gtk/gtk.h>
-
-#include "util.h"
+#include "gtkapplicationimpl.h"
 
 /* XXX Not Implemented XXX */
 /* XXX For X11, this only deals with dbus, which I don't want XXX */

@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <gtk/gtkfontsel.h>
 
 GType
 gtk_font_chooser_dialog_get_type (void)
