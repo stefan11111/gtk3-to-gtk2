@@ -3,7 +3,10 @@
 #include <gtk/gtkspinner.h>
 #include <gtk/gtkspinbutton.h>
 #include <gdk/gdkcairo.h>
-#include "util.h"
+
+#include "gtkpango.h"
+#include "gtkenums.h"
+
 #include <math.h>
 #include <dlfcn.h>
 

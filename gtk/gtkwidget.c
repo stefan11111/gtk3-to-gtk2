@@ -8,8 +8,6 @@
 #include "gtkapplicationprivate.h"
 #include "gtkwidgetprivate.h"
 
-//#include "util.h"
-
 static GQuark           quark_action_muxer = 0;
 
 int

@@ -1,6 +1,5 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
-
-#include "util.h"
+#include <gdk/gdkwindow.h>
 
 gint
 gdk_window_get_scale_factor (GdkWindow *window)

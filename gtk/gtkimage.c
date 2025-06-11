@@ -1,7 +1,6 @@
 #include <gtk/gtkimage.h>
+#include <gtk/gtkprivate.h>
 #include <cairo-gobject.h>
-
-#include "util.h"
 
 #ifndef P_
 #define P_(x) x

@@ -1,4 +1,3 @@
-#include <gdk/gdktypes.h>
-#include "util.h"
+#include <glib.h>
 
 gboolean            _gdk_disable_multidevice = FALSE;

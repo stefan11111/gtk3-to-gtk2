@@ -1,5 +1,4 @@
-#include <gdk/gdkdrawingcontext.h>
-#include "util.h"
+#include "gdkdrawingcontextprivate.h"
 
 /* Not Implemented */
 /* TODO: Maybe Implement Later */

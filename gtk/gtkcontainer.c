@@ -1,8 +1,6 @@
 #include <gtk/gtkcontainer.h>
 #include <gobject/gobjectnotifyqueue.c>
 
-#include "util.h"
-
 #define PARAM_SPEC_PARAM_ID(pspec)              ((pspec)->param_id)
 #define PARAM_SPEC_SET_PARAM_ID(pspec, id)      ((pspec)->param_id = (id))
 

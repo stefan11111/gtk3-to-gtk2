@@ -1,5 +1,6 @@
-#include <gtk/gtkcolorsel.h>
-#include "util.h"
+#include <gtk/gtkcolorchooser.h>
+
+#include "gdkrgba.h"
 
 GType
 gtk_color_chooser_get_type (void)

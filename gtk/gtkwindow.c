@@ -2,8 +2,9 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkactionmuxer.h>
 #include <gtk/gtkicontheme.h>
+#include <gtk/gtkprivate.h>
 
-#include "util.h"
+#include "gtkwidgetprivate.h"
 
 #ifndef P_
 #define P_(x) x

@@ -51,8 +51,7 @@
 
 #include <gtk/gtkscrollable.h>
 #include <gtk/gtkadjustment.h>
-
-#include "util.h"
+#include <gtk/gtkprivate.h>
 
 #ifndef P_
 #define P_(x) x
