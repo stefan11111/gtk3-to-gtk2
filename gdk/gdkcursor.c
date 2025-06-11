@@ -1,4 +1,3 @@
-#include <glib.h>
 #include <gdk/gdkcursor.h>
 #include <dlfcn.h>
 

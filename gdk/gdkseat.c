@@ -1,4 +1,3 @@
-#include <glib-object.h>
 #include <gdk/gdkseat.h>
 
 /* XXX Not Implemented XXX */
