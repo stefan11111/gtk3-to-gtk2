@@ -347,7 +347,6 @@ _gtk_header_bar_update_window_buttons (GtkHeaderBar *bar)
             {
               GtkWidget *button = NULL;
               GtkWidget *image = NULL;
-              AtkObject *accessible;
 
               if (strcmp (t[j], "icon") == 0 &&
                   is_sovereign_window)
@@ -382,10 +381,6 @@ _gtk_header_bar_update_window_buttons (GtkHeaderBar *bar)
                   gtk_widget_set_can_focus (button, FALSE);
                   gtk_widget_show_all (button);
 
-                  accessible = gtk_widget_get_accessible (button);
-                  if (GTK_IS_ACCESSIBLE (accessible))
-                    atk_object_set_name (accessible, _("Application menu"));
-
                   priv->titlebar_icon = image;
                   if (!_gtk_header_bar_update_window_icon (bar, window))
                     gtk_image_set_from_icon_name (GTK_IMAGE (priv->titlebar_icon),
@@ -405,10 +400,6 @@ _gtk_header_bar_update_window_buttons (GtkHeaderBar *bar)
                   gtk_widget_show_all (button);
                   g_signal_connect_swapped (button, "clicked",
                                             G_CALLBACK (gtk_window_iconify), window);
-
-                  accessible = gtk_widget_get_accessible (button);
-                  if (GTK_IS_ACCESSIBLE (accessible))
-                    atk_object_set_name (accessible, _("Minimize"));
                 }
               else if (strcmp (t[j], "maximize") == 0 &&
                        gtk_window_get_resizable (window) &&
@@ -429,10 +420,6 @@ _gtk_header_bar_update_window_buttons (GtkHeaderBar *bar)
                   gtk_widget_show_all (button);
                   g_signal_connect_swapped (button, "clicked",
                                             G_CALLBACK (_gtk_window_toggle_maximized), window);
-
-                  accessible = gtk_widget_get_accessible (button);
-                  if (GTK_IS_ACCESSIBLE (accessible))
-                    atk_object_set_name (accessible, maximized ? _("Restore") : _("Maximize"));
                 }
               else if (strcmp (t[j], "close") == 0 &&
                        gtk_window_get_deletable (window))
@@ -448,10 +435,6 @@ _gtk_header_bar_update_window_buttons (GtkHeaderBar *bar)
                   gtk_widget_show_all (button);
                   g_signal_connect_swapped (button, "clicked",
                                             G_CALLBACK (gtk_window_close), window);
-
-                  accessible = gtk_widget_get_accessible (button);
-                  if (GTK_IS_ACCESSIBLE (accessible))
-                    atk_object_set_name (accessible, _("Close"));
                 }
 
               if (button)
@@ -2114,8 +2097,6 @@ gtk_header_bar_class_init (GtkHeaderBarClass *class)
 
   g_object_class_install_properties (object_class, LAST_PROP, header_bar_props);
 
-  gtk_widget_class_set_accessible_type (widget_class, GTK_TYPE_HEADER_BAR_ACCESSIBLE);
-  gtk_widget_class_set_accessible_role (widget_class, ATK_ROLE_PANEL);
   gtk_widget_class_set_css_name (widget_class, "headerbar");
 }
 

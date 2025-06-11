@@ -275,3 +275,12 @@ gtk_window_get_icon_for_size (GtkWindow *window,
   return NULL;
 }
 
+void
+_gtk_window_toggle_maximized (GtkWindow *window)
+{
+
+  if (window->maximize_initially)
+    gtk_window_unmaximize (window);
+  else
+    gtk_window_maximize (window);
+}

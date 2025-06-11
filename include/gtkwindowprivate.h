@@ -7,6 +7,8 @@
 
 G_BEGIN_DECLS
 
+void            _gtk_window_toggle_maximized (GtkWindow *window);
+
 GdkPixbuf *gtk_window_get_icon_for_size (GtkWindow *window,
                                          gint       size);
 
