@@ -32,7 +32,7 @@
 #ifndef __GTK_ITEM_FACTORY_H__
 #define	__GTK_ITEM_FACTORY_H__
 
-#include <gtk/gtk.h>
+#include <gtk/gtkwidget.h>
 
 
 G_BEGIN_DECLS

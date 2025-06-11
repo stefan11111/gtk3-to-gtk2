@@ -29,7 +29,7 @@
 #ifndef __GTK_OLD_EDITABLE_H__
 #define __GTK_OLD_EDITABLE_H__
 
-#include <gtk/gtk.h>
+#include <gtk/gtkwidget.h>
 
 
 G_BEGIN_DECLS
