@@ -956,6 +956,13 @@ gboolean   gtk_widget_has_focus           (GtkWidget           *widget);
 gboolean   gtk_widget_is_focus            (GtkWidget           *widget);
 void       gtk_widget_grab_focus          (GtkWidget           *widget);
 
+
+void       gtk_widget_set_focus_on_click  (GtkWidget           *widget,
+                                           gboolean             focus_on_click);
+
+gboolean   gtk_widget_get_focus_on_click  (GtkWidget           *widget);
+
+
 void       gtk_widget_set_can_default     (GtkWidget           *widget,
                                            gboolean             can_default);
 gboolean   gtk_widget_get_can_default     (GtkWidget           *widget);
@@ -975,6 +982,17 @@ const gchar*          gtk_widget_get_name               (GtkWidget    *widget);
 void                  gtk_widget_set_state              (GtkWidget    *widget,
 							 GtkStateType  state);
 GtkStateType          gtk_widget_get_state              (GtkWidget    *widget);
+
+
+void                  gtk_widget_set_state_flags        (GtkWidget     *widget,
+                                                         GtkStateFlags  flags,
+                                                         gboolean       clear);
+
+void                  gtk_widget_unset_state_flags      (GtkWidget     *widget,
+                                                         GtkStateFlags  flags);
+
+GtkStateFlags         gtk_widget_get_state_flags        (GtkWidget     *widget);
+
 
 void                  gtk_widget_set_sensitive          (GtkWidget    *widget,
 							 gboolean      sensitive);

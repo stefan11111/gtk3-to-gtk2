@@ -18,13 +18,13 @@
 #include "gtkmarshalers.h"
 #include "gtkwidgetprivate.h"
 #include "gtkheaderbarprivate.h"
+#include "gtkmenubuttonprivate.h"
+#include "gtkcontainerprivate.h"
+#include "gtkwindowprivate.h"
 
 #if 0 /* include <gtk/gtkprivate.h> instead */
 #include "gtkprivate.h"
 #endif
-
-#include "gtkcontainerprivate.h"
-#include "gtkwindowprivate.h"
 
 #if 0 /* These include forward declatarions that are not implemented */
 #include "gtksymboliccolorprivate.h"

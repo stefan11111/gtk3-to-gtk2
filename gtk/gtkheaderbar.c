@@ -26,6 +26,7 @@
 #include <gtk/gtkprivate.h>
 #include <gtk/gtkstylecontext.h>
 #include <gtk/gtkbox.h>
+#include <gtk/gtkmenubutton.h>
 
 #include <gdk/gdkcairo.h>
 

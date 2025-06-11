@@ -1,10 +1,12 @@
 #ifndef __INTERNAL_GTK_WIDGET_PRIVATE_H__
 #define __INTERNAL_GTK_WIDGET_PRIVATE_H__
 
-G_BEGIN_DECLS
-
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkactionmuxer.h>
+
+G_BEGIN_DECLS
+
+#define GTK_STATE_FLAGS_BITS 13
 
 gboolean     gtk_widget_needs_allocate      (GtkWidget *widget);
 

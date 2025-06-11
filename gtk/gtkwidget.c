@@ -7,6 +7,7 @@
 
 #include "gtkapplicationprivate.h"
 #include "gtkwidgetprivate.h"
+#include "gtkenums.h"
 
 static GQuark           quark_action_muxer = 0;
 
@@ -672,4 +673,127 @@ gint
 gtk_widget_get_scale_factor (GtkWidget *widget)
 {
   return 1;
+}
+
+/**
+ * gtk_widget_set_state_flags:
+ * @widget: a #GtkWidget
+ * @flags: State flags to turn on
+ * @clear: Whether to clear state before turning on @flags
+ *
+ * This function is for use in widget implementations. Turns on flag
+ * values in the current widget state (insensitive, prelighted, etc.).
+ *
+ * This function accepts the values %GTK_STATE_FLAG_DIR_LTR and
+ * %GTK_STATE_FLAG_DIR_RTL but ignores them. If you want to set the widget's
+ * direction, use gtk_widget_set_direction().
+ *
+ * It is worth mentioning that any other state than %GTK_STATE_FLAG_INSENSITIVE,
+ * will be propagated down to all non-internal children if @widget is a
+ * #GtkContainer, while %GTK_STATE_FLAG_INSENSITIVE itself will be propagated
+ * down to all #GtkContainer children by different means than turning on the
+ * state flag down the hierarchy, both gtk_widget_get_state_flags() and
+ * gtk_widget_is_sensitive() will make use of these.
+ *
+ * Since: 3.0
+ **/
+void
+gtk_widget_set_state_flags (GtkWidget     *widget,
+                            GtkStateFlags  flags,
+                            gboolean       clear)
+{
+#define ALLOWED_FLAGS (~(GTK_STATE_FLAG_DIR_LTR | GTK_STATE_FLAG_DIR_RTL))
+
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (flags < (1 << GTK_STATE_FLAGS_BITS));
+
+  if (clear) {
+    gtk_widget_set_state (widget, GtkStateType_from_GtkStateFlags (flags));
+  }
+  else {
+    GtkStateFlags prev_state_flags;
+    prev_state_flags = GtkStateFlags_from_GtkStateType (gtk_widget_get_state (widget));
+    gtk_widget_set_state (widget, GtkStateType_from_GtkStateFlags (prev_state_flags & flags & ALLOWED_FLAGS));
+  }
+
+#undef ALLOWED_FLAGS
+}
+
+/**
+ * gtk_widget_unset_state_flags:
+ * @widget: a #GtkWidget
+ * @flags: State flags to turn off
+ *
+ * This function is for use in widget implementations. Turns off flag
+ * values for the current widget state (insensitive, prelighted, etc.).
+ * See gtk_widget_set_state_flags().
+ *
+ * Since: 3.0
+ **/
+void
+gtk_widget_unset_state_flags (GtkWidget     *widget,
+                              GtkStateFlags  flags)
+{
+  gtk_widget_set_state_flags (widget, (~flags) & ((1 << GTK_STATE_FLAGS_BITS) - 1), FALSE);
+}
+
+/**
+ * gtk_widget_get_state_flags:
+ * @widget: a #GtkWidget
+ *
+ * Returns the widget state as a flag set. It is worth mentioning
+ * that the effective %GTK_STATE_FLAG_INSENSITIVE state will be
+ * returned, that is, also based on parent insensitivity, even if
+ * @widget itself is sensitive.
+ *
+ * Also note that if you are looking for a way to obtain the
+ * #GtkStateFlags to pass to a #GtkStyleContext method, you
+ * should look at gtk_style_context_get_state().
+ *
+ * Returns: The state flags for widget
+ *
+ * Since: 3.0
+ **/
+GtkStateFlags
+gtk_widget_get_state_flags (GtkWidget *widget)
+{
+  return GtkStateFlags_from_GtkStateType (gtk_widget_get_state (widget));
+}
+
+/**
+ * gtk_widget_set_focus_on_click:
+ * @widget: a #GtkWidget
+ * @focus_on_click: whether the widget should grab focus when clicked with the mouse
+ *
+ * Sets whether the widget should grab focus when it is clicked with the mouse.
+ * Making mouse clicks not grab focus is useful in places like toolbars where
+ * you don’t want the keyboard focus removed from the main area of the
+ * application.
+ *
+ * Since: 3.20
+ **/
+void
+gtk_widget_set_focus_on_click (GtkWidget *widget,
+                               gboolean   focus_on_click)
+{
+  /* Not Implemented */
+}
+
+/**
+ * gtk_widget_get_focus_on_click:
+ * @widget: a #GtkWidget
+ *
+ * Returns whether the widget should grab focus when it is clicked with the mouse.
+ * See gtk_widget_set_focus_on_click().
+ *
+ * Returns: %TRUE if the widget should grab focus when it is clicked with
+ *               the mouse.
+ *
+ * Since: 3.20
+ **/
+gboolean
+gtk_widget_get_focus_on_click (GtkWidget *widget)
+{
+  /* Not Implemented */
+  return FALSE;
 }

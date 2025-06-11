@@ -139,6 +139,7 @@
 #include <gtk/gtkmenu.h>
 #include <gtk/gtkmenubar.h>
 
+#include <gtk/gtkmenubutton.h>
 #include <gtk/gtkheaderbar.h>
 
 #include <gtk/gtkmenuitem.h>
