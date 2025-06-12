@@ -53,9 +53,7 @@
 #include <gtk/gtkadjustment.h>
 #include <gtk/gtkprivate.h>
 
-#ifndef P_
-#define P_(x) x
-#endif
+#include "gtkintl.h"
 
 G_DEFINE_INTERFACE (GtkScrollable, gtk_scrollable, G_TYPE_OBJECT)
 

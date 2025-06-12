@@ -26,12 +26,10 @@
 
 #include <gtk/gtkstack.h>
 
+#include "gtkintl.h"
+
 #include <math.h>
 #include <string.h>
-
-#ifndef P_
-#define P_(x) x
-#endif
 
 /**
  * SECTION:gtkstack

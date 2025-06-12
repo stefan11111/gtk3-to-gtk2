@@ -2,9 +2,7 @@
 #include <gtk/gtkprivate.h>
 #include <cairo-gobject.h>
 
-#ifndef P_
-#define P_(x) x
-#endif
+#include "gtkintl.h"
 
 static GParamSpec *prop_surface = NULL;
 

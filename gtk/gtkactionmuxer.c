@@ -25,10 +25,7 @@
 #include <string.h>
 
 #include "gtkmarshalers.h"
-
-#ifndef I_
-#define I_(x) x
-#endif
+#include "gtkintl.h"
 
 /*< private >
  * SECTION:gtkactionmuxer

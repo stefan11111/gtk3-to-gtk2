@@ -8,6 +8,7 @@
 
 #include "gtkpango.h"
 #include "gtkenums.h"
+#include "gtkintl.h"
 
 #include <math.h>
 #include <dlfcn.h>
@@ -28,10 +29,6 @@ struct _CursorInfo
   GdkColor primary;
   GdkColor secondary;
 };
-
-#ifndef I_
-#define I_(x) x
-#endif
 
 #define GTK_GRAY		0xdcdc, 0xdada, 0xd5d5
 #define GTK_DARK_GRAY		0xc4c4, 0xc2c2, 0xbdbd

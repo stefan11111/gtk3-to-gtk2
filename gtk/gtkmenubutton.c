@@ -113,11 +113,7 @@
 #include <gtk/gtkmain.h>
 
 #include "gtkmenubuttonprivate.h"
-
-
-#ifndef P_
-#define P_(x) x
-#endif
+#include "gtkintl.h"
 
 struct _GtkMenuButtonPrivate
 {

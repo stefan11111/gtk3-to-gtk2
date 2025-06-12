@@ -17,9 +17,7 @@
 
 #include "gtkstylepropertyprivate.h"
 
-#ifndef P_
-#define P_(x) x
-#endif
+#include "gtkintl.h"
 
 enum {
   PROP_0,

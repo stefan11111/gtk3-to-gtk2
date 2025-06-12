@@ -17,9 +17,7 @@
 
 #include "gtkstyleproviderprivate.h"
 
-#ifndef I_
-#define I_(x) x
-#endif
+#include "gtkintl.h"
 
 enum {
   CHANGED,

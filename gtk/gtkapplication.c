@@ -7,20 +7,13 @@
 #include <gdk/gdk.h> /* gdk_threads_{enter,leave} */
 
 
+#include "gtkintl.h"
 #include "gtkapplicationprivate.h"
 #include "gdk-private.h"
 
 /* XXX Only half-implemented  XXX */
 /* XXX This deals with things like dbus, which I don't want to implement XXX */
 /* XXX This also has some other things I might want to implement eventually XXX */
-
-#ifndef P_
-#define P_(x) x
-#endif
-
-#ifndef I_
-#define I_(x) x
-#endif
 
 enum {
   WINDOW_ADDED,

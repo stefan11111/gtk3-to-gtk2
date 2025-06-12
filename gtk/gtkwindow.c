@@ -7,11 +7,8 @@
 
 #include <gdk/gdk.h> /* gdk_threads_add_idle_full */ 
 
+#include "gtkintl.h"
 #include "gtkwidgetprivate.h"
-
-#ifndef P_
-#define P_(x) x
-#endif
 
 #define default_icon_list (*gtk2_default_icon_list ())
 #define default_icon_name (*gtk2_default_icon_name ())

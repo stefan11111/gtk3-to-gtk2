@@ -32,12 +32,9 @@
 
 #include "gtkheaderbarprivate.h"
 #include "gtkwindowprivate.h"
+#include "gtkintl.h"
 
 #include <string.h>
-
-#ifndef P_
-#define P_(x) x
-#endif
 
 /**
  * SECTION:gtkheaderbar

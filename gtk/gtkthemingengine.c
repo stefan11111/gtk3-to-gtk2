@@ -22,9 +22,7 @@
 #include <gdk/gdkrgba.h>
 #include <gtk/gtkprivate.h>
 
-#ifndef P_
-#define P_(str) str
-#endif
+#include "gtkintl.h"
 
 /**
  * SECTION:gtkthemingengine

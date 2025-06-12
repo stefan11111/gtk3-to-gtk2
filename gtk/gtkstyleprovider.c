@@ -17,9 +17,7 @@
 
 #include "gtkstyleproviderprivate.h"
 
-#ifndef I_
-#define I_(str) str
-#endif
+#include "gtkintl.h"
 
 /**
  * SECTION:gtkstyleprovider
