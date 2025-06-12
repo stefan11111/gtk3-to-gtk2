@@ -22,6 +22,8 @@
 #include <gtk/gtkstylecontext.h>
 #include <gtk/gtktypes.h>
 
+#include "gtkcsstypesprivate.h"
+
 G_BEGIN_DECLS
 
 #define GTK_TYPE_STYLE_PROVIDER_PRIVATE          (_gtk_style_provider_private_get_type ())
@@ -36,10 +38,8 @@ typedef struct _GtkStyleProviderPrivate GtkStyleProviderPrivate; /* dummy typede
 /* XXX css typedefs XXX*/
 typedef struct _GtkCssValue GtkCssValue;
 typedef struct _GtkCssKeyframes GtkCssKeyframes;
-typedef struct _GtkCssMatcher GtkCssMatcher;
 typedef struct _GtkCssLookup GtkCssLookup;
 typedef struct _GtkCssSection GtkCssSection;
-typedef guint64 GtkCssChange;
 
 struct _GtkStyleProviderPrivateInterface
 {

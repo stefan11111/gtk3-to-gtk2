@@ -37,4 +37,6 @@
 #include "gtkstylecontextprivate.h"
 #include "gtkstylepropertiesprivate.h"
 #include "gtkstylepropertyprivate.h"
+#include "gtkcsstypesprivate.h"
+#include "gtkroundedboxprivate.h"
 #endif
