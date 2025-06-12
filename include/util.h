@@ -21,6 +21,7 @@
 #include "gtkmenubuttonprivate.h"
 #include "gtkcontainerprivate.h"
 #include "gtkwindowprivate.h"
+#include "gtkprogresstrackerprivate.h"
 
 #if 0 /* include <gtk/gtkprivate.h> instead */
 #include "gtkprivate.h"
