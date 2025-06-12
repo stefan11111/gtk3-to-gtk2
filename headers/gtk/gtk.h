@@ -192,6 +192,9 @@
 #include <gtk/gtkseparator.h>
 #include <gtk/gtkseparatormenuitem.h>
 #include <gtk/gtkseparatortoolitem.h>
+
+#include <gtk/gtkstack.h>
+
 #include <gtk/gtksettings.h>
 #include <gtk/gtkshow.h>
 #include <gtk/gtksizegroup.h>

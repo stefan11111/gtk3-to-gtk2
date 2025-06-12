@@ -19,3 +19,10 @@ _gtk_settings_get_style_cascade (GtkSettings *settings,
   }
   return ret;
 }
+
+gboolean
+gtk_settings_get_enable_animations (GtkSettings *settings)
+{
+  /* Not Implemented */
+  return FALSE;
+}

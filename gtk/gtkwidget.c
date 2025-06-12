@@ -28,6 +28,71 @@ gtk_widget_get_allocated_height (GtkWidget *widget)
 }
 
 /**
+ * gtk_widget_get_allocated_baseline:
+ * @widget: the widget to query
+ *
+ * Returns the baseline that has currently been allocated to @widget.
+ * This function is intended to be used when implementing handlers
+ * for the #GtkWidget::draw function, and when allocating child
+ * widgets in #GtkWidget::size_allocate.
+ *
+ * Returns: the baseline of the @widget, or -1 if none
+ *
+ * Since: 3.10
+ **/
+int
+gtk_widget_get_allocated_baseline (GtkWidget *widget)
+{
+  return -1;
+}
+
+/**
+ * gtk_widget_get_allocated_size:
+ * @widget: a #GtkWidget
+ * @allocation: (out): a pointer to a #GtkAllocation to copy to
+ * @baseline: (out) (allow-none): a pointer to an integer to copy to
+ *
+ * Retrieves the widget’s allocated size.
+ *
+ * This function returns the last values passed to
+ * gtk_widget_size_allocate_with_baseline(). The value differs from
+ * the size returned in gtk_widget_get_allocation() in that functions
+ * like gtk_widget_set_halign() can adjust the allocation, but not
+ * the value returned by this function.
+ *
+ * If a widget is not visible, its allocated size is 0.
+ *
+ * Since: 3.20
+ */
+void
+gtk_widget_get_allocated_size (GtkWidget     *widget,
+                               GtkAllocation *allocation,
+                               int           *baseline)
+{
+  gtk_widget_get_allocation (widget, allocation);
+
+  if (baseline)
+    *baseline = -1;
+}
+
+/**
+ * gtk_widget_in_destruction:
+ * @widget: a #GtkWidget
+ *
+ * Returns whether the widget is currently being destroyed.
+ * This information can sometimes be used to avoid doing
+ * unnecessary work.
+ *
+ * Returns: %TRUE if @widget is being destroyed
+ */
+gboolean
+gtk_widget_in_destruction (GtkWidget *widget)
+{
+  /* Not Implemented */
+  return FALSE;
+}
+
+/**
  * gtk_widget_get_clip:
  * @widget: a #GtkWidget
  * @clip: (out): a pointer to a #GtkAllocation to copy to
@@ -796,4 +861,114 @@ gtk_widget_get_focus_on_click (GtkWidget *widget)
 {
   /* Not Implemented */
   return FALSE;
+}
+
+/**
+ * gtk_widget_is_visible:
+ * @widget: a #GtkWidget
+ *
+ * Determines whether the widget and all its parents are marked as
+ * visible.
+ *
+ * This function does not check if the widget is obscured in any way.
+ *
+ * See also gtk_widget_get_visible() and gtk_widget_set_visible()
+ *
+ * Returns: %TRUE if the widget and all its parents are visible
+ *
+ * Since: 3.8
+ **/
+gboolean
+gtk_widget_is_visible (GtkWidget *widget)
+{
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
+
+  while (widget)
+    {
+      if (!gtk_widget_get_visible (widget))
+        return FALSE;
+
+      widget = gtk_widget_get_parent (widget);
+    }
+
+  return TRUE;
+}
+
+/**
+ * gtk_widget_queue_allocate:
+ * @widget: a #GtkWidget
+ *
+ * This function is only for use in widget implementations.
+ *
+ * Flags the widget for a rerun of the GtkWidgetClass::size_allocate
+ * function. Use this function instead of gtk_widget_queue_resize()
+ * when the @widget's size request didn't change but it wants to
+ * reposition its contents.
+ *
+ * An example user of this function is gtk_widget_set_halign().
+ *
+ * Since: 3.20
+ */
+void
+gtk_widget_queue_allocate (GtkWidget *widget)
+{
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  GTK_PRIVATE_SET_FLAG (widget, GTK_ALLOC_NEEDED);
+}
+
+/**
+ * gtk_widget_register_window:
+ * @widget: a #GtkWidget
+ * @window: a #GdkWindow
+ *
+ * Registers a #GdkWindow with the widget and sets it up so that
+ * the widget receives events for it. Call gtk_widget_unregister_window()
+ * when destroying the window.
+ *
+ * Before 3.8 you needed to call gdk_window_set_user_data() directly to set
+ * this up. This is now deprecated and you should use gtk_widget_register_window()
+ * instead. Old code will keep working as is, although some new features like
+ * transparency might not work perfectly.
+ *
+ * Since: 3.8
+ */
+void
+gtk_widget_register_window (GtkWidget    *widget,
+                            GdkWindow    *window)
+{
+  gpointer user_data;
+
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (GDK_IS_WINDOW (window));
+
+  gdk_window_get_user_data (window, &user_data);
+  g_assert (user_data == NULL);
+
+  gdk_window_set_user_data (window, widget);
+}
+
+/**
+ * gtk_widget_unregister_window:
+ * @widget: a #GtkWidget
+ * @window: a #GdkWindow
+ *
+ * Unregisters a #GdkWindow from the widget that was previously set up with
+ * gtk_widget_register_window(). You need to call this when the window is
+ * no longer used by the widget, such as when you destroy it.
+ *
+ * Since: 3.8
+ */
+void
+gtk_widget_unregister_window (GtkWidget    *widget,
+                              GdkWindow    *window)
+{
+  gpointer user_data;
+
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (GDK_IS_WINDOW (window));
+
+  gdk_window_get_user_data (window, &user_data);
+  g_assert (user_data == widget);
+
+  gdk_window_set_user_data (window, NULL);
 }

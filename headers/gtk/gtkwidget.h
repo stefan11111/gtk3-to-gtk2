@@ -894,6 +894,11 @@ void	   gtk_widget_queue_clear_area	  (GtkWidget	       *widget,
 
 void	   gtk_widget_queue_resize	  (GtkWidget	       *widget);
 void	   gtk_widget_queue_resize_no_redraw (GtkWidget *widget);
+
+
+void       gtk_widget_queue_allocate      (GtkWidget           *widget);
+
+
 #ifndef GTK_DISABLE_DEPRECATED
 void	   gtk_widget_draw		  (GtkWidget	       *widget,
 					   const GdkRectangle  *area);
@@ -1003,6 +1008,10 @@ void                  gtk_widget_set_visible            (GtkWidget    *widget,
                                                          gboolean      visible);
 gboolean              gtk_widget_get_visible            (GtkWidget    *widget);
 
+
+gboolean              gtk_widget_is_visible             (GtkWidget    *widget);
+
+
 void                  gtk_widget_set_has_window         (GtkWidget    *widget,
                                                          gboolean      has_window);
 gboolean              gtk_widget_get_has_window         (GtkWidget    *widget);
@@ -1043,6 +1052,14 @@ void                  gtk_widget_set_window             (GtkWidget    *widget,
                                                          GdkWindow    *window);
 GdkWindow           * gtk_widget_get_window             (GtkWidget    *widget);
 
+
+void                  gtk_widget_register_window        (GtkWidget    *widget,
+                                                         GdkWindow    *window);
+
+void                  gtk_widget_unregister_window      (GtkWidget    *widget,
+                                                         GdkWindow    *window);
+
+
 void                  gtk_widget_get_allocation         (GtkWidget     *widget,
                                                          GtkAllocation *allocation);
 void                  gtk_widget_set_allocation         (GtkWidget     *widget,
@@ -1063,6 +1080,13 @@ void                  gtk_widget_get_requisition        (GtkWidget     *widget,
 int                   gtk_widget_get_allocated_width    (GtkWidget *widget);
 
 int                   gtk_widget_get_allocated_height   (GtkWidget *widget);
+
+int                   gtk_widget_get_allocated_baseline (GtkWidget     *widget);
+
+void                  gtk_widget_get_allocated_size     (GtkWidget     *widget,
+                                                         GtkAllocation *allocation,
+                                                         int           *baseline);
+
 
 
 gboolean   gtk_widget_child_focus         (GtkWidget           *widget,
@@ -1439,6 +1463,10 @@ gboolean   gtk_widget_get_has_tooltip       (GtkWidget   *widget);
 GType           gtk_requisition_get_type (void) G_GNUC_CONST;
 GtkRequisition *gtk_requisition_copy     (const GtkRequisition *requisition);
 void            gtk_requisition_free     (GtkRequisition       *requisition);
+
+
+gboolean     gtk_widget_in_destruction (GtkWidget *widget);
+
 
 #if	defined (GTK_TRACE_OBJECTS) && defined (__GNUC__)
 #  define gtk_widget_ref g_object_ref
