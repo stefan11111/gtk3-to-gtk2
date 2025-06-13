@@ -5,6 +5,7 @@
 #include "gdkdrawingcontextprivate.h"
 #include "gdkinternals.h"
 #include "gdk-private.h"
+#include "gdkregionprivate.h"
 
 
 #include "gtkenums.h"
@@ -23,6 +24,7 @@
 #include "gtkwindowprivate.h"
 #include "gtkprogresstrackerprivate.h"
 #include "gtkintl.h"
+#include "gtkpopoverprivate.h"
 
 #if 0 /* include <gtk/gtkprivate.h> instead */
 #include "gtkprivate.h"

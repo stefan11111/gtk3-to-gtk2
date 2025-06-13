@@ -5,11 +5,124 @@
 #include <gtk/gtkapplication.h>
 #include <gtk/gtkprivate.h>
 
+#include <gdk/gdkcairo.h>
+
 #include "gtkapplicationprivate.h"
 #include "gtkwidgetprivate.h"
 #include "gtkenums.h"
 
+#include "gdkregionprivate.h"
+
+typedef GdkSegment GdkRegionBox;
+
+/*
+ *   clip region
+ */
+
+struct _GdkRegion
+{
+  long size;
+  long numRects;
+  GdkRegionBox *rects;
+  GdkRegionBox extents;
+};
+
 static GQuark           quark_action_muxer = 0;
+
+/**
+ * gtk_widget_set_opacity:
+ * @widget: a #GtkWidget
+ * @opacity: desired opacity, between 0 and 1
+ *
+ * Request the @widget to be rendered partially transparent,
+ * with opacity 0 being fully transparent and 1 fully opaque. (Opacity values
+ * are clamped to the [0,1] range.).
+ * This works on both toplevel widget, and child widgets, although there
+ * are some limitations:
+ *
+ * For toplevel widgets this depends on the capabilities of the windowing
+ * system. On X11 this has any effect only on X screens with a compositing manager
+ * running. See gtk_widget_is_composited(). On Windows it should work
+ * always, although setting a window’s opacity after the window has been
+ * shown causes it to flicker once on Windows.
+ *
+ * For child widgets it doesn’t work if any affected widget has a native window, or
+ * disables double buffering.
+ *
+ * Since: 3.8
+ **/
+void
+gtk_widget_set_opacity (GtkWidget *widget,
+                        gdouble    opacity)
+{
+  GdkWindow *window = gtk_widget_get_window (widget);
+  gdk_window_set_opacity (window, opacity);
+}
+
+/**
+ * gtk_widget_get_opacity:
+ * @widget: a #GtkWidget
+ *
+ * Fetches the requested opacity for this widget.
+ * See gtk_widget_set_opacity().
+ *
+ * Returns: the requested opacity for this widget.
+ *
+ * Since: 3.8
+ **/
+gdouble
+gtk_widget_get_opacity (GtkWidget *widget)
+{
+  /* could be better implemented,
+     but that would require backend-speciffic code,
+     which I don't want to write for now */
+  GtkWindow *window = gtk_widget_get_tooltip_window (widget);
+  return gtk_window_get_opacity (window);
+}
+
+/**
+ * gtk_widget_shape_combine_region:
+ * @widget: a #GtkWidget
+ * @region: (allow-none): shape to be added, or %NULL to remove an existing shape
+ *
+ * Sets a shape for this widget’s GDK window. This allows for
+ * transparent windows etc., see gdk_window_shape_combine_region()
+ * for more information.
+ *
+ * Since: 3.0
+ **/
+void
+gtk_widget_shape_combine_region (GtkWidget *widget,
+                                 cairo_region_t *region)
+{
+  GdkWindow *window;
+  GdkRegion gdk_region;
+
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (region != NULL);
+
+  window = gtk_widget_get_window (widget);
+  GdkRegion_from_cairo_region (&gdk_region, region);
+  gdk_window_shape_combine_region (window, &gdk_region, 0, 0);
+}
+
+/**
+ * gtk_widget_input_shape_combine_region:
+ * @widget: a #GtkWidget
+ * @region: (allow-none): shape to be added, or %NULL to remove an existing shape
+ *
+ * Sets an input shape for this widget’s GDK window. This allows for
+ * windows which react to mouse click in a nonrectangular region, see
+ * gdk_window_input_shape_combine_region() for more information.
+ *
+ * Since: 3.0
+ **/
+void
+gtk_widget_input_shape_combine_region (GtkWidget      *widget,
+                                       cairo_region_t *region)
+{
+  gtk_widget_shape_combine_region (widget, region);
+}
 
 int
 gtk_widget_get_allocated_width (GtkWidget *widget)
@@ -73,6 +186,36 @@ gtk_widget_get_allocated_size (GtkWidget     *widget,
 
   if (baseline)
     *baseline = -1;
+}
+
+/**
+ * gtk_widget_size_allocate_with_baseline:
+ * @widget: a #GtkWidget
+ * @allocation: position and size to be allocated to @widget
+ * @baseline: The baseline of the child, or -1
+ *
+ * This function is only used by #GtkContainer subclasses, to assign a size,
+ * position and (optionally) baseline to their child widgets.
+ *
+ * In this function, the allocation and baseline may be adjusted. It
+ * will be forced to a 1x1 minimum size, and the
+ * adjust_size_allocation virtual and adjust_baseline_allocation
+ * methods on the child will be used to adjust the allocation and
+ * baseline. Standard adjustments include removing the widget's
+ * margins, and applying the widget’s #GtkWidget:halign and
+ * #GtkWidget:valign properties.
+ *
+ * If the child widget does not have a valign of %GTK_ALIGN_BASELINE the
+ * baseline argument is ignored and -1 is used instead.
+ *
+ * Since: 3.10
+ **/
+void
+gtk_widget_size_allocate_with_baseline (GtkWidget     *widget,
+                                        GtkAllocation *allocation,
+                                        gint           baseline)
+{
+  gtk_widget_size_allocate (widget, allocation);
 }
 
 /**
@@ -971,4 +1114,362 @@ gtk_widget_unregister_window (GtkWidget    *widget,
   g_assert (user_data == widget);
 
   gdk_window_set_user_data (window, NULL);
+}
+
+/**
+ * gtk_widget_add_tick_callback:
+ * @widget: a #GtkWidget
+ * @callback: function to call for updating animations
+ * @user_data: data to pass to @callback
+ * @notify: function to call to free @user_data when the callback is removed.
+ *
+ * Queues an animation frame update and adds a callback to be called
+ * before each frame. Until the tick callback is removed, it will be
+ * called frequently (usually at the frame rate of the output device
+ * or as quickly as the application can be repainted, whichever is
+ * slower). For this reason, is most suitable for handling graphics
+ * that change every frame or every few frames. The tick callback does
+ * not automatically imply a relayout or repaint. If you want a
+ * repaint or relayout, and aren’t changing widget properties that
+ * would trigger that (for example, changing the text of a #GtkLabel),
+ * then you will have to call gtk_widget_queue_resize() or
+ * gtk_widget_queue_draw_area() yourself.
+ *
+ * gdk_frame_clock_get_frame_time() should generally be used for timing
+ * continuous animations and
+ * gdk_frame_timings_get_predicted_presentation_time() if you are
+ * trying to display isolated frames at particular times.
+ *
+ * This is a more convenient alternative to connecting directly to the
+ * #GdkFrameClock::update signal of #GdkFrameClock, since you don't
+ * have to worry about when a #GdkFrameClock is assigned to a widget.
+ *
+ * Returns: an id for the connection of this callback. Remove the callback
+ *     by passing it to gtk_widget_remove_tick_callback()
+ *
+ * Since: 3.8
+ */
+guint
+gtk_widget_add_tick_callback (GtkWidget       *widget,
+                              GtkTickCallback  callback,
+                              gpointer         user_data,
+                              GDestroyNotify   notify)
+{
+  /* Not Implemented */
+  return 0;
+}
+
+/**
+ * gtk_widget_remove_tick_callback:
+ * @widget: a #GtkWidget
+ * @id: an id returned by gtk_widget_add_tick_callback()
+ *
+ * Removes a tick callback previously registered with
+ * gtk_widget_add_tick_callback().
+ *
+ * Since: 3.8
+ */
+void
+gtk_widget_remove_tick_callback (GtkWidget *widget,
+                                 guint      id)
+{
+  /* Not Implemented */
+}
+
+gboolean
+gtk_widget_has_tick_callback (GtkWidget *widget)
+{
+  return FALSE;
+}
+
+void
+gtk_widget_draw_internal (GtkWidget *widget,
+                          cairo_t   *cr,
+                          gboolean   clip_to_size)
+{
+  if (!gtk_widget_is_drawable (widget))
+    return;
+
+#if 0
+  if (clip_to_size)
+    {
+      cairo_rectangle (cr,
+                       widget->priv->clip.x - widget->priv->allocation.x,
+                       widget->priv->clip.y - widget->priv->allocation.y,
+                       widget->priv->clip.width,
+                       widget->priv->clip.height);
+      cairo_clip (cr);
+    }
+#endif
+
+  if (gdk_cairo_get_clip_rectangle (cr, NULL))
+    {
+      GdkWindow *event_window = NULL;
+#if 0
+      gboolean result;
+#endif
+
+      /* If this was a cairo_t passed via gtk_widget_draw() then we don't
+       * require a window; otherwise we check for the window associated
+       * to the drawing context and mark it using the clip region of the
+       * Cairo context.
+       */
+#if 0 /* TODO: gdkdrawingcontext is implemented as stubs */
+      if (!gtk_cairo_is_marked_for_draw (cr))
+        {
+          GdkDrawingContext *context = gdk_cairo_get_drawing_context (cr);
+
+          if (context != NULL)
+            {
+              event_window = gdk_drawing_context_get_window (context);
+              if (event_window != NULL)
+                gdk_window_mark_paint_from_clip (event_window, cr);
+            }
+        }
+#endif
+
+#ifdef G_ENABLE_CONSISTENCY_CHECKS
+      if (_gtk_widget_get_alloc_needed (widget))
+        g_warning ("%s %p is drawn without a current allocation. This should not happen.", G_OBJECT_TYPE_NAME (widget), widget);
+#endif
+
+#if 0 /* TODO: remove when the draw signal is implemented for gtkwidget */
+      if (g_signal_has_handler_pending (widget, widget_signals[DRAW], 0, FALSE))
+        {
+          g_signal_emit (widget, widget_signals[DRAW],
+                         0, cr,
+                         &result);
+        }
+      else
+#endif
+        if (GTK_WIDGET_GET_CLASS (widget)->draw)
+        {
+          cairo_save (cr);
+          GTK_WIDGET_GET_CLASS (widget)->draw (widget, cr);
+          cairo_restore (cr);
+        }
+
+#ifdef G_ENABLE_DEBUG
+      if (GTK_DISPLAY_DEBUG_CHECK (gtk_widget_get_display (widget), BASELINES))
+        {
+          gint baseline = gtk_widget_get_allocated_baseline (widget);
+          gint width = gtk_widget_get_allocated_width (widget);
+
+          if (baseline != -1)
+            {
+              cairo_save (cr);
+              cairo_new_path (cr);
+              cairo_move_to (cr, 0, baseline+0.5);
+              cairo_line_to (cr, width, baseline+0.5);
+              cairo_set_line_width (cr, 1.0);
+              cairo_set_source_rgba (cr, 1.0, 0, 0, 0.25);
+              cairo_stroke (cr);
+              cairo_restore (cr);
+            }
+        }
+      if (widget->priv->highlight_resize)
+        {
+          GtkAllocation alloc;
+          gtk_widget_get_allocation (widget, &alloc);
+
+          cairo_rectangle (cr, 0, 0, alloc.width, alloc.height);
+          cairo_set_source_rgba (cr, 1, 0, 0, 0.2);
+          cairo_fill (cr);
+
+          gtk_widget_queue_draw (widget);
+
+          widget->priv->highlight_resize = FALSE;
+        }
+#endif
+
+      if (cairo_status (cr) &&
+          event_window != NULL)
+        {
+          /* We check the event so we only warn about internal GTK+ calls.
+           * Errors might come from PDF streams having write failures and
+           * we don't want to spam stderr in that case.
+           * We do want to catch errors from
+           */
+          g_warning ("drawing failure for widget '%s': %s",
+                     G_OBJECT_TYPE_NAME (widget),
+                     cairo_status_to_string (cairo_status (cr)));
+        }
+    }
+}
+
+/**
+ * gtk_cairo_should_draw_window:
+ * @cr: a cairo context
+ * @window: the window to check. @window may not be an input-only
+ *          window.
+ *
+ * This function is supposed to be called in #GtkWidget::draw
+ * implementations for widgets that support multiple windows.
+ * @cr must be untransformed from invoking of the draw function.
+ * This function will return %TRUE if the contents of the given
+ * @window are supposed to be drawn and %FALSE otherwise. Note
+ * that when the drawing was not initiated by the windowing
+ * system this function will return %TRUE for all windows, so
+ * you need to draw the bottommost window first. Also, do not
+ * use “else if” statements to check which window should be drawn.
+ *
+ * Returns: %TRUE if @window should be drawn
+ *
+ * Since: 3.0
+ */
+gboolean
+gtk_cairo_should_draw_window (cairo_t   *cr,
+                              GdkWindow *window)
+{
+  GdkDrawingContext *context;
+  GdkWindow *tmp;
+
+  g_return_val_if_fail (cr != NULL, FALSE);
+  g_return_val_if_fail (GDK_IS_WINDOW (window), FALSE);
+
+#if 0
+  if (gtk_cairo_is_marked_for_draw (cr))
+    return TRUE;
+#endif
+
+  context = gdk_cairo_get_drawing_context (cr);
+  if (context == NULL)
+    return TRUE;
+
+  tmp = gdk_drawing_context_get_window (context);
+  if (tmp == NULL)
+    return TRUE;
+
+  while (!gdk_window_has_native (window))
+    window = gdk_window_get_parent (window);
+
+  return tmp == window;
+}
+
+/* Returns TRUE if a translation should be done */
+static gboolean
+_gtk_widget_get_translation_to_window (GtkWidget      *widget,
+                                       GdkWindow      *window,
+                                       int            *x,
+                                       int            *y)
+{
+  GdkWindow *w, *widget_window;
+
+  if (!gtk_widget_get_has_window (widget))
+    {
+      GtkAllocation allocation;
+      gtk_widget_get_allocation (widget, &allocation);
+      *x = -allocation.x;
+      *y = -allocation.y;
+    }
+  else
+    {
+      *x = 0;
+      *y = 0;
+    }
+
+  widget_window = gtk_widget_get_window (widget);
+
+  for (w = window; w && w != widget_window; w = gdk_window_get_parent (w))
+    {
+      int wx, wy;
+      gdk_window_get_position (w, &wx, &wy);
+      *x += wx;
+      *y += wy;
+    }
+
+  if (w == NULL)
+    {
+      *x = 0;
+      *y = 0;
+      return FALSE;
+    }
+
+  return TRUE;
+}
+
+/**
+ * gtk_cairo_transform_to_window:
+ * @cr: the cairo context to transform
+ * @widget: the widget the context is currently centered for
+ * @window: the window to transform the context to
+ *
+ * Transforms the given cairo context @cr that from @widget-relative
+ * coordinates to @window-relative coordinates.
+ * If the @widget’s window is not an ancestor of @window, no
+ * modification will be applied.
+ *
+ * This is the inverse to the transformation GTK applies when
+ * preparing an expose event to be emitted with the #GtkWidget::draw
+ * signal. It is intended to help porting multiwindow widgets from
+ * GTK+ 2 to the rendering architecture of GTK+ 3.
+ *
+ * Since: 3.0
+ **/
+void
+gtk_cairo_transform_to_window (cairo_t   *cr,
+                               GtkWidget *widget,
+                               GdkWindow *window)
+{
+  int x, y;
+
+  g_return_if_fail (cr != NULL);
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (GDK_IS_WINDOW (window));
+
+  if (_gtk_widget_get_translation_to_window (widget, window, &x, &y))
+    cairo_translate (cr, x, y);
+}
+
+void
+gtk_widget_render (GtkWidget            *widget,
+                   GdkWindow            *window,
+                   const cairo_region_t *region)
+{
+  GdkDrawingContext *context;
+  gboolean do_clip;
+  cairo_t *cr;
+  int x, y;
+  gboolean is_double_buffered;
+
+  /* We take the value here, in case somebody manages to changes
+   * the double_buffered value inside a ::draw call, and ends up
+   * breaking everything.
+   */
+  is_double_buffered = gtk_widget_get_double_buffered (widget);
+#if 0 /* TODO: gtkdrawingcontext is implemented as stubs */
+  if (is_double_buffered)
+    {
+      /* We only render double buffered on native windows */
+      if (!gdk_window_has_native (window))
+        return;
+
+      context = gdk_window_begin_draw_frame (window, region);
+      cr = gdk_drawing_context_get_cairo_context (context);
+    }
+  else
+#endif
+    {
+      /* This is annoying, but it has to stay because Firefox
+       * disables double buffering on a top-level GdkWindow,
+       * which breaks the drawing context.
+       *
+       * Candidate for deletion in the next major API bump.
+       */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+      cr = gdk_cairo_create (window);
+G_GNUC_END_IGNORE_DEPRECATIONS
+    }
+
+  do_clip = _gtk_widget_get_translation_to_window (widget, window, &x, &y);
+  cairo_translate (cr, -x, -y);
+
+  gtk_widget_draw_internal (widget, cr, do_clip);
+
+#if 0 /* TODO: gtkdrawingcontext is implemented as stubs */
+  if (is_double_buffered)
+    gdk_window_end_draw_frame (window, context);
+  else
+#endif
+    cairo_destroy (cr);
 }

@@ -510,6 +510,31 @@ typedef 	GdkRectangle	   GtkAllocation;
 typedef void    (*GtkCallback)     (GtkWidget        *widget,
 				    gpointer          data);
 
+
+
+/* TODO: remove when gdkframeclock is implemented */
+typedef struct _GdkFrameClock GdkFrameClock;
+
+
+/**
+ * GtkTickCallback:
+ * @widget: the widget
+ * @frame_clock: the frame clock for the widget (same as calling gtk_widget_get_frame_clock())
+ * @user_data: user data passed to gtk_widget_add_tick_callback().
+ *
+ * Callback type for adding a function to update animations. See gtk_widget_add_tick_callback().
+ *
+ * Returns: %G_SOURCE_CONTINUE if the tick callback should continue to be called,
+ *  %G_SOURCE_REMOVE if the tick callback should be removed.
+ *
+ * Since: 3.8
+ */
+typedef gboolean (*GtkTickCallback) (GtkWidget     *widget,
+                                     GdkFrameClock *frame_clock,
+                                     gpointer       user_data);
+
+
+
 /**
  * GtkRequisition:
  * @width: the widget's desired width
@@ -907,6 +932,44 @@ void	   gtk_widget_size_request	  (GtkWidget	       *widget,
 					   GtkRequisition      *requisition);
 void	   gtk_widget_size_allocate	  (GtkWidget	       *widget,
 					   GtkAllocation       *allocation);
+
+
+void       gtk_widget_size_allocate_with_baseline         (GtkWidget           *widget,
+                                                           GtkAllocation       *allocation,
+                                                           gint                 baseline);
+
+GtkSizeRequestMode  gtk_widget_get_request_mode               (GtkWidget      *widget);
+
+void                gtk_widget_get_preferred_width            (GtkWidget      *widget,
+                                                               gint           *minimum_width,
+                                                               gint           *natural_width);
+
+void                gtk_widget_get_preferred_height_for_width (GtkWidget      *widget,
+                                                               gint            width,
+                                                               gint           *minimum_height,
+                                                               gint           *natural_height);
+
+void                gtk_widget_get_preferred_height           (GtkWidget      *widget,
+                                                               gint           *minimum_height,
+                                                               gint           *natural_height);
+
+void                gtk_widget_get_preferred_width_for_height (GtkWidget      *widget,
+                                                               gint            height,
+                                                               gint           *minimum_width,
+                                                               gint           *natural_width);
+
+void   gtk_widget_get_preferred_height_and_baseline_for_width (GtkWidget     *widget,
+                                                               gint           width,
+                                                               gint          *minimum_height,
+                                                               gint          *natural_height,
+                                                               gint          *minimum_baseline,
+                                                               gint          *natural_baseline);
+
+void                gtk_widget_get_preferred_size             (GtkWidget      *widget,
+                                                               GtkRequisition *minimum_size,
+                                                               GtkRequisition *natural_size);
+
+
 void       gtk_widget_get_child_requisition (GtkWidget	       *widget,
 					     GtkRequisition    *requisition);
 void	   gtk_widget_add_accelerator	  (GtkWidget           *widget,
@@ -1118,6 +1181,14 @@ void	   gtk_widget_set_extension_events (GtkWidget		*widget,
 					    GdkExtensionMode	mode);
 
 GdkExtensionMode gtk_widget_get_extension_events (GtkWidget	*widget);
+
+
+void       gtk_widget_set_opacity         (GtkWidget           *widget,
+                                           double               opacity);
+
+double     gtk_widget_get_opacity         (GtkWidget           *widget);
+
+
 GtkWidget*   gtk_widget_get_toplevel	(GtkWidget	*widget);
 GtkWidget*   gtk_widget_get_ancestor	(GtkWidget	*widget,
 					 GType		 widget_type);
@@ -1409,6 +1480,14 @@ GtkTextDirection gtk_widget_get_direction         (GtkWidget        *widget);
 void             gtk_widget_set_default_direction (GtkTextDirection  dir);
 GtkTextDirection gtk_widget_get_default_direction (void);
 
+
+void         gtk_widget_shape_combine_region (GtkWidget *widget,
+                                              cairo_region_t *region);
+
+void         gtk_widget_input_shape_combine_region (GtkWidget *widget,
+                                                    cairo_region_t *region);
+
+
 /* Compositing manager functionality */
 gboolean gtk_widget_is_composited (GtkWidget *widget);
 
@@ -1440,6 +1519,18 @@ void	     gtk_widget_class_path	   (GtkWidget *widget,
 					    gchar    **path,
 					    gchar    **path_reversed);
 
+
+
+guint gtk_widget_add_tick_callback (GtkWidget       *widget,
+                                    GtkTickCallback  callback,
+                                    gpointer         user_data,
+                                    GDestroyNotify   notify);
+
+void gtk_widget_remove_tick_callback (GtkWidget       *widget,
+                                      guint            id);
+
+
+
 GList* gtk_widget_list_mnemonic_labels  (GtkWidget *widget);
 void   gtk_widget_add_mnemonic_label    (GtkWidget *widget,
 					 GtkWidget *label);
@@ -1459,6 +1550,15 @@ gchar *    gtk_widget_get_tooltip_markup    (GtkWidget   *widget);
 void       gtk_widget_set_has_tooltip       (GtkWidget   *widget,
 					     gboolean     has_tooltip);
 gboolean   gtk_widget_get_has_tooltip       (GtkWidget   *widget);
+
+
+gboolean   gtk_cairo_should_draw_window     (cairo_t     *cr,
+                                             GdkWindow   *window);
+
+void       gtk_cairo_transform_to_window    (cairo_t     *cr,
+                                             GtkWidget   *widget,
+                                             GdkWindow   *window);
+
 
 GType           gtk_requisition_get_type (void) G_GNUC_CONST;
 GtkRequisition *gtk_requisition_copy     (const GtkRequisition *requisition);

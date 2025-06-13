@@ -704,6 +704,22 @@ typedef enum
 } GtkDragResult;
 
 /**
+ * GtkSizeRequestMode:
+ * @GTK_SIZE_REQUEST_HEIGHT_FOR_WIDTH: Prefer height-for-width geometry management
+ * @GTK_SIZE_REQUEST_WIDTH_FOR_HEIGHT: Prefer width-for-height geometry management
+ * @GTK_SIZE_REQUEST_CONSTANT_SIZE: Don’t trade height-for-width or width-for-height
+ *
+ * Specifies a preference for height-for-width or
+ * width-for-height geometry management.
+ */
+typedef enum
+{
+  GTK_SIZE_REQUEST_HEIGHT_FOR_WIDTH = 0,
+  GTK_SIZE_REQUEST_WIDTH_FOR_HEIGHT,
+  GTK_SIZE_REQUEST_CONSTANT_SIZE
+} GtkSizeRequestMode;
+
+/**
  * GtkScrollablePolicy:
  * @GTK_SCROLL_MINIMUM: Scrollable adjustments are based on the minimum size
  * @GTK_SCROLL_NATURAL: Scrollable adjustments are based on the natural size

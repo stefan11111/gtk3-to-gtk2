@@ -311,6 +311,14 @@ gboolean    gtk_entry_im_context_filter_keypress         (GtkEntry             *
 void        gtk_entry_reset_im_context                   (GtkEntry             *entry);
 
 
+
+/* expose gtk2 internals */
+void gtk2_gtk_entry_grab_focus (GtkWidget *widget);
+
+
+void           gtk_entry_grab_focus_without_selecting        (GtkEntry             *entry);
+
+
 /* Deprecated compatibility functions
  */
 

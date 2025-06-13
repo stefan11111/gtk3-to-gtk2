@@ -159,6 +159,9 @@
 #include <gtk/gtkpapersize.h>
 #include <gtk/gtkpaned.h>
 #include <gtk/gtkplug.h>
+
+#include <gtk/gtkpopoverprivate.h>
+
 #include <gtk/gtkprintcontext.h>
 #include <gtk/gtkprintoperation.h>
 #include <gtk/gtkprintoperationpreview.h>

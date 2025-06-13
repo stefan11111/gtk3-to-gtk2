@@ -137,6 +137,13 @@ void     gtk_container_foreach_full (GtkContainer       *container,
 
 GList*   gtk_container_get_children     (GtkContainer       *container);
 
+
+void     gtk_container_propagate_draw   (GtkContainer   *container,
+                                         GtkWidget      *child,
+                                         cairo_t        *cr);
+
+
+
 #ifndef GTK_DISABLE_DEPRECATED
 #define gtk_container_children gtk_container_get_children
 #endif
