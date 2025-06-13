@@ -195,7 +195,6 @@ gtk_application_get_windows (GtkApplication *application)
   return application->priv->windows;
 }
 
-#if 0 /* TODO: fix after gtkapplicationwindow is implemented */
 /**
  * gtk_application_get_window_by_id:
  * @application: a #GtkApplication
@@ -228,7 +227,6 @@ gtk_application_get_window_by_id (GtkApplication *application,
 
   return NULL;
 }
-#endif
 
 /**
  * gtk_application_get_active_window:
@@ -1127,10 +1125,11 @@ gtk_application_window_added (GtkApplication *application,
                               GtkWindow      *window)
 {
   GtkApplicationPrivate *priv = application->priv;
-#if 0 /* TODO: fix after gtkapplicationwindow is implemented */
+
   if (GTK_IS_APPLICATION_WINDOW (window))
     {
       gtk_application_window_set_id (GTK_APPLICATION_WINDOW (window), ++priv->last_window_id);
+#if 0 /* TODO: remove when gtkshortcutwindow is implemented */
       if (priv->help_overlay_path)
         {
           GtkBuilder *builder;
@@ -1143,13 +1142,12 @@ gtk_application_window_added (GtkApplication *application,
                                                      GTK_SHORTCUTS_WINDOW (help_overlay));
           g_object_unref (builder);
         }
-    }
 #endif
+    }
+
   priv->windows = g_list_prepend (priv->windows, window);
 
-#if 0 /* TODO: fix after gtkapplicationwindow is implemented */
   gtk_window_set_application (window, application);
-#endif
 
   g_application_hold (G_APPLICATION (application));
 
@@ -1182,9 +1180,8 @@ gtk_application_window_removed (GtkApplication *application,
 
   g_application_release (G_APPLICATION (application));
   priv->windows = g_list_remove (priv->windows, window);
-#if 0 /* TODO: fix after gtkapplicationwindow is implemented */
+
   gtk_window_set_application (window, NULL);
-#endif
 
   if (priv->windows != old_active && priv->impl)
     {

@@ -1,17 +1,18 @@
 #ifndef __INTERNAL_GTK_APPLICATION_PRIVATE_H__
 #define __INTERNAL_GTK_APPLICATION_PRIVATE_H__
 
+#include <gtk/gtkapplicationwindow.h>
 
 #include "gtkapplicationimpl.h"
 #include "gtkapplicationaccelsprivate.h"
 
 G_BEGIN_DECLS
 
-#if 0 /* TODO: remove after gtkapplicationwindow is implemented */
+
 void                    gtk_application_window_set_id                   (GtkApplicationWindow     *window,
                                                                          guint                     id);
 GActionGroup *          gtk_application_window_get_action_group         (GtkApplicationWindow     *window);
-#endif
+
 
 void                    gtk_application_handle_window_realize           (GtkApplication           *application,
                                                                          GtkWindow                *window);
