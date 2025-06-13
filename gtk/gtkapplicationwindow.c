@@ -17,7 +17,7 @@
  * Author: Ryan Lortie <desrt@desrt.ca>
  */
 
-#include "gtkapplicationwindow.h"
+#include <gtk/gtkapplicationwindow.h>
 
 #include <gtk/gtkheaderbar.h>
 #include <gtk/gtkmenubar.h>

@@ -100,8 +100,6 @@
 #include <gtk/gtkrender.h>
 #include <gtk/gtkentry.h>
 
-//#include "gtkmodelbutton.h"
-
 #include <gtk/gtkactionmuxer.h>
 #include <gtk/gtkmenutracker.h>
 #include <gtk/gtkstack.h>

@@ -590,6 +590,10 @@ GdkEvent* gdk_event_new                 (GdkEventType    type);
 GdkEvent* gdk_event_copy     		(const GdkEvent *event);
 void	  gdk_event_free     		(GdkEvent 	*event);
 
+
+GdkWindow *gdk_event_get_window         (const GdkEvent *event);
+
+
 guint32   gdk_event_get_time            (const GdkEvent  *event);
 gboolean  gdk_event_get_state           (const GdkEvent  *event,
                                          GdkModifierType *state);
@@ -599,9 +603,48 @@ gboolean  gdk_event_get_coords		(const GdkEvent  *event,
 gboolean  gdk_event_get_root_coords	(const GdkEvent  *event,
 					 gdouble	 *x_root,
 					 gdouble	 *y_root);
+
+
+gboolean  gdk_event_get_button          (const GdkEvent *event,
+                                         guint          *button);
+
+gboolean  gdk_event_get_click_count     (const GdkEvent *event,
+                                         guint          *click_count);
+
+gboolean  gdk_event_get_keyval          (const GdkEvent *event,
+                                         guint          *keyval);
+
+gboolean  gdk_event_get_keycode         (const GdkEvent *event,
+                                         guint16        *keycode);
+
+gboolean gdk_event_get_scroll_direction (const GdkEvent *event,
+                                         GdkScrollDirection *direction);
+
+gboolean  gdk_event_get_scroll_deltas   (const GdkEvent *event,
+                                         gdouble         *delta_x,
+                                         gdouble         *delta_y);
+
+gboolean  gdk_event_is_scroll_stop_event (const GdkEvent *event);
+
+
+
 gboolean  gdk_event_get_axis            (const GdkEvent  *event,
                                          GdkAxisUse       axis_use,
                                          gdouble         *value);
+
+
+
+void       gdk_event_set_device         (GdkEvent        *event,
+                                         GdkDevice       *device);
+
+GdkDevice* gdk_event_get_device         (const GdkEvent  *event);
+
+void       gdk_event_set_source_device  (GdkEvent        *event,
+                                         GdkDevice       *device);
+
+GdkDevice* gdk_event_get_source_device  (const GdkEvent  *event);
+
+
 void      gdk_event_request_motions     (const GdkEventMotion *event);
 void	  gdk_event_handler_set 	(GdkEventFunc    func,
 					 gpointer        data,
@@ -613,6 +656,12 @@ GdkScreen *gdk_event_get_screen         (const GdkEvent  *event);
 
 void	  gdk_set_show_events		(gboolean	 show_events);
 gboolean  gdk_get_show_events		(void);
+
+
+
+/* expose gtk2 internals */
+gboolean gtk2_gdk_event_is_allocated (const GdkEvent *event);
+
 
 #ifndef GDK_MULTIHEAD_SAFE
 void gdk_add_client_message_filter (GdkAtom       message_type,

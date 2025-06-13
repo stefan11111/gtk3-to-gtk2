@@ -137,6 +137,35 @@ void	   gtk_menu_popup		  (GtkMenu	       *menu,
 					   guint		button,
 					   guint32		activate_time);
 
+
+void       gtk_menu_popup_for_device      (GtkMenu             *menu,
+                                           GdkDevice           *device,
+                                           GtkWidget           *parent_menu_shell,
+                                           GtkWidget           *parent_menu_item,
+                                           GtkMenuPositionFunc  func,
+                                           gpointer             data,
+                                           GDestroyNotify       destroy,
+                                           guint                button,
+                                           guint32              activate_time);
+
+void       gtk_menu_popup_at_rect         (GtkMenu             *menu,
+                                           GdkWindow           *rect_window,
+                                           const GdkRectangle  *rect,
+                                           GdkGravity           rect_anchor,
+                                           GdkGravity           menu_anchor,
+                                           const GdkEvent      *trigger_event);
+
+void       gtk_menu_popup_at_widget       (GtkMenu             *menu,
+                                           GtkWidget           *widget,
+                                           GdkGravity           widget_anchor,
+                                           GdkGravity           menu_anchor,
+                                           const GdkEvent      *trigger_event);
+
+void       gtk_menu_popup_at_pointer      (GtkMenu             *menu,
+                                           const GdkEvent      *trigger_event);
+
+
+
 /* Position the menu according to its position function. Called
  * from gtkmenuitem.c when a menu-item changes its allocation
  */

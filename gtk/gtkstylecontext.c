@@ -3,8 +3,8 @@
 #include <gdk/gdkscreen.h>
 #include <gdk/gdkcairo.h>
 
-#include "gdkrgba.h"
-#include "gtkenums.h"
+#include "gdkrgbaprivate.h"
+#include "gtkenumsprivate.h"
 #include "gtkstyleproviderprivate.h"
 #include "gtkstylecascadeprivate.h"
 #include "gtksettingsprivate.h"

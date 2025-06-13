@@ -9,7 +9,7 @@
 
 #include "gtkapplicationprivate.h"
 #include "gtkwidgetprivate.h"
-#include "gtkenums.h"
+#include "gtkenumsprivate.h"
 
 #include "gdkregionprivate.h"
 

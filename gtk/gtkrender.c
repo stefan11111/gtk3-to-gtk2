@@ -7,7 +7,7 @@
 #include <gdk/gdkkeys.h>
 
 #include "gtkpango.h"
-#include "gtkenums.h"
+#include "gtkenumsprivate.h"
 #include "gtkintl.h"
 
 #include <math.h>

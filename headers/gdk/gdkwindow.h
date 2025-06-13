@@ -605,6 +605,22 @@ GdkWindow*    gdk_window_get_pointer	 (GdkWindow	  *window,
 					  gint		  *x,
 					  gint		  *y,
 					  GdkModifierType *mask);
+
+
+GdkWindow *   gdk_window_get_device_position (GdkWindow       *window,
+                                              GdkDevice       *device,
+                                              gint            *x,
+                                              gint            *y,
+                                              GdkModifierType *mask);
+
+GdkWindow *   gdk_window_get_device_position_double (GdkWindow       *window,
+                                                     GdkDevice       *device,
+                                                     gdouble         *x,
+                                                     gdouble         *y,
+                                                     GdkModifierType *mask);
+
+
+
 GdkWindow *   gdk_window_get_parent      (GdkWindow       *window);
 GdkWindow *   gdk_window_get_toplevel    (GdkWindow       *window);
 

@@ -42,16 +42,9 @@
 
 #include "gdkdrawingcontextprivate.h"
 
-//#include <gdk/gdkrectangle.h>
-
 #include "gdkinternals.h"
 
 #include "gtkintl.h"
-
-//#include "gdkframeclockidle.h"
-//#include "gdkwindowimpl.h"
-//#include "gdkglcontextprivate.h"
-//#include <gdk/gdk-private.h>
 
 G_DEFINE_TYPE (GdkDrawingContext, gdk_drawing_context, G_TYPE_OBJECT)
 

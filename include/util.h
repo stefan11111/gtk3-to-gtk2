@@ -1,6 +1,6 @@
 #warning include separate headers instead of util.h, helps with the build time
 
-#include "gdkrgba.h"
+#include "gdkrgbaprivate.h"
 #include "gdkwindowinternal.h"
 #include "gdkdrawingcontextprivate.h"
 #include "gdkinternals.h"
@@ -8,7 +8,7 @@
 #include "gdkregionprivate.h"
 
 
-#include "gtkenums.h"
+#include "gtkenumsprivate.h"
 #include "gtkpango.h"
 #include "gtkrenderprivate.h"
 #include "gtkcairo.h"

@@ -145,3 +145,72 @@ gdk_window_end_draw_frame (GdkWindow         *window,
   /* Not Implemented */
 }
 
+/**
+ * gdk_window_get_device_position:
+ * @window: a #GdkWindow.
+ * @device: pointer #GdkDevice to query to.
+ * @x: (out) (allow-none): return location for the X coordinate of @device, or %NULL.
+ * @y: (out) (allow-none): return location for the Y coordinate of @device, or %NULL.
+ * @mask: (out) (allow-none): return location for the modifier mask, or %NULL.
+ *
+ * Obtains the current device position and modifier state.
+ * The position is given in coordinates relative to the upper left
+ * corner of @window.
+ *
+ * Use gdk_window_get_device_position_double() if you need subpixel precision.
+ *
+ * Returns: (nullable) (transfer none): The window underneath @device
+ * (as with gdk_device_get_window_at_position()), or %NULL if the
+ * window is not known to GDK.
+ *
+ * Since: 3.0
+ **/
+GdkWindow *
+gdk_window_get_device_position (GdkWindow       *window,
+                                GdkDevice       *device,
+                                gint            *x,
+                                gint            *y,
+                                GdkModifierType *mask)
+{
+  return gdk_window_get_pointer (window, x, y, mask);
+}
+
+/**
+ * gdk_window_get_device_position_double:
+ * @window: a #GdkWindow.
+ * @device: pointer #GdkDevice to query to.
+ * @x: (out) (allow-none): return location for the X coordinate of @device, or %NULL.
+ * @y: (out) (allow-none): return location for the Y coordinate of @device, or %NULL.
+ * @mask: (out) (allow-none): return location for the modifier mask, or %NULL.
+ *
+ * Obtains the current device position in doubles and modifier state.
+ * The position is given in coordinates relative to the upper left
+ * corner of @window.
+ *
+ * Returns: (nullable) (transfer none): The window underneath @device
+ * (as with gdk_device_get_window_at_position()), or %NULL if the
+ * window is not known to GDK.
+ *
+ * Since: 3.10
+ **/
+GdkWindow *
+gdk_window_get_device_position_double (GdkWindow       *window,
+                                       GdkDevice       *device,
+                                       double          *x,
+                                       double          *y,
+                                       GdkModifierType *mask)
+{
+  gint _x, _y;
+  GdkWindow *ret;
+
+  ret = gdk_window_get_pointer (window, &_x, &_y, mask);
+  if (x) {
+    *x = _x;
+  }
+
+  if (y) {
+    *y = _y;
+  }
+
+  return ret;
+}
