@@ -1460,3 +1460,37 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   else
     cairo_destroy (cr);
 }
+
+/**
+ * gtk_widget_insert_action_group:
+ * @widget: a #GtkWidget
+ * @name: the prefix for actions in @group
+ * @group: (allow-none): a #GActionGroup, or %NULL
+ *
+ * Inserts @group into @widget. Children of @widget that implement
+ * #GtkActionable can then be associated with actions in @group by
+ * setting their “action-name” to
+ * @prefix.`action-name`.
+ *
+ * If @group is %NULL, a previously inserted group for @name is removed
+ * from @widget.
+ *
+ * Since: 3.6
+ */
+void
+gtk_widget_insert_action_group (GtkWidget    *widget,
+                                const gchar  *name,
+                                GActionGroup *group)
+{
+  GtkActionMuxer *muxer;
+
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (name != NULL);
+
+  muxer = _gtk_widget_get_action_muxer (widget, TRUE);
+
+  if (group)
+    gtk_action_muxer_insert (muxer, name, group);
+  else
+    gtk_action_muxer_remove (muxer, name);
+}

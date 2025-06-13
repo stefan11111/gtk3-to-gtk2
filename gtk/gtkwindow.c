@@ -359,3 +359,93 @@ gtk_window_close (GtkWindow *window)
   delete_event_handler = gdk_threads_add_idle_full (G_PRIORITY_DEFAULT, send_delete_event, window, NULL);
   g_source_set_name_by_id (delete_event_handler, "[gtk+] send_delete_event");
 }
+
+void
+_gtk_window_get_shadow_width (GtkWindow *window,
+                              GtkBorder *border)
+{
+  /* Not Implemented */
+  g_return_if_fail (border != NULL);
+  *border = (GtkBorder){0};
+}
+
+/**
+ * gtk_window_set_titlebar:
+ * @window: a #GtkWindow
+ * @titlebar: (allow-none): the widget to use as titlebar
+ *
+ * Sets a custom titlebar for @window.
+ *
+ * A typical widget used here is #GtkHeaderBar, as it provides various features
+ * expected of a titlebar while allowing the addition of child widgets to it.
+ *
+ * If you set a custom titlebar, GTK+ will do its best to convince
+ * the window manager not to put its own titlebar on the window.
+ * Depending on the system, this function may not work for a window
+ * that is already visible, so you set the titlebar before calling
+ * gtk_widget_show().
+ *
+ * Since: 3.10
+ */
+void
+gtk_window_set_titlebar (GtkWindow *window,
+                         GtkWidget *titlebar)
+{
+  /* Not Implemented */
+}
+
+/**
+ * gtk_window_get_titlebar:
+ * @window: a #GtkWindow
+ *
+ * Returns the custom titlebar that has been set with
+ * gtk_window_set_titlebar().
+ *
+ * Returns: (nullable) (transfer none): the custom titlebar, or %NULL
+ *
+ * Since: 3.16
+ */
+GtkWidget *
+gtk_window_get_titlebar (GtkWindow *window)
+{
+  /* Not Implemented */
+  return NULL;
+}
+
+gboolean
+_gtk_window_titlebar_shows_app_menu (GtkWindow *window)
+{
+  /* Not Implemented */
+  return FALSE;
+}
+
+/* _gtk_window_set_allocation:
+ * @window: a #GtkWindow
+ * @allocation: the original allocation for the window
+ * @allocation_out: @allocation taking decorations into
+ * consideration
+ *
+ * This function is like gtk_widget_set_allocation()
+ * but does the necessary extra work to update
+ * the resize grip positioning, etc.
+ *
+ * Call this instead of gtk_widget_set_allocation()
+ * when overriding ::size_allocate in a GtkWindow
+ * subclass without chaining up.
+ *
+ * The @allocation parameter will be adjusted to
+ * reflect any internal decorations that the window
+ * may have. That revised allocation will then be
+ * returned in the @allocation_out parameter.
+ */
+void
+_gtk_window_set_allocation (GtkWindow           *window,
+                            const GtkAllocation *allocation,
+                            GtkAllocation       *allocation_out)
+{
+  g_assert (allocation != NULL);
+  g_assert (allocation_out != NULL);
+
+  gtk_widget_set_allocation ((GtkWidget*)window, allocation);
+  *allocation_out = *allocation;
+}

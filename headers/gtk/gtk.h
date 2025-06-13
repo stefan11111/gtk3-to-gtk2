@@ -46,6 +46,7 @@
 #include <gtk/gtkactionmuxer.h>
 
 #include <gtk/gtkapplication.h>
+#include <gtk/gtkapplicationwindow.h>
 
 #include <gtk/gtkarrow.h>
 #include <gtk/gtkaspectframe.h>

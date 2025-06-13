@@ -9,4 +9,8 @@
 #define I_(x) x
 #endif
 
+#ifndef _
+#define _(x) x
+#endif
+
 #endif /* __INTERNAL_GTK_INTL_H__ */

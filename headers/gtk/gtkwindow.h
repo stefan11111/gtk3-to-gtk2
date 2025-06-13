@@ -419,6 +419,11 @@ GList *          gtk_window_group_list_windows  (GtkWindowGroup     *window_grou
 
 
 
+void     gtk_window_set_titlebar           (GtkWindow    *window,
+                                            GtkWidget    *titlebar);
+
+GtkWidget *gtk_window_get_titlebar         (GtkWindow    *window);
+
 gboolean gtk_window_is_maximized           (GtkWindow    *window);
 
 

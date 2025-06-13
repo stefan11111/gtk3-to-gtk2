@@ -1521,6 +1521,20 @@ void	     gtk_widget_class_path	   (GtkWidget *widget,
 
 
 
+
+
+
+
+
+
+
+void                    gtk_widget_insert_action_group                  (GtkWidget    *widget,
+                                                                         const gchar  *name,
+                                                                         GActionGroup *group);
+
+
+
+
 guint gtk_widget_add_tick_callback (GtkWidget       *widget,
                                     GtkTickCallback  callback,
                                     gpointer         user_data,
