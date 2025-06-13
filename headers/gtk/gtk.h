@@ -161,7 +161,7 @@
 #include <gtk/gtkpaned.h>
 #include <gtk/gtkplug.h>
 
-#include <gtk/gtkpopoverprivate.h>
+#include <gtk/gtkpopover.h>
 
 #include <gtk/gtkprintcontext.h>
 #include <gtk/gtkprintoperation.h>
