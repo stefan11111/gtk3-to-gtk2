@@ -14,6 +14,7 @@
 
 #include "gdkregionprivate.h"
 #include "gdkwindowinternal.h"
+#include "gdkrgbaprivate.h"
 
 #include "gtkglobals.h"
 
@@ -295,10 +296,47 @@ gtk_widget_set_clip (GtkWidget           *widget,
 }
 
 void
+gtk_widget_override_color (GtkWidget     *widget,
+                                      GtkStateFlags  state,
+                                      const GdkRGBA *color)
+{
+  GdkColor c = GdkColor_from_GdkRGBA (color);
+  gtk_widget_modify_base (widget, GTK_STATE_NORMAL, &c);
+}
+
+void
+gtk_widget_override_background_color (GtkWidget     *widget,
+                                      GtkStateFlags  state,
+                                      const GdkRGBA *color)
+{
+  GdkColor c = GdkColor_from_GdkRGBA (color);
+  gtk_widget_modify_bg (widget, GTK_STATE_NORMAL, &c);
+}
+
+void
 gtk_widget_override_font (GtkWidget                  *widget,
                           const PangoFontDescription *font_desc)
 {
   gtk_widget_modify_font (widget, (PangoFontDescription *)font_desc);
+}
+
+void
+gtk_widget_override_symbolic_color (GtkWidget     *widget,
+                                    const gchar   *name,
+                                    const GdkRGBA *color)
+{
+  /* Not Implemented */
+}
+
+void
+gtk_widget_override_cursor (GtkWidget     *widget,
+                            const GdkRGBA *cursor,
+                            const GdkRGBA *secondary_cursor)
+{
+  GdkColor c1 = GdkColor_from_GdkRGBA (cursor);
+  GdkColor c2 = GdkColor_from_GdkRGBA (secondary_cursor);
+
+  gtk_widget_modify_cursor (widget, &c1, &c2);
 }
 
 GtkStyleContext *

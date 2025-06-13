@@ -1393,8 +1393,26 @@ void        gtk_widget_modify_font        (GtkWidget            *widget,
 
 GtkStyleContext * gtk_widget_get_style_context (GtkWidget *widget);
 
+
+void         gtk_widget_override_color            (GtkWidget     *widget,
+                                                   GtkStateFlags  state,
+                                                   const GdkRGBA *color);
+
+void         gtk_widget_override_background_color (GtkWidget     *widget,
+                                                   GtkStateFlags  state,
+                                                   const GdkRGBA *color);
+
 void         gtk_widget_override_font             (GtkWidget                  *widget,
                                                    const PangoFontDescription *font_desc);
+
+void         gtk_widget_override_symbolic_color   (GtkWidget     *widget,
+                                                   const gchar   *name,
+                                                   const GdkRGBA *color);
+
+void         gtk_widget_override_cursor           (GtkWidget       *widget,
+                                                   const GdkRGBA   *cursor,
+                                                   const GdkRGBA   *secondary_cursor);
+
 
 #ifndef GTK_DISABLE_DEPRECATED
 
