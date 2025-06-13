@@ -39,7 +39,7 @@
 typedef GtkStyle GtkStyleContext;
 typedef GtkStyleClass GtkStyleContextClass;
 
-/* TODO: remove this */
+/* TODO: remove this when gdkframeclock is implemented */
 typedef struct _GdkFrameClock GdkFrameClock;
 
 /* Default set of properties that GtkStyleContext may contain */

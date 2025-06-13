@@ -24,10 +24,6 @@
 #include <gdk/gdktypes.h>
 #include <cairo/cairo.h>
 
-/* Not Implemented */
-/* TODO: Maybe Implement Later */
-/* This is part of the gl support for gtk3 */
-
 G_BEGIN_DECLS
 
 #define GDK_TYPE_DRAWING_CONTEXT (gdk_drawing_context_get_type ())

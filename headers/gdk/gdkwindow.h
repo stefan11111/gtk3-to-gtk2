@@ -34,6 +34,7 @@
 #include <gdk/gdkdrawable.h>
 #include <gdk/gdktypes.h>
 #include <gdk/gdkevents.h>
+#include <gdk/gdkdrawingcontext.h>
 #include <gdk/gdkversionmacros.h>
 
 G_BEGIN_DECLS
@@ -528,6 +529,16 @@ void	      gdk_window_begin_paint_rect   (GdkWindow          *window,
 void	      gdk_window_begin_paint_region (GdkWindow          *window,
 					     const GdkRegion    *region);
 void	      gdk_window_end_paint          (GdkWindow          *window);
+
+
+GdkDrawingContext *gdk_window_begin_draw_frame  (GdkWindow            *window,
+                                                 const cairo_region_t *region);
+
+void          gdk_window_end_draw_frame    (GdkWindow            *window,
+                                            GdkDrawingContext    *context);
+
+
+
 void	      gdk_window_flush             (GdkWindow          *window);
 
 void	      gdk_window_set_title	   (GdkWindow	  *window,

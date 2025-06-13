@@ -29,6 +29,7 @@ struct _cairo_region {
     pixman_region32_t rgn;
 };
 
+/* creates a new cairo_region_t */
 cairo_region_t *
 cairo_region_from_GdkRegion (const GdkRegion* reg)
 {
@@ -45,6 +46,7 @@ cairo_region_from_GdkRegion (const GdkRegion* reg)
   return ret;
 }
 
+/* dst must be already allocated */
 void
 GdkRegion_from_cairo_region (GdkRegion *dst, const cairo_region_t *src)
 {

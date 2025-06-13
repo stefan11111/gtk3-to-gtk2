@@ -13,20 +13,6 @@
 
 #include "gdkregionprivate.h"
 
-typedef GdkSegment GdkRegionBox;
-
-/*
- *   clip region
- */
-
-struct _GdkRegion
-{
-  long size;
-  long numRects;
-  GdkRegionBox *rects;
-  GdkRegionBox extents;
-};
-
 static GQuark           quark_action_muxer = 0;
 
 /**
@@ -96,14 +82,18 @@ gtk_widget_shape_combine_region (GtkWidget *widget,
                                  cairo_region_t *region)
 {
   GdkWindow *window;
-  GdkRegion gdk_region;
+  GdkRegion *gdk_region;
 
   g_return_if_fail (GTK_IS_WIDGET (widget));
   g_return_if_fail (region != NULL);
 
   window = gtk_widget_get_window (widget);
-  GdkRegion_from_cairo_region (&gdk_region, region);
-  gdk_window_shape_combine_region (window, &gdk_region, 0, 0);
+  gdk_region = gdk_region_new ();
+  GdkRegion_from_cairo_region (gdk_region, region);
+  gdk_window_shape_combine_region (window, gdk_region, 0, 0);
+  /* do not use gdk_region_destroy, and it holds the same data as region */
+  /* use plain free */
+  free (gdk_region);
 }
 
 /**
@@ -1437,7 +1427,7 @@ gtk_widget_render (GtkWidget            *widget,
    * breaking everything.
    */
   is_double_buffered = gtk_widget_get_double_buffered (widget);
-#if 0 /* TODO: gtkdrawingcontext is implemented as stubs */
+
   if (is_double_buffered)
     {
       /* We only render double buffered on native windows */
@@ -1448,7 +1438,6 @@ gtk_widget_render (GtkWidget            *widget,
       cr = gdk_drawing_context_get_cairo_context (context);
     }
   else
-#endif
     {
       /* This is annoying, but it has to stay because Firefox
        * disables double buffering on a top-level GdkWindow,
@@ -1466,10 +1455,8 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   gtk_widget_draw_internal (widget, cr, do_clip);
 
-#if 0 /* TODO: gtkdrawingcontext is implemented as stubs */
   if (is_double_buffered)
     gdk_window_end_draw_frame (window, context);
   else
-#endif
     cairo_destroy (cr);
 }
