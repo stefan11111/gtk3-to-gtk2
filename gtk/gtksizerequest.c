@@ -151,8 +151,13 @@ gtk_widget_get_preferred_width (GtkWidget *widget,
   g_return_if_fail (GTK_IS_WIDGET (widget));
   g_return_if_fail (minimum_width != NULL || natural_width != NULL);
 
-  *minimum_width = widget->requisition.width;
-  *natural_width = widget->allocation.width;
+  if (minimum_width) {
+    *minimum_width = widget->requisition.width;
+  }
+
+  if (natural_width) {
+    *natural_width = widget->allocation.width;
+  }
 }
 
 /**
@@ -181,8 +186,13 @@ gtk_widget_get_preferred_height (GtkWidget *widget,
   g_return_if_fail (GTK_IS_WIDGET (widget));
   g_return_if_fail (minimum_height != NULL || natural_height != NULL);
 
-  *minimum_height = widget->requisition.height;
-  *natural_height = widget->allocation.height;
+  if (minimum_height) {
+    *minimum_height = widget->requisition.height;
+  }
+
+  if (natural_height) {
+    *natural_height = widget->allocation.height;
+  }
 }
 
 /**
@@ -271,8 +281,13 @@ gtk_widget_get_preferred_height_and_baseline_for_width (GtkWidget *widget,
   g_return_if_fail (GTK_IS_WIDGET (widget));
   g_return_if_fail (minimum_height != NULL || natural_height != NULL);
 
-  *minimum_height = widget->requisition.height;
-  *natural_height = widget->allocation.height;
+  if (minimum_height) {
+    *minimum_height = widget->requisition.height;
+  }
+
+  if (natural_height) {
+    *natural_height = widget->allocation.height;
+  }
 
   if (minimum_baseline) {
     *minimum_baseline = -1;
