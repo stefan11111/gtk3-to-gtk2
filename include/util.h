@@ -25,6 +25,7 @@
 #include "gtkprogresstrackerprivate.h"
 #include "gtkintl.h"
 #include "gtkpopoverprivate.h"
+#include "gtkglobals.h"
 
 #if 0 /* include <gtk/gtkprivate.h> instead */
 #include "gtkprivate.h"

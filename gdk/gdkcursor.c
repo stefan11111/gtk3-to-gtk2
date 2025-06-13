@@ -1,5 +1,6 @@
 #include <gdk/gdkcursor.h>
-#include <dlfcn.h>
+
+#include "gtkglobals.h"
 
 /* XXX horrible hacks XXX */
 /* gtk3 changed the abi for GdkCursor to inherit from GObject instead of being a boxed type */
@@ -10,40 +11,6 @@
 /* To fix this, use the dynamic linker to get the glib symbols */
 /* then override them with ones that call gdk_cursor_{ref/unref} as needed */
 
-static void* glib_gobject = NULL;
-static gpointer (*glib_g_object_ref) (gpointer object) = NULL;
-static void (*glib_g_object_unref) (gpointer object) = NULL;
-
-static gsize glib_loaded = 0;
-
-static void glib_g_object_init (void)
-{
-  if (g_once_init_enter (&glib_loaded)) {
-    char *dl_error;
-
-    glib_gobject = dlopen ("libgobject-2.0.so", RTLD_NOW);
-
-    g_return_if_fail (glib_gobject != NULL);
-
-    glib_g_object_ref = dlsym (glib_gobject, "g_object_ref");
-
-    dl_error = dlerror();
-
-    if (dl_error) {
-      g_warning ("%s\n", dl_error);
-    }
-
-    glib_g_object_unref = dlsym (glib_gobject, "g_object_unref");
-
-    dl_error = dlerror();
-
-    if (dl_error) {
-      g_warning ("%s\n", dl_error);
-    }
-    g_once_init_leave (&glib_loaded, 1);
-  }
-}
-
 #define CURSOR_REF_COUNT_TRESH 0xff /* a reasonable guess for the maximum refcount of a cursor */
 
 #undef g_object_ref /* glib has this as both a symbol and a macro at the same type */
@@ -52,7 +19,7 @@ g_object_ref (gpointer object)
 {
   GdkCursor *cursor = object;
 
-  if (!glib_loaded) {
+  if (!glib_g_object_loaded) {
     glib_g_object_init ();
   }
 
@@ -71,7 +38,7 @@ g_object_unref (gpointer object)
 {
   GdkCursor *cursor = object;
 
-  if (!glib_loaded) {
+  if (!glib_g_object_loaded) {
     glib_g_object_init ();
   }
 

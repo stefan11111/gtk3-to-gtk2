@@ -924,10 +924,19 @@ void	   gtk_widget_queue_resize_no_redraw (GtkWidget *widget);
 void       gtk_widget_queue_allocate      (GtkWidget           *widget);
 
 
+#if 0
 #ifndef GTK_DISABLE_DEPRECATED
 void	   gtk_widget_draw		  (GtkWidget	       *widget,
 					   const GdkRectangle  *area);
 #endif /* GTK_DISABLE_DEPRECATED */
+#else
+/* api for this changed */
+/* gtk2 calls still work, due to a dlopen hack */
+void       gtk_widget_draw                (GtkWidget           *widget,
+                                           cairo_t             *cr);
+#endif
+
+
 void	   gtk_widget_size_request	  (GtkWidget	       *widget,
 					   GtkRequisition      *requisition);
 void	   gtk_widget_size_allocate	  (GtkWidget	       *widget,

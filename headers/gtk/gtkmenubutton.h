@@ -27,12 +27,7 @@
 
 #include <gtk/gtktogglebutton.h>
 #include <gtk/gtkmenu.h>
-
-#if 0 /* TODO: remove when gtkpopover is implemented */
 #include <gtk/gtkpopover.h>
-#else
-typedef struct _GtkPopover GtkPopover;
-#endif
 
 G_BEGIN_DECLS
 

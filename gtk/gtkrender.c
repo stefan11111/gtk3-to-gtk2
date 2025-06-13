@@ -10,8 +10,9 @@
 #include "gtkenumsprivate.h"
 #include "gtkintl.h"
 
+#include "gtkglobals.h"
+
 #include <math.h>
-#include <dlfcn.h>
 
 /* XXX The code is this file should be FAST XXX */
 
@@ -1260,7 +1261,7 @@ gtk_render_frame (GtkStyleContext *context,
 
   /* This hardcodes the type of shadow to draw */
   /* as is, this does nothing */
-  /* TODO: parhaps change to GTK_SHADOW_IN */
+  /* TODO: perhaps change to GTK_SHADOW_IN */
   gtk_cairo_paint_shadow (context, cr, state_type, GTK_SHADOW_NONE, (GtkWidget*)NULL, NULL, x, y, width, height);
 }
 
@@ -3397,17 +3398,6 @@ gtk_draw_insertion_cursor (GtkWidget          *widget,
 			   gboolean            draw_arrow)
 */
 {
-  static void *gtk2;
-  static void (*gtk2_gtk_draw_insertion_cursor)(GtkWidget          *widget,
-                                                GdkDrawable        *drawable,
-                                                const GdkRectangle *area,
-                                                const GdkRectangle *location,
-                                                gboolean            is_primary,
-                                                GtkTextDirection    direction,
-                                                gboolean            draw_arrow);
-
-  char *dl_error;
-
   /* gtk3 args */
   gboolean            is_primary;
   GtkTextDirection    direction;
@@ -3447,27 +3437,8 @@ gtk_draw_insertion_cursor (GtkWidget          *widget,
   direction = va_arg (list, GtkTextDirection);
   draw_arrow = va_arg (list, gboolean);
 
-  if (!gtk2) {
-    gtk2 = dlopen (
-#ifdef X11
-                   "libgtk-x11-2.0.so",
-#else
-                   "libgtk-directfb-2.0.so",
-#endif
-                   RTLD_NOW);
-
-    g_return_if_fail (gtk2 != NULL);
-
-    gtk2_gtk_draw_insertion_cursor = dlsym (gtk2, "gtk_draw_insertion_cursor");
-
-    dl_error = dlerror();
-
-    if (dl_error) {
-      g_warning ("%s\n", dl_error);
-      return;
-    }
-
-    /* dlclose never called */
+  if (gtk2_loaded) {
+    gtk2_init();
   }
 
   gtk2_gtk_draw_insertion_cursor (widget, drawable, area, location, is_primary, direction, draw_arrow);

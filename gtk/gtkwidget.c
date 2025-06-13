@@ -3,6 +3,7 @@
 #include <gtk/gtkactionmuxer.h>
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkapplication.h>
+#include <gtk/gtkpopover.h>
 #include <gtk/gtkprivate.h>
 
 #include <gdk/gdkcairo.h>
@@ -12,8 +13,29 @@
 #include "gtkenumsprivate.h"
 
 #include "gdkregionprivate.h"
+#include "gdkwindowinternal.h"
+
+#include "gtkglobals.h"
 
 static GQuark           quark_action_muxer = 0;
+
+static const cairo_user_data_key_t mark_for_draw_key;
+
+static inline gboolean
+gtk_cairo_is_marked_for_draw (cairo_t *cr)
+{
+  return cairo_get_user_data (cr, &mark_for_draw_key) != NULL;
+}
+
+static inline void
+gtk_cairo_set_marked_for_draw (cairo_t  *cr,
+                               gboolean  marked)
+{
+  if (marked)
+    cairo_set_user_data (cr, &mark_for_draw_key, GINT_TO_POINTER (1), NULL);
+  else
+    cairo_set_user_data (cr, &mark_for_draw_key, NULL, NULL);
+}
 
 /**
  * gtk_widget_set_opacity:
@@ -391,17 +413,8 @@ gtk_widget_get_valign_with_baseline (GtkWidget *widget)
 gint
 gtk_widget_get_margin_left (GtkWidget *widget)
 {
-#if 0 /* Not Implemented */
-  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
-
-  GtkAllocation allocation;
-  gtk_widget_get_allocation (widget, &allocation);
-
-  return allocation.x;
-#else
   /* Not Implemented */
   return 0;
-#endif
 }
 
 /**
@@ -420,38 +433,7 @@ void
 gtk_widget_set_margin_left (GtkWidget *widget,
                             gint       margin)
 {
-#if 0 /* Not Implemented */
-  GtkAllocation allocation;
-#if 0
-  GtkRequsition requisition;
-  GtkWindow *window;
-#endif
-
-  g_return_if_fail (GTK_IS_WIDGET (widget));
-  g_return_if_fail (margin <= G_MAXINT16);
-
-  gtk_widget_get_allocation (widget, &allocation);
-#if 0
-  gtk_widget_size_request (widget, &requisition);
-#endif
-
-  if (allocation.x != -1) {
-    allocation.width += allocation.x - margin;
-#if 0
-    requisition.width += allocation.x - margin;
-#endif
-  }
-  allocation.x = margin;
-
-  gtk_widget_size_allocate (widget, &allocation);
-
-#if 0
-  window = gtk_widget_get_window (widget);
-  if (window) {
-    gtk_window_set_default_size(window, requisition.width, requisition.height);
-  }
-#endif
-#endif /* Not Implemented */
+  /* Not Implemented */
 }
 
 /**
@@ -469,17 +451,8 @@ gtk_widget_set_margin_left (GtkWidget *widget,
 gint
 gtk_widget_get_margin_right (GtkWidget *widget)
 {
-#if 0 /* Not Implemented */
-  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
-
-  GtkAllocation allocation;
-  gtk_widget_get_allocation (widget, &allocation);
-
-  return allocation.x + allocation.width;
-#else
   /* Not Implemented */
   return 0;
-#endif
 }
 
 /**
@@ -498,35 +471,7 @@ void
 gtk_widget_set_margin_right (GtkWidget *widget,
                              gint       margin)
 {
-#if 0 /* Not Implemented */
-  GtkAllocation allocation;
-#if 0
-  GtkRequsition requisition;
-  GtkWindow *window;
-#endif
-
-  g_return_if_fail (GTK_IS_WIDGET (widget));
-  g_return_if_fail (margin <= G_MAXINT16);
-
-  gtk_widget_get_allocation (widget, &allocation);
-#if 0
-  gtk_widget_size_request (widget, &requisition);
-#endif
-
-#if 0
-  requisition.width += (margin - (allocation.x == -1 ? 0 : allocation.x)) - allocation.width;
-#endif
-  allocation.width = margin - (allocation.x == -1 ? 0 : allocation.x);
-
-  gtk_widget_size_allocate (widget, &allocation);
-
-#if 0
-  window = gtk_widget_get_window (widget);
-  if (window) {
-    gtk_window_set_default_size(window, requisition.width, requisition.height);
-  }
-#endif
-#endif /* Not Implemented */
+  /* Not Implemented */
 }
 
 /**
@@ -626,17 +571,8 @@ gtk_widget_set_margin_end (GtkWidget *widget,
 gint
 gtk_widget_get_margin_top (GtkWidget *widget)
 {
-#if 0 /* Not Implemented */
-  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
-
-  GtkAllocation allocation;
-  gtk_widget_get_allocation (widget, &allocation);
-
-  return allocation.y;
-#else
   /* Not Implemented */
   return 0;
-#endif
 }
 
 /**
@@ -653,38 +589,7 @@ void
 gtk_widget_set_margin_top (GtkWidget *widget,
                            gint       margin)
 {
-#if 0 /* Not Implemented */
-  GtkAllocation allocation;
-#if 0
-  GtkRequsition requisition;
-  GtkWindow *window;
-#endif
-
-  g_return_if_fail (GTK_IS_WIDGET (widget));
-  g_return_if_fail (margin <= G_MAXINT16);
-
-  gtk_widget_get_allocation (widget, &allocation);
-#if 0
-  gtk_widget_size_request (widget, &requisition);
-#endif
-
-  if (allocation.y != -1) {
-    allocation.height += allocation.y - margin;
-#if 0
-    requisition.height += allocation.y - margin;
-#endif
-  }
-  allocation.y = margin;
-
-  gtk_widget_size_allocate (widget, &allocation);
-
-#if 0
-  window = gtk_widget_get_window (widget);
-  if (window) {
-    gtk_window_set_default_size(window, requisition.width, requisition.height);
-  }
-#endif
-#endif /* Not Implemented */
+  /* Not Implemented */
 }
 
 /**
@@ -700,17 +605,8 @@ gtk_widget_set_margin_top (GtkWidget *widget,
 gint
 gtk_widget_get_margin_bottom (GtkWidget *widget)
 {
-#if 0 /* Not Implemented */
-  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
-
-  GtkAllocation allocation;
-  gtk_widget_get_allocation (widget, &allocation);
-
-  return allocation.y + allocation.height;
-#else
   /* Not Implemented */
   return 0;
-#endif
 }
 
 /**
@@ -727,35 +623,7 @@ void
 gtk_widget_set_margin_bottom (GtkWidget *widget,
                               gint       margin)
 {
-#if 0 /* Not Implemented */
-  GtkAllocation allocation;
-#if 0
-  GtkRequsition requisition;
-  GtkWindow *window;
-#endif
-
-  g_return_if_fail (GTK_IS_WIDGET (widget));
-  g_return_if_fail (margin <= G_MAXINT16);
-
-  gtk_widget_get_allocation (widget, &allocation);
-#if 0
-  gtk_widget_size_request (widget, &requisition);
-#endif
-
-#if 0
-  requisition.height += (margin - (allocation.y == -1 ? 0 : allocation.y)) - allocation.height;
-#endif
-  allocation.height = margin - (allocation.y == -1 ? 0 : allocation.y);
-
-  gtk_widget_size_allocate (widget, &allocation);
-
-#if 0
-  window = gtk_widget_get_window (widget);
-  if (window) {
-    gtk_window_set_default_size(window, requisition.width, requisition.height);
-  }
-#endif
-#endif /* Not Implemented */
+  /* Not Implemented */
 }
 
 
@@ -812,11 +680,8 @@ _gtk_widget_get_parent_muxer (GtkWidget *widget,
 
   if (GTK_IS_MENU (widget))
     parent = gtk_menu_get_attach_widget (GTK_MENU (widget));
-/* TODO: remove when gtkpopover is implemented */
-#if 0
   else if (GTK_IS_POPOVER (widget))
     parent = gtk_popover_get_relative_to (GTK_POPOVER (widget));
-#endif
   else
     parent = gtk_widget_get_parent (widget);
 
@@ -1180,7 +1045,7 @@ gtk_widget_draw_internal (GtkWidget *widget,
   if (!gtk_widget_is_drawable (widget))
     return;
 
-#if 0
+#if 0 /* Nothing to clip */
   if (clip_to_size)
     {
       cairo_rectangle (cr,
@@ -1195,7 +1060,7 @@ gtk_widget_draw_internal (GtkWidget *widget,
   if (gdk_cairo_get_clip_rectangle (cr, NULL))
     {
       GdkWindow *event_window = NULL;
-#if 0
+#if 0 /* TODO: remove when the draw signal is implemented for gtkwidget */
       gboolean result;
 #endif
 
@@ -1204,7 +1069,7 @@ gtk_widget_draw_internal (GtkWidget *widget,
        * to the drawing context and mark it using the clip region of the
        * Cairo context.
        */
-#if 0 /* TODO: gdkdrawingcontext is implemented as stubs */
+#if 0 /* TODO: remove when gdk_window_mark_paint_from_clip is implemented */
       if (!gtk_cairo_is_marked_for_draw (cr))
         {
           GdkDrawingContext *context = gdk_cairo_get_drawing_context (cr);
@@ -1317,10 +1182,8 @@ gtk_cairo_should_draw_window (cairo_t   *cr,
   g_return_val_if_fail (cr != NULL, FALSE);
   g_return_val_if_fail (GDK_IS_WINDOW (window), FALSE);
 
-#if 0
   if (gtk_cairo_is_marked_for_draw (cr))
     return TRUE;
-#endif
 
   context = gdk_cairo_get_drawing_context (cr);
   if (context == NULL)
@@ -1493,4 +1356,69 @@ gtk_widget_insert_action_group (GtkWidget    *widget,
     gtk_action_muxer_insert (muxer, name, group);
   else
     gtk_action_muxer_remove (muxer, name);
+}
+
+/**
+ * gtk_widget_draw:
+ * @widget: the widget to draw. It must be drawable (see
+ *   gtk_widget_is_drawable()) and a size must have been allocated.
+ * @cr: a cairo context to draw to
+ *
+ * Draws @widget to @cr. The top left corner of the widget will be
+ * drawn to the currently set origin point of @cr.
+ *
+ * You should pass a cairo context as @cr argument that is in an
+ * original state. Otherwise the resulting drawing is undefined. For
+ * example changing the operator using cairo_set_operator() or the
+ * line width using cairo_set_line_width() might have unwanted side
+ * effects.
+ * You may however change the context’s transform matrix - like with
+ * cairo_scale(), cairo_translate() or cairo_set_matrix() and clip
+ * region with cairo_clip() prior to calling this function. Also, it
+ * is fine to modify the context with cairo_save() and
+ * cairo_push_group() prior to calling this function.
+ *
+ * Note that special-purpose widgets may contain special code for
+ * rendering to the screen and might appear differently on screen
+ * and when rendered using gtk_widget_draw().
+ *
+ * Since: 3.0
+ **/
+
+/* XXX conflicts with gtk2 XXX */
+/* XXX abuses the dynamic linker to make this work XXX */
+void
+gtk_widget_draw (GtkWidget *widget,
+                 cairo_t   *cr)
+{
+  if (GTK_IS_WIDGET (widget)) { /* gtk2 call */
+    if (!gtk2_loaded) {
+      gtk2_init ();
+    }
+
+    gtk2_gtk_widget_draw (widget, (GdkRectangle*)cr);
+    return;
+  }
+
+  /* gtk3 call */
+  gboolean was_marked;
+
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (GTK_WIDGET_ALLOC_NEEDED (widget));
+  g_return_if_fail (cr != NULL);
+
+  cairo_save (cr);
+
+  was_marked = gtk_cairo_is_marked_for_draw (cr);
+
+  /* We mark the window so that gtk_cairo_should_draw_window()
+   * will always return TRUE, and all GdkWindows get drawn
+   */
+  gtk_cairo_set_marked_for_draw (cr, TRUE);
+
+  gtk_widget_draw_internal (widget, cr, TRUE);
+
+  gtk_cairo_set_marked_for_draw (cr, was_marked);
+
+  cairo_restore (cr);
 }
