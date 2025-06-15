@@ -22,11 +22,13 @@ gdk_window_get_current_paint_region (GdkWindow *_window)
   if (impl_window->clip_region != NULL)
     {
       region = cairo_region_from_GdkRegion (impl_window->clip_region);
+      region = cairo_region_copy (region);
       cairo_region_translate (region, -window->abs_x, -window->abs_y);
     }
   else
     {
       region = cairo_region_from_GdkRegion (window->clip_region);
+      cairo_region_copy (region);
     }
 
   return region;
@@ -213,4 +215,41 @@ gdk_window_get_device_position_double (GdkWindow       *window,
   }
 
   return ret;
+}
+
+/**
+ * gdk_window_get_clip_region:
+ * @window: a #GdkWindow
+ *
+ * Computes the region of a window that potentially can be written
+ * to by drawing primitives. This region may not take into account
+ * other factors such as if the window is obscured by other windows,
+ * but no area outside of this region will be affected by drawing
+ * primitives.
+ *
+ * Returns: a #cairo_region_t. This must be freed with cairo_region_destroy()
+ *          when you are done.
+ **/
+cairo_region_t*
+gdk_window_get_clip_region (GdkWindow *window)
+{
+  return gdk_window_get_current_paint_region (window);
+}
+
+/**
+ * gdk_window_get_visible_region:
+ * @window: a #GdkWindow
+ *
+ * Computes the region of the @window that is potentially visible.
+ * This does not necessarily take into account if the window is
+ * obscured by other windows, but no area outside of this region
+ * is visible.
+ *
+ * Returns: a #cairo_region_t. This must be freed with cairo_region_destroy()
+ *          when you are done.
+ **/
+cairo_region_t *
+gdk_window_get_visible_region (GdkWindow *window)
+{
+  return gdk_window_get_clip_region (window);
 }

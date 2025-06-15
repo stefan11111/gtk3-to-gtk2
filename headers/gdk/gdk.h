@@ -54,6 +54,9 @@
 #include <gdk/gdkmain.h>
 
 #include <gdk/gdkkeys.h>
+
+#include <gdk/gdkkeysyms.h>
+
 #include <gdk/gdkpango.h>
 #include <gdk/gdkpixbuf.h>
 #include <gdk/gdkpixmap.h>
