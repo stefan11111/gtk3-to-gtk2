@@ -51,6 +51,8 @@
 #include <gdk/gdkinput.h>
 #include <gdk/gdkseat.h>
 
+#include <gdk/gdkmain.h>
+
 #include <gdk/gdkkeys.h>
 #include <gdk/gdkpango.h>
 #include <gdk/gdkpixbuf.h>

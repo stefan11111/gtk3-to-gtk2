@@ -55,19 +55,20 @@ typedef GdkScreenX11Class GdkX11ScreenClass;
 
 
 #ifdef X11
-GType gdk_screen_x11_get_type (void);
-GdkScreenX11 *gdk_screen_x11 (void *ptr);
-GdkScreenX11Class *gdk_screen_x11_class (void *ptr);
-gboolean gdk_is_screen_x11 (void *ptr);
-gboolean gdk_is_screen_x11_class (void *ptr);
-GdkScreenX11Class *gdk_screen_x11_get_class (void *ptr);
+/* expose gtk2 internals */
+GType gtk2_gdk_screen_x11_get_type (void);
+GdkScreenX11 *gtk2_gdk_screen_x11 (void *ptr);
+GdkScreenX11Class *gtk2_gdk_screen_x11_class (void *ptr);
+gboolean gtk2_gdk_is_screen_x11 (void *ptr);
+gboolean gtk2_gdk_is_screen_x11_class (void *ptr);
+GdkScreenX11Class *gtk2_gdk_screen_x11_get_class (void *ptr);
 
-#define GDK_TYPE_X11_SCREEN              (gdk_screen_x11_get_type ())
-#define GDK_X11_SCREEN(object)           (gdk_screen_x11 (object))
-#define GDK_X11_SCREEN_CLASS(klass)      (gdk_screen_x11_class (klass))
-#define GDK_IS_X11_SCREEN(object)        (gdk_is_screen_x11 (object))
-#define GDK_IS_X11_SCREEN_CLASS(klass)   (gdk_is_screen_x11_class (klass))
-#define GDK_X11_SCREEN_GET_CLASS(obj)    (gdk_screen_x11_get_class (obj))
+#define GDK_TYPE_X11_SCREEN              (gtk2_gdk_screen_x11_get_type ())
+#define GDK_X11_SCREEN(object)           (gtk2_gdk_screen_x11 (object))
+#define GDK_X11_SCREEN_CLASS(klass)      (gtk2_gdk_screen_x11_class (klass))
+#define GDK_IS_X11_SCREEN(object)        (gtk2_gdk_is_screen_x11 (object))
+#define GDK_IS_X11_SCREEN_CLASS(klass)   (gtk2_gdk_is_screen_x11_class (klass))
+#define GDK_X11_SCREEN_GET_CLASS(obj)    (gtk2_gdk_screen_x11_get_class (obj))
 #else
 #define GDK_TYPE_X11_SCREEN              (0)
 #define GDK_X11_SCREEN(object)           ((GdkScreenX11*)object)
