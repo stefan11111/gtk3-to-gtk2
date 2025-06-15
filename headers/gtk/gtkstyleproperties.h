@@ -70,7 +70,6 @@ typedef gboolean (* GtkStylePropertyParser) (const gchar  *string,
 
 GType gtk_style_properties_get_type (void) G_GNUC_CONST;
 
-#if 0 /* TODO: Implement these */
 /* Next 2 are implemented in gtkcsscustomproperty.c */
 
 void     gtk_style_properties_register_property (GtkStylePropertyParser  parse_func,
@@ -79,7 +78,6 @@ void     gtk_style_properties_register_property (GtkStylePropertyParser  parse_f
 gboolean gtk_style_properties_lookup_property   (const gchar             *property_name,
                                                  GtkStylePropertyParser  *parse_func,
                                                  GParamSpec             **pspec);
-#endif
 
 
 GtkStyleProperties * gtk_style_properties_new (void);
