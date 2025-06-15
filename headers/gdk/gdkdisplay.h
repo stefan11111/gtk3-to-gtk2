@@ -30,6 +30,7 @@
 
 #include <gdk/gdktypes.h>
 #include <gdk/gdkevents.h>
+#include <gdk/gdkmonitor.h>
 #include <gdk/gdkversionmacros.h>
 
 G_BEGIN_DECLS
@@ -231,6 +232,9 @@ GList   * gdk_display_list_seats       (GdkDisplay *display);
 gboolean gdk_display_supports_shapes           (GdkDisplay    *display);
 gboolean gdk_display_supports_input_shapes     (GdkDisplay    *display);
 gboolean gdk_display_supports_composite        (GdkDisplay    *display);
+
+
+GdkMonitor * gdk_display_get_primary_monitor   (GdkDisplay *display);
 
 G_END_DECLS
 

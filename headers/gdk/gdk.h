@@ -53,6 +53,8 @@
 
 #include <gdk/gdkmain.h>
 
+#include <gdk/gdkmonitor.h>
+
 #include <gdk/gdkkeys.h>
 
 #include <gdk/gdkkeysyms.h>
@@ -61,6 +63,9 @@
 #include <gdk/gdkpixbuf.h>
 #include <gdk/gdkpixmap.h>
 #include <gdk/gdkproperty.h>
+
+#include <gdk/gdkrectangle.h>
+
 #include <gdk/gdkregion.h>
 #include <gdk/gdkrgb.h>
 #include <gdk/gdkscreen.h>
@@ -168,18 +173,6 @@ void gdk_disable_multidevice (void);
 void gdk_set_double_click_time             (guint       msec);
 #endif
 
-/* Rectangle utilities
- */
-gboolean gdk_rectangle_intersect (const GdkRectangle *src1,
-				  const GdkRectangle *src2,
-				  GdkRectangle       *dest);
-void     gdk_rectangle_union     (const GdkRectangle *src1,
-				  const GdkRectangle *src2,
-				  GdkRectangle       *dest);
-
-GType gdk_rectangle_get_type (void) G_GNUC_CONST;
-
-#define GDK_TYPE_RECTANGLE (gdk_rectangle_get_type ())
 
 /* Conversion functions between wide char and multibyte strings. 
  */

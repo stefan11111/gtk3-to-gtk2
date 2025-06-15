@@ -1,11 +1,16 @@
 #warning include separate headers instead of util.h, helps with the build time
 
+#ifdef X11
+#include "gdkscreen-x11.h"
+#endif
+
 #include "gdkrgbaprivate.h"
 #include "gdkwindowinternal.h"
 #include "gdkdrawingcontextprivate.h"
 #include "gdkinternals.h"
 #include "gdk-private.h"
 #include "gdkregionprivate.h"
+#include "gdkmonitorprivate.h"
 
 
 #include "gtkenumsprivate.h"
