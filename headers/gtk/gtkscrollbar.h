@@ -67,6 +67,9 @@ struct _GtkScrollbarClass
 
 GType       gtk_scrollbar_get_type (void) G_GNUC_CONST;
 
+GtkWidget * gtk_scrollbar_new      (GtkOrientation  orientation,
+                                    GtkAdjustment  *adjustment);
+
 G_END_DECLS
 
 #endif /* __GTK_SCROLLBAR_H__ */
