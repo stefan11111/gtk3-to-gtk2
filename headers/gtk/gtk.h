@@ -209,6 +209,7 @@
 #include <gtk/gtkstatusicon.h>
 #include <gtk/gtkstock.h>
 
+#include <gtk/gtkcssprovider.h>
 #include <gtk/gtkcsssection.h>
 
 #include <gtk/gtkstyle.h>

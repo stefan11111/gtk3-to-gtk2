@@ -26,6 +26,7 @@
 #include "gtkintl.h"
 #include "gtkpopoverprivate.h"
 #include "gtkglobals.h"
+#include "gtkcssproviderprivate.h"
 
 #if 0 /* include <gtk/gtkprivate.h> instead */
 #include "gtkprivate.h"
