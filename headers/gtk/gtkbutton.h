@@ -91,6 +91,12 @@ struct _GtkButtonClass
 GType          gtk_button_get_type          (void) G_GNUC_CONST;
 GtkWidget*     gtk_button_new               (void);
 GtkWidget*     gtk_button_new_with_label    (const gchar    *label);
+
+
+GtkWidget*     gtk_button_new_from_icon_name (const gchar    *icon_name,
+                                              GtkIconSize     size);
+
+
 GtkWidget*     gtk_button_new_from_stock    (const gchar    *stock_id);
 GtkWidget*     gtk_button_new_with_mnemonic (const gchar    *label);
 #ifndef GTK_DISABLE_DEPRECATED
