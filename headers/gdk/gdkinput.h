@@ -165,6 +165,22 @@ void     gdk_device_get_state    (GdkDevice         *device,
 				  gdouble           *axes,
 				  GdkModifierType   *mask);
 
+
+
+GdkWindow *
+         gdk_device_get_window_at_position
+                                 (GdkDevice         *device,
+                                  gint              *win_x,
+                                  gint              *win_y);
+
+GdkWindow *
+         gdk_device_get_window_at_position_double
+                                 (GdkDevice         *device,
+                                  gdouble           *win_x,
+                                  gdouble           *win_y);
+
+
+
 gboolean gdk_device_get_history  (GdkDevice         *device,
 				  GdkWindow         *window,
 				  guint32            start,
