@@ -146,6 +146,18 @@ void               gtk_progress_bar_set_ellipsize (GtkProgressBar     *pbar,
 PangoEllipsizeMode gtk_progress_bar_get_ellipsize (GtkProgressBar     *pbar);
 
 
+/* from gtk3 */
+void       gtk_progress_bar_set_inverted         (GtkProgressBar *pbar,
+                                                  gboolean        inverted);
+
+gboolean           gtk_progress_bar_get_inverted    (GtkProgressBar *pbar);
+
+void               gtk_progress_bar_set_show_text (GtkProgressBar     *pbar,
+                                                   gboolean            show_text);
+
+gboolean           gtk_progress_bar_get_show_text (GtkProgressBar     *pbar);
+
+
 #ifndef GTK_DISABLE_DEPRECATED
 
 /* Everything below here is deprecated */

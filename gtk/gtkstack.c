@@ -1651,8 +1651,13 @@ gtk_stack_get_preferred_width (GtkWidget *widget,
                                gint      *minimum,
                                gint      *natural)
 {
-  *minimum = 0;
-  *natural = 0;
+  if (minimum) {
+    *minimum = 0;
+  }
+
+  if (natural) {
+    *natural = 0;
+  }
 }
 
 #if 0 /* TODO: get_preferred_width_for_height and get_preferred_height_for_width is Not Implemented */
@@ -1662,8 +1667,13 @@ gtk_stack_get_preferred_width_for_height (GtkWidget *widget,
                                           gint      *minimum,
                                           gint      *natural)
 {
-  *minimum = 0;
-  *natural = 0;
+  if (minimum) {
+    *minimum = 0;
+  }
+
+  if (natural) {
+    *natural = 0;
+  }
 }
 #endif
 
@@ -1672,8 +1682,13 @@ gtk_stack_get_preferred_height (GtkWidget *widget,
                                 gint      *minimum,
                                 gint      *natural)
 {
-  *minimum = 0;
-  *natural = 0;
+  if (minimum) {
+    *minimum = 0;
+  }
+
+  if (natural) {
+    *natural = 0;
+  }
 }
 
 #if 0 /* TODO: get_preferred_width_for_height and get_preferred_height_for_width is Not Implemented */
@@ -1683,8 +1698,13 @@ gtk_stack_get_preferred_height_for_width (GtkWidget *widget,
                                           gint      *minimum,
                                           gint      *natural)
 {
-  *minimum = 0;
-  *natural = 0;
+  if (minimum) {
+    *minimum = 0;
+  }
+
+  if (natural) {
+    *natural = 0;
+  }
 }
 #endif
 

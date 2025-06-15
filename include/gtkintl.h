@@ -13,4 +13,8 @@
 #define _(x) x
 #endif
 
+#ifndef C_
+#define C_(c, s) s
+#endif
+
 #endif /* __INTERNAL_GTK_INTL_H__ */
