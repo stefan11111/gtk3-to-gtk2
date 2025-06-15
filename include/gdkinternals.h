@@ -28,6 +28,10 @@ struct _GdkEventPrivate
   gpointer   windowing_data;
 };
 
+struct _GdkWindow {
+  struct _GdkDrawable drawable;
+};
+
 extern gboolean   _gdk_disable_multidevice;
 
 PangoDirection gdk_unichar_direction (gunichar ch);

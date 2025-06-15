@@ -29,6 +29,8 @@
 #include <gtk/gtkcsssection.h>
 #include <cairo/cairo.h>
 
+G_BEGIN_DECLS
+
 #define GTK_TYPE_STYLE_CONTEXT         (gtk_style_context_get_type ())
 #define GTK_STYLE_CONTEXT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GTK_TYPE_STYLE_CONTEXT, GtkStyleContext))
 #define GTK_STYLE_CONTEXT_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST    ((c), GTK_TYPE_STYLE_CONTEXT, GtkStyleContextClass))

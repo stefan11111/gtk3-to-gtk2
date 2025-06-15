@@ -91,6 +91,9 @@ GDK_AVAILABLE_IN_3_20
 GtkShortcutsWindow *
             gtk_application_window_get_help_overlay (GtkApplicationWindow *window);
 
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(GtkApplicationWindow, g_object_unref)
+
 G_END_DECLS
 
 #endif /* __GTK_APPLICATION_WINDOW_H__ */

@@ -104,9 +104,17 @@ typedef struct _GdkVisual             GdkVisual;
 typedef struct _GdkDrawable           GdkDrawable;
 typedef struct _GdkDrawable           GdkBitmap;
 typedef struct _GdkDrawable           GdkPixmap;
+
+#ifdef GDK_COMPILATION
 typedef struct _GdkDrawable           GdkWindow;
+#else
+typedef struct _GdkWindow             GdkWindow;
+#endif
+
 typedef struct _GdkDisplay            GdkDisplay;
 typedef struct _GdkScreen             GdkScreen;
+
+typedef struct _GdkSeat               GdkSeat;
 
 typedef enum
 {

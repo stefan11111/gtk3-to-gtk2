@@ -186,7 +186,9 @@ void gdk_input_set_extension_events (GdkWindow        *window,
 #ifndef GDK_MULTIHEAD_SAFE
 GdkDevice *gdk_device_get_core_pointer (void);
 #endif
- 
+
+GdkSeat     *gdk_device_get_seat            (GdkDevice *device);
+
 G_END_DECLS
 
 #endif /* __GDK_INPUT_H__ */
