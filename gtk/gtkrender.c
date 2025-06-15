@@ -3437,7 +3437,7 @@ gtk_draw_insertion_cursor (GtkWidget          *widget,
   direction = va_arg (list, GtkTextDirection);
   draw_arrow = va_arg (list, gboolean);
 
-  if (gtk2_loaded) {
+  if (!gtk2_loaded) {
     gtk2_init();
   }
 

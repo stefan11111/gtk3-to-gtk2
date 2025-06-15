@@ -69,10 +69,10 @@ install: ${ALL_LIBS}
 	mkdir -p ${DESTDIR}${XPKGCONFDIR}
 
 #	LIBDIR should only have one /, at the begining, like /lib or /lib64
-	sed 's/@libdir@/\${LIBDIR}/g' pc/pc-${TARGET}/gail-3.0.pc > ${DESTDIR}${XPKGCONFDIR}/gail-3.0.pc
-	sed 's/@libdir@/\${LIBDIR}/g' pc/pc-${TARGET}/gdk-3.0.pc > ${DESTDIR}${XPKGCONFDIR}/gdk-3.0.pc
-	sed 's/@libdir@/\${LIBDIR}/g' pc/pc-${TARGET}/gtk+-3.0.pc > ${DESTDIR}${XPKGCONFDIR}/gtk+-3.0.pc
-	sed 's/@libdir@/\${LIBDIR}/g' pc/pc-${TARGET}/gtk+-unix-print-3.0.pc > ${DESTDIR}${XPKGCONFDIR}/gtk+-unix-print-3.0.pc
+	sed 's~@libdir@~${LIBDIR}~g' pc/pc-${TARGET}/gail-3.0.pc > ${DESTDIR}${XPKGCONFDIR}/gail-3.0.pc
+	sed 's~@libdir@~${LIBDIR}~g' pc/pc-${TARGET}/gdk-3.0.pc > ${DESTDIR}${XPKGCONFDIR}/gdk-3.0.pc
+	sed 's~@libdir@~${LIBDIR}~g' pc/pc-${TARGET}/gtk+-3.0.pc > ${DESTDIR}${XPKGCONFDIR}/gtk+-3.0.pc
+	sed 's~@libdir@~${LIBDIR}~g' pc/pc-${TARGET}/gtk+-unix-print-3.0.pc > ${DESTDIR}${XPKGCONFDIR}/gtk+-unix-print-3.0.pc
 
 	mkdir -p ${DESTDIR}/usr/include/gtk-3.0/gtk
 	cp -rf headers/* ${DESTDIR}/usr/include/gtk-3.0

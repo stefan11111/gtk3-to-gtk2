@@ -5,12 +5,17 @@
 #include <gtk/gtkapplication.h>
 #include <gtk/gtkpopover.h>
 #include <gtk/gtkprivate.h>
+#include <gtk/gtkmain.h>
 
 #include <gdk/gdkcairo.h>
+
+#include <cairo-gobject.h>
 
 #include "gtkapplicationprivate.h"
 #include "gtkwidgetprivate.h"
 #include "gtkenumsprivate.h"
+#include "gtkmarshalers.h"
+#include "gtkintl.h"
 
 #include "gdkregionprivate.h"
 #include "gdkwindowinternal.h"
@@ -18,7 +23,14 @@
 
 #include "gtkglobals.h"
 
+enum {
+  DRAW,
+  LAST_EXTRA_SIGNAL
+};
+
 static GQuark           quark_action_muxer = 0;
+
+static guint            widget_extra_signals[LAST_EXTRA_SIGNAL] = { 0 };
 
 static const cairo_user_data_key_t mark_for_draw_key;
 
@@ -32,10 +44,7 @@ static inline void
 gtk_cairo_set_marked_for_draw (cairo_t  *cr,
                                gboolean  marked)
 {
-  if (marked)
-    cairo_set_user_data (cr, &mark_for_draw_key, GINT_TO_POINTER (1), NULL);
-  else
-    cairo_set_user_data (cr, &mark_for_draw_key, NULL, NULL);
+  cairo_set_user_data (cr, &mark_for_draw_key, GINT_TO_POINTER (marked), NULL);
 }
 
 /**
@@ -1098,9 +1107,7 @@ gtk_widget_draw_internal (GtkWidget *widget,
   if (gdk_cairo_get_clip_rectangle (cr, NULL))
     {
       GdkWindow *event_window = NULL;
-#if 0 /* TODO: remove when the draw signal is implemented for gtkwidget */
       gboolean result;
-#endif
 
       /* If this was a cairo_t passed via gtk_widget_draw() then we don't
        * require a window; otherwise we check for the window associated
@@ -1126,15 +1133,13 @@ gtk_widget_draw_internal (GtkWidget *widget,
         g_warning ("%s %p is drawn without a current allocation. This should not happen.", G_OBJECT_TYPE_NAME (widget), widget);
 #endif
 
-#if 0 /* TODO: remove when the draw signal is implemented for gtkwidget */
-      if (g_signal_has_handler_pending (widget, widget_signals[DRAW], 0, FALSE))
+      if (g_signal_has_handler_pending (widget, widget_extra_signals[DRAW], 0, FALSE))
         {
-          g_signal_emit (widget, widget_signals[DRAW],
+          g_signal_emit (widget, widget_extra_signals[DRAW],
                          0, cr,
                          &result);
         }
       else
-#endif
         if (GTK_WIDGET_GET_CLASS (widget)->draw)
         {
           cairo_save (cr);
@@ -1457,4 +1462,142 @@ gtk_widget_draw (GtkWidget *widget,
   gtk_cairo_set_marked_for_draw (cr, was_marked);
 
   cairo_restore (cr);
+}
+
+/* We guard against the draw signal callbacks modifying the state of the
+ * cairo context by surrounding it with save/restore.
+ * Maybe we should also cairo_new_path() just to be sure?
+ */
+static void
+gtk_widget_draw_marshaller (GClosure     *closure,
+                            GValue       *return_value,
+                            guint         n_param_values,
+                            const GValue *param_values,
+                            gpointer      invocation_hint,
+                            gpointer      marshal_data)
+{
+  cairo_t *cr = g_value_get_boxed (&param_values[1]);
+
+  cairo_save (cr);
+
+  _gtk_marshal_BOOLEAN__BOXED (closure,
+                               return_value,
+                               n_param_values,
+                               param_values,
+                               invocation_hint,
+                               marshal_data);
+
+
+  cairo_restore (cr);
+}
+
+
+static void
+gtk_widget_draw_marshallerv (GClosure     *closure,
+                             GValue       *return_value,
+                             gpointer      instance,
+                             va_list       args,
+                             gpointer      marshal_data,
+                             int           n_params,
+                             GType        *param_types)
+{
+  cairo_t *cr;
+  va_list args_copy;
+
+  G_VA_COPY (args_copy, args);
+  cr = va_arg (args_copy, gpointer);
+
+  cairo_save (cr);
+
+  _gtk_marshal_BOOLEAN__BOXEDv (closure,
+                                return_value,
+                                instance,
+                                args,
+                                marshal_data,
+                                n_params,
+                                param_types);
+
+
+  cairo_restore (cr);
+
+  va_end (args_copy);
+}
+
+static gboolean
+gtk_widget_real_expose_event (GtkWidget      *widget,
+                              GdkEventExpose *expose)
+{
+  gboolean result = FALSE;
+  cairo_t *cr;
+
+  if (!gtk_widget_is_drawable (widget))
+    return FALSE;
+
+  cr = gdk_cairo_create (expose->window);
+  gdk_cairo_region (cr, expose->region);
+  cairo_clip (cr);
+
+  if (!gtk_widget_get_has_window (widget))
+    {
+      cairo_translate (cr,
+                       widget->allocation.x,
+                       widget->allocation.y);
+    }
+
+  g_signal_emit (widget, widget_extra_signals[DRAW],
+                 0, cr,
+                 &result);
+
+  cairo_destroy (cr);
+
+  return result;
+}
+
+/* abuse the dynamic linker to hook into gtk_widget_class_init */
+/* we do this for both gtk2 calls and gtk3 calls */
+void
+gtk2_gtk_widget_class_init_hook (GtkWidgetClass *klass)
+{
+  klass->draw = NULL;
+  klass->expose_event = gtk_widget_real_expose_event;
+
+  /**
+   * GtkWidget::draw:
+   * @widget: the object which received the signal
+   * @cr: the cairo context to draw to
+   *
+   * This signal is emitted when a widget is supposed to render itself.
+   * The @widget's top left corner must be painted at the origin of
+   * the passed in context and be sized to the values returned by
+   * gtk_widget_get_allocated_width() and
+   * gtk_widget_get_allocated_height().
+   *
+   * Signal handlers connected to this signal can modify the cairo
+   * context passed as @cr in any way they like and don't need to
+   * restore it. The signal emission takes care of calling cairo_save()
+   * before and cairo_restore() after invoking the handler.
+   *
+   * The signal handler will get a @cr with a clip region already set to the
+   * widget's dirty region, i.e. to the area that needs repainting.  Complicated
+   * widgets that want to avoid redrawing themselves completely can get the full
+   * extents of the clip region with gdk_cairo_get_clip_rectangle(), or they can
+   * get a finer-grained representation of the dirty region with
+   * cairo_copy_clip_rectangle_list().
+   *
+   * Returns: %TRUE to stop other handlers from being invoked for the event.
+   * %FALSE to propagate the event further.
+   *
+   * Since: 3.0
+   */
+  widget_extra_signals[DRAW] =
+    g_signal_new (I_("draw"),
+                   G_TYPE_FROM_CLASS (klass),
+                   G_SIGNAL_RUN_LAST,
+                   G_STRUCT_OFFSET (GtkWidgetClass, draw),
+                   gtk2_gtk_boolean_handled_accumulator, NULL,
+                   gtk_widget_draw_marshaller,
+                   G_TYPE_BOOLEAN, 1,
+                   CAIRO_GOBJECT_TYPE_CONTEXT);
+  g_signal_set_va_marshaller (widget_extra_signals[DRAW], G_TYPE_FROM_CLASS (klass),
+                              gtk_widget_draw_marshallerv);
 }

@@ -27,7 +27,6 @@ extern void (*gtk2_gtk_draw_insertion_cursor)(GtkWidget          *widget,
 extern void (*gtk2_gtk_widget_draw) (GtkWidget          *widget,
                                      const GdkRectangle *area);
 
-
 /* glib-gobject symbols */
 extern gpointer (*glib_g_object_ref) (gpointer object);
 extern void (*glib_g_object_unref) (gpointer object);
