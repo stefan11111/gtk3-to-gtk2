@@ -697,10 +697,6 @@ _gtk_widget_get_action_muxer (GtkWidget *widget,
 {
   GtkActionMuxer *muxer;
 
-  if (!quark_action_muxer) {
-    quark_action_muxer = g_quark_from_static_string ("gtk-widget-action-muxer");
-  }
-
   muxer = (GtkActionMuxer*)g_object_get_qdata (G_OBJECT (widget), quark_action_muxer);
   if (muxer)
     return muxer;
@@ -746,10 +742,6 @@ void
 _gtk_widget_update_parent_muxer (GtkWidget *widget)
 {
   GtkActionMuxer *muxer;
-
-  if (!quark_action_muxer) {
-    quark_action_muxer = g_quark_from_static_string ("gtk-widget-action-muxer");
-  }
 
   muxer = (GtkActionMuxer*)g_object_get_qdata (G_OBJECT (widget), quark_action_muxer);
   if (muxer == NULL)
@@ -1562,6 +1554,8 @@ gtk_widget_real_expose_event (GtkWidget      *widget,
 void
 gtk2_gtk_widget_class_init_hook (GtkWidgetClass *klass)
 {
+  quark_action_muxer = g_quark_from_static_string ("gtk-widget-action-muxer");
+
   klass->draw = NULL;
   klass->expose_event = gtk_widget_real_expose_event;
 

@@ -125,6 +125,96 @@ struct _GtkWindowGeometryInfo
   GtkWindowLastGeometryInfo last;
 };
 
+static void (*gtk2_gtk_window_set_property) (GObject      *object,
+                                             guint         prop_id,
+                                             const GValue *value,
+                                             GParamSpec   *pspec) = NULL;
+
+static void (*gtk2_gtk_window_get_property) (GObject      *object,
+                                             guint         prop_id,
+                                             GValue       *value,
+                                             GParamSpec   *pspec) = NULL;
+
+static void
+gtk_window_real_set_property (GObject      *object,
+                              guint         prop_id,
+                              const GValue *value,
+                              GParamSpec   *pspec)
+{
+  GtkWindow  *window = GTK_WINDOW (object);
+
+  if (prop_id == PROP_APPLICATION) {
+    gtk_window_set_application (window, g_value_get_object (value));
+    return;
+  }
+
+  gtk2_gtk_window_set_property (object, prop_id, value, pspec);
+}
+
+static void
+gtk_window_real_get_property (GObject      *object,
+                              guint         prop_id,
+                              GValue       *value,
+                              GParamSpec   *pspec)
+{
+  GtkWindow  *window = GTK_WINDOW (object);
+
+  if (prop_id == PROP_APPLICATION) {
+    g_value_set_object (value, gtk_window_get_application (window));
+    return;
+  }
+
+  gtk2_gtk_window_get_property (object, prop_id, value, pspec);
+}
+
+
+/* abuse the dynamic linker to hook into gtk_widget_class_init */
+/* we do this for both gtk2 calls and gtk3 calls */
+void
+gtk2_gtk_window_class_init_hook (GtkWindowClass *klass)
+{
+  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+
+/* from gtk2:
+  gobject_class->set_property = gtk_window_set_property;
+  gobject_class->get_property = gtk_window_get_property;
+*/
+
+  /* do this to avoid writing trampolines */
+  /* trampolines don't work because when I link a program against this
+     it's stack remains non-executable,
+     even it the stack of the library is executable
+  */
+  gtk2_gtk_window_set_property = gobject_class->set_property;
+  gtk2_gtk_window_get_property = gobject_class->get_property;
+
+  gobject_class->set_property = gtk_window_real_set_property;
+  gobject_class->get_property = gtk_window_real_get_property;
+
+
+  /**
+   * GtkWindow:application:
+   *
+   * The #GtkApplication associated with the window.
+   *
+   * The application will be kept alive for at least as long as it
+   * has any windows associated with it (see g_application_hold()
+   * for a way to keep it alive without windows).
+   *
+   * Normally, the connection between the application and the window
+   * will remain until the window is destroyed, but you can explicitly
+   * remove it by setting the :application property to %NULL.
+   *
+   * Since: 3.0
+   */
+  prop_application = g_param_spec_object ("application",
+                                          P_("GtkApplication"),
+                                          P_("The GtkApplication for the window"),
+                                          GTK_TYPE_APPLICATION,
+                                          GTK_PARAM_READWRITE|G_PARAM_STATIC_STRINGS|G_PARAM_EXPLICIT_NOTIFY);
+
+  g_object_class_install_property (gobject_class, PROP_APPLICATION, prop_application);
+}
 
 /**
  * gtk_window_get_application:
@@ -196,17 +286,6 @@ gtk_window_set_application (GtkWindow      *window,
       _gtk_widget_update_parent_muxer (GTK_WIDGET (window));
 
       gtk2_gtk_window_notify_keys_changed (window);
-
-      if (!prop_application) {
-        prop_application = g_param_spec_object ("application",
-                                                P_("GtkApplication"),
-                                                P_("The GtkApplication for the window"),
-                                                GTK_TYPE_APPLICATION,
-                                                GTK_PARAM_READWRITE|G_PARAM_STATIC_STRINGS|G_PARAM_EXPLICIT_NOTIFY);
-      }
-
-      /* install this even if we already installed it */
-      g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_APPLICATION, prop_application);
 
       g_object_notify_by_pspec (G_OBJECT (window), prop_application);
     }
