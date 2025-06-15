@@ -697,6 +697,10 @@ _gtk_widget_get_action_muxer (GtkWidget *widget,
 {
   GtkActionMuxer *muxer;
 
+  if (!quark_action_muxer) {
+    quark_action_muxer = g_quark_from_static_string ("gtk-widget-action-muxer");
+  }
+
   muxer = (GtkActionMuxer*)g_object_get_qdata (G_OBJECT (widget), quark_action_muxer);
   if (muxer)
     return muxer;
