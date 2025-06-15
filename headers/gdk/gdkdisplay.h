@@ -221,6 +221,13 @@ void     gdk_display_store_clipboard                (GdkDisplay    *display,
 						     const GdkAtom *targets,
 						     gint           n_targets);
 
+
+
+GdkSeat * gdk_display_get_default_seat (GdkDisplay *display);
+GList   * gdk_display_list_seats       (GdkDisplay *display);
+
+
+
 gboolean gdk_display_supports_shapes           (GdkDisplay    *display);
 gboolean gdk_display_supports_input_shapes     (GdkDisplay    *display);
 gboolean gdk_display_supports_composite        (GdkDisplay    *display);
